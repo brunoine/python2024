@@ -1,0 +1,10 @@
+# References
+
+::: {#refs}
+:::
+
+<br>
+
+
+![](images\quanto_mais_aprendo.jpg)
+

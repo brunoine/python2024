@@ -1,0 +1,64 @@
+# Módulo 2
+
+::: {.callout-tip}
+## Conteúdos
+
+Estatísticas básicas em Python. 
+
+Apresentação dos *packages* `NumPy` e `Pandas`. 
+
+Familiarização com os aspectos fundamentais de bases de dados relacionais e o modelo relacional de gestão. 
+
+Conexões às bases de dados e interações através de consultas básicas de SQL.
+:::
+
+
+A instalação dos *packages* deve ser feita através do terminal Bash com o comando: `$ pip install pandas`
+
+```{python}
+import pandas as pd
+import altair as alt
+import seaborn as sns
+from matplotlib import pyplot as plt
+```
+
+```{python}
+penguins = pd.read_csv("https://pos.it/palmer-penguins-github-csv")
+```
+
+
+```{python}
+
+penguins.groupby("species").size().reset_index(name = "count")
+```
+```{python}
+colors = ["#FF8C00", "#A020F0", "#008B8B"]
+sns.set_palette(colors, n_colors = 3)
+```
+
+```{python}
+
+penguins["bill_ratio"] = (
+   penguins["bill_length_mm"] / penguins["bill_depth_mm"] 
+)
+sns.displot(penguins, 
+            x = "bill_ratio", 
+            hue = "species", 
+            kind = "kde", fill = True, aspect = 2, height = 3)
+plt.show()
+```
+
+```{python}
+def collatz(num):
+    if num % 2 == 0:
+        return num // 2
+    else:
+        return 3 * num + 1
+
+number = 5
+
+while number != 1:
+    number = collatz(int(number))
+    print(number)
+```
+

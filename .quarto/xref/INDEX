@@ -1,0 +1,47 @@
+{
+  "index.qmd": {
+    "index.html": "a09eb988"
+  },
+  "000-preface.qmd": {
+    "000-preface.html": "a07f13a8"
+  },
+  "100-intro.qmd": {
+    "100-intro.html": "70871f44"
+  },
+  "200-chapter_1.qmd": {
+    "200-chapter_1.html": "e9b81af6"
+  },
+  "300-conclusao.qmd": {
+    "300-conclusao.html": "fc79d326"
+  },
+  "references.qmd": {
+    "references.html": "001a4386"
+  },
+  "100-mod1.qmd": {
+    "100-mod1.html": "ce5af87b"
+  },
+  "200-mod2.qmd": {
+    "200-mod2.html": "2ca03d0b"
+  },
+  "300-mod3.qmd": {
+    "300-mod3.html": "bdf95430"
+  },
+  "400-mod4.qmd": {
+    "400-mod4.html": "05e3b1e5"
+  },
+  "500-mod5.qmd": {
+    "500-mod5.html": "7bc067af"
+  },
+  "600-mod6.qmd": {
+    "600-mod6.html": "a4984191"
+  },
+  "700-mod7.qmd": {
+    "700-mod7.html": "4b970042"
+  },
+  "800-mod8.qmd": {
+    "800-mod8.html": "fe62c9ee"
+  },
+  "900-mod9.qmd": {
+    "900-mod9.html": "8b61cfc8"
+  }
+}

@@ -1,0 +1,13 @@
+# Módulo 3
+
+::: {.callout-tip}
+## Conteúdos
+
+Utilização de jupyter notebooks para documentação de scripts e visualização de resultados.
+
+Introdução ao `Pyplot` do *package* `Matplotlib`.
+:::
+
+
+
+<br>

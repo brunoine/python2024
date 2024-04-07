@@ -1,0 +1,14 @@
+# Módulo 9
+
+::: {.callout-tip}
+## Conteúdos
+
+Introdução à análise espacial de dados geográficos.
+
+Os formatos de dados JSON e GEOJSON.
+
+Como obter dados através de um API.
+:::
+
+
+<br>

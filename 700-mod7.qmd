@@ -1,0 +1,11 @@
+# Módulo 7
+
+::: {.callout-tip}
+## Conteúdos
+
+Conceitos de *Classe*, Programação recursiva, *RegExp*.
+
+:::
+
+
+<br>

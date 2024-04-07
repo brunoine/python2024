@@ -1,0 +1,15 @@
+# Módulo 5
+
+::: {.callout-tip}
+## Conteúdos
+
+Conceitos de *Data Science* com `Pandas` e `Scikit`.
+
+Manipulação de dataFrames para extrair, filtrar e transformar conjuntos de dados.
+
+Introdução a aprendizagem supervisionada (Regressão e Classificação).
+
+:::
+
+
+<br>

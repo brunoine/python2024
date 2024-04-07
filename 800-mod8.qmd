@@ -1,0 +1,12 @@
+# Módulo 8
+
+::: {.callout-tip}
+## Conteúdos
+
+Aprendizagem supervisionada utilizando o `scikit`.
+
+:::
+
+
+
+<br>

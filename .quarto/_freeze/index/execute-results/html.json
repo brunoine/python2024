@@ -1,0 +1,16 @@
+{
+  "hash": "10bc903cf84c943cbfc93f47e3c57cad",
+  "result": {
+    "markdown": "# Programação em Python {.unnumbered}\n\n<br>\n\n![](images\\python.jpg)\n\n## A template to write books ready for self-publishing\n\nGo to [https://github.com/b-rodrigues/kdp_quarto](https://github.com/b-rodrigues/kdp_quarto) for the source code.\n\nGo to [https://b-rodrigues.github.io/kdp_quarto/](https://b-rodrigues.github.io/kdp_quarto/) to visit the published website.\n\n\n::: {.cell}\n\n```{.r .cell-code}\na very long line of R code that wraps in html, epub and PDF! In a pdf especially this is needed\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ndata(mtcars)\nlm(mpg ~ ., data = mtcars)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n\nCall:\nlm(formula = mpg ~ ., data = mtcars)\n\nCoefficients:\n(Intercept)          cyl         disp           hp         drat           wt  \n   12.30337     -0.11144      0.01334     -0.02148      0.78711     -3.71530  \n       qsec           vs           am         gear         carb  \n    0.82104      0.31776      2.52023      0.65541     -0.19942  \n```\n:::\n:::\n\n\nThis is how you can show verbatim code chunks in the output. This is using\na `{verbatim}` chunk (check the source `index.qmd`):\n\n\n\n````default\n```{r}\na very long line of R code that wraps in html, epub and PDF! In a pdf especially this is needed\n```\n\n````\n\nIf you want to show the triple backticks inline, you can also do so, like this:\n```` ```{r} ```` to start an R chunk and ```` ``` ```` to end it. Check the source.\n\n## Figures\n\nUse `knitr::include_graphics()` to include images. Check the source for how to add\nlabels and captions:\n\n::: {.cell}\n\n```{.r .cell-code}\nknitr::include_graphics(\"images/nda.png\")\n```\n\n::: {.cell-output-display}\n![NDA logo](images/nda.png){#fig-nda width=261}\n:::\n:::\n\nSee @fig-nda for a logo.\n\n## Conditional content\n\nThe block below does not appear in the PDF, only on the website and Epub:\n\n::: {.content-hidden when-format=\"pdf\"}\nHello, I won't appear in the PDF!\n:::\n\n::: {.content-visible when-format=\"pdf\"}\nBut this text here, will only appear in the PDF!\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

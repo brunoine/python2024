@@ -1,0 +1,86 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Python 2024",
+    "section": "",
+    "text": "Programação em Python"
+  },
+  {
+    "objectID": "index.html#formação-em-data-science",
+    "href": "index.html#formação-em-data-science",
+    "title": "Python 2024",
+    "section": "Formação em Data Science",
+    "text": "Formação em Data Science\n\n\n\nFormadores: Bartholomeus Schoenmakers, Luis Ferreira, Sónia Quaresma\nBasic de 2024-04-08 a 202404-12\nIntermediate de 2024-04-15 a 2024-04-22\nAdvanced de 2024-05-06 a 2024-05-14\nFormação presencial realizada nas instalações do INE - Porto.\nUsing Python with the RStudio IDE\n\n\n\n\n\n\nshortcut\n\n\n\n\n\nPara inserir uma nova chunk de python, no RStudio:\nTools &gt; Modify Keyboard Shortcuts &gt; Insert Chunk Python &gt;\nCtrl+Alt+P"
+  },
+  {
+    "objectID": "100-mod1.html#código",
+    "href": "100-mod1.html#código",
+    "title": "1  Módulo 1",
+    "section": "1.1 Código",
+    "text": "1.1 Código\nVamos começar com o python em chunks\n\nprint(\"hello, world!\")\n\nhello, world!\n\n\npodemos definir uma função com um input\n\ndef fib(n):\n  a, b = 0, 1\n  while a &lt; n:\n    print(a, end=' ')\n    a, b = b, a+b\n  print()\n  \nfib(1000)\n\n0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 \n\n\ne criar uma lista que queremos transformar e enumerar\n\n# python 3: list comprehensions\nfruits = ['Banana', 'Apple', 'Lime']\nloud_fruits = [fruit.upper() for fruit in fruits]\n\nprint(loud_fruits)\n\nlist(enumerate(fruits))\n\n['BANANA', 'APPLE', 'LIME']\n\n\n[(0, 'Banana'), (1, 'Apple'), (2, 'Lime')]\n\n\ne tentar um if else\n\nfechado = True\n\nif fechado:\n  print('porta fechada!')\nelse:\n  print('vamos lá!')\n\nporta fechada!\n\n\nOperadores logicos\n\nTrue and False\n\nFalse\n\n\n\nTrue or False\n\nTrue\n\n\n\nnot True == False\n\nTrue"
+  },
+  {
+    "objectID": "100-mod1.html#the-zen-of-python",
+    "href": "100-mod1.html#the-zen-of-python",
+    "title": "1  Módulo 1",
+    "section": "1.2 The Zen of Python",
+    "text": "1.2 The Zen of Python\n\nimport this\n\nThe Zen of Python, by Tim Peters\n\nBeautiful is better than ugly.\nExplicit is better than implicit.\nSimple is better than complex.\nComplex is better than complicated.\nFlat is better than nested.\nSparse is better than dense.\nReadability counts.\nSpecial cases aren't special enough to break the rules.\nAlthough practicality beats purity.\nErrors should never pass silently.\nUnless explicitly silenced.\nIn the face of ambiguity, refuse the temptation to guess.\nThere should be one-- and preferably only one --obvious way to do it.\nAlthough that way may not be obvious at first unless you're Dutch.\nNow is better than never.\nAlthough never is often better than *right* now.\nIf the implementation is hard to explain, it's a bad idea.\nIf the implementation is easy to explain, it may be a good idea.\nNamespaces are one honking great idea -- let's do more of those!\n\n\nLessons from the Zen of Python"
+  },
+  {
+    "objectID": "200-mod2.html",
+    "href": "200-mod2.html",
+    "title": "2  Módulo 2",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nEstatísticas básicas em Python.\nApresentação dos packages NumPy e Pandas.\nFamiliarização com os aspectos fundamentais de bases de dados relacionais e o modelo relacional de gestão.\nConexões às bases de dados e interações através de consultas básicas de SQL.\n\n\nA instalação dos packages deve ser feita através do terminal Bash com o comando: $ pip install pandas\n\nimport pandas as pd\nimport altair as alt\nimport seaborn as sns\nfrom matplotlib import pyplot as plt\n\n\npenguins = pd.read_csv(\"https://pos.it/palmer-penguins-github-csv\")\n\n\npenguins.groupby(\"species\").size().reset_index(name = \"count\")\n\n\n\n\n\n\n\n\nspecies\ncount\n\n\n\n\n0\nAdelie\n152\n\n\n1\nChinstrap\n68\n\n\n2\nGentoo\n124\n\n\n\n\n\n\n\n\ncolors = [\"#FF8C00\", \"#A020F0\", \"#008B8B\"]\nsns.set_palette(colors, n_colors = 3)\n\n\npenguins[\"bill_ratio\"] = (\n   penguins[\"bill_length_mm\"] / penguins[\"bill_depth_mm\"] \n)\nsns.displot(penguins, \n            x = \"bill_ratio\", \n            hue = \"species\", \n            kind = \"kde\", fill = True, aspect = 2, height = 3)\nplt.show()\n\n\n\n\n\ndef collatz(num):\n    if num % 2 == 0:\n        return num // 2\n    else:\n        return 3 * num + 1\n\nnumber = 5\n\nwhile number != 1:\n    number = collatz(int(number))\n    print(number)\n\n16\n8\n4\n2\n1"
+  },
+  {
+    "objectID": "300-mod3.html",
+    "href": "300-mod3.html",
+    "title": "3  Módulo 3",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nUtilização de jupyter notebooks para documentação de scripts e visualização de resultados.\nIntrodução ao Pyplot do package Matplotlib."
+  },
+  {
+    "objectID": "400-mod4.html",
+    "href": "400-mod4.html",
+    "title": "4  Módulo 4",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nConfiguração do ambiente de desenvolvimento."
+  },
+  {
+    "objectID": "500-mod5.html",
+    "href": "500-mod5.html",
+    "title": "5  Módulo 5",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nConceitos de Data Science com Pandas e Scikit.\nManipulação de dataFrames para extrair, filtrar e transformar conjuntos de dados.\nIntrodução a aprendizagem supervisionada (Regressão e Classificação)."
+  },
+  {
+    "objectID": "600-mod6.html",
+    "href": "600-mod6.html",
+    "title": "6  Módulo 6",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nVisualização de dados resultantes de modelos de machine learning e de dados geográficos."
+  },
+  {
+    "objectID": "700-mod7.html",
+    "href": "700-mod7.html",
+    "title": "7  Módulo 7",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nConceitos de Classe, Programação recursiva, RegExp."
+  },
+  {
+    "objectID": "800-mod8.html",
+    "href": "800-mod8.html",
+    "title": "8  Módulo 8",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nAprendizagem supervisionada utilizando o scikit."
+  },
+  {
+    "objectID": "900-mod9.html",
+    "href": "900-mod9.html",
+    "title": "9  Módulo 9",
+    "section": "",
+    "text": "Conteúdos\n\n\n\nIntrodução à análise espacial de dados geográficos.\nOs formatos de dados JSON e GEOJSON.\nComo obter dados através de um API."
+  }
+]

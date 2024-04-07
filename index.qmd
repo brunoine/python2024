@@ -1,0 +1,36 @@
+# Programação em Python {.unnumbered}
+
+<br>
+
+![](images\python.jpg)
+
+## Formação em *Data Science*
+
+::: {.column-margin}
+![](images/r_python.jpg)
+:::
+
+Formadores: Bartholomeus Schoenmakers, Luis Ferreira, Sónia Quaresma
+
+**Basic** de 2024-04-08 a 202404-12
+
+**Intermediate** de 2024-04-15 a 2024-04-22
+
+**Advanced** de 2024-05-06 a 2024-05-14
+
+Formação presencial realizada nas instalações do INE - Porto.
+
+[Using Python with the RStudio IDE](https://support.posit.co/hc/en-us/articles/1500007929061-Using-Python-with-the-RStudio-IDE)
+
+::: {.callout-caution collapse="true"}
+## *shortcut*
+
+Para inserir uma nova *chunk* de *python*, no RStudio:
+
+Tools > Modify Keyboard Shortcuts > Insert Chunk Python >
+
+`Ctrl+Alt+P`
+
+:::
+
+

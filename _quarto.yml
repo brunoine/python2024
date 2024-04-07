@@ -1,0 +1,73 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Python 2024"
+  favicon: "images/nda.png"
+  author: "Bruno A Lima"
+  date: "2024-04-01"
+  search: true
+  repo-url: "https://git.ine.pt/nda/formacao/python2024"
+  repo-actions: [edit]
+  downloads: [pdf, epub]
+  body-footer: |
+    ![](images/ine_logo_secundario_cores_491x57.png){width=50%}
+
+  chapters:
+    - index.qmd
+    - part: Basic
+      chapters:
+        - 100-mod1.qmd
+        - 200-mod2.qmd
+        - 300-mod3.qmd
+    - part: Intermediate
+      chapters: 
+        - 400-mod4.qmd
+        - 500-mod5.qmd
+        - 600-mod6.qmd
+    - part: Advanced
+      chapters: 
+        - 700-mod7.qmd
+        - 800-mod8.qmd
+        - 900-mod9.qmd
+    - references.qmd
+  page-navigation: true
+
+bibliography: references.bib
+
+format:
+  epub:
+    toc:
+      true
+    lang:
+      pt
+    date:
+      "2024-03-31"
+    css:
+      epub.css
+  html:
+    theme:
+      light: flatly
+      dark: solar
+    css:
+      epub.css
+  pdf:
+    keep-tex: true
+    documentclass: scrbook
+    classoption: [paper=6in:9in,pagesize=pdftex,headinclude=on,footinclude=on,12pt]
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \areaset[0.50in]{4.5in}{8in}
+    include-before-body:
+      text: |
+        \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+           showspaces = false,
+           showtabs = false,
+           breaksymbolleft={},
+           breaklines
+           % Note: setting commandchars=\\\{\} here will cause an error 
+        }  
+    fig-pos: 'H'

@@ -1,0 +1,10 @@
+# Módulo 6
+
+::: {.callout-tip}
+## Conteúdos
+
+Visualização de dados resultantes de modelos de *machine learning* e de dados geográficos. 
+:::
+
+
+<br>
