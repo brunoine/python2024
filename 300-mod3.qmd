@@ -1,4 +1,4 @@
-# Módulo 3
+# Jupyter e Visualizações (Basics)
 
 ::: {.callout-tip}
 ## Conteúdos
@@ -8,6 +8,819 @@ Utilização de jupyter notebooks para documentação de scripts e visualizaçã
 Introdução ao `Pyplot` do *package* `Matplotlib`.
 :::
 
+## Jupyter e Markdown
+
+Um **JUPYTER** Notebook é composto de uma combinação de células de código e documentação.
+
+Abrir através do prompt: `Anaconda prompt -> jupyter notebook`
+
+Ficheiros do tipo `.ipynb`
+
+![](images/notebook.png)
+
+Shortcuts
+![](images/shortcuts.png)
+
+The Zen of Python, by Tim Peters
+
+***
+
+<img src="https://cdn-blog.adafruit.com/uploads/2020/06/20200602zen.jpg"/>
+
+```{python}
+import this
+```
+
+### Data Exploration and Visualization (Basics)
+
+#### Importar Dados Externos para Pandas Dataframe
+
+[Exemplo .csv](https://dados.gov.pt/pt/datasets/despesa-com-medicamentos-nos-hospitais-do-sns-1/)
+[Exemplo .xlsx](https://data.europa.eu/data/datasets/classificacao-etaria-de-teatro?locale=pt)
+
+```{python}
+# Obter dados a partir do Link Direto ao dados
+# Importar Bibliotecas
+# No ambiente formação devem-se utilizar os ficheiros locais (poderá dar erro "http error 404")
+
+import pandas as pd
+import requests 
+# Link direto para ficheiro CSV: Despesa com Medicamentos nos Hospitais do SNS
+ficheiro = r'https://dados.gov.pt/pt/datasets/r/8803343f-6e1b-47de-87ac-26432adb45f0'
+
+# Importar num Pandas Dataframe
+df = pd.read_csv(ficheiro, sep=';')
+
+# Informação
+# print(df.head(5))
+# print(df.info())
+# print(df.describe())
+```
+```{python}
+#| eval: false 
+
+# Import Packages openxyl para poder trabalhar com XLSX
+import pandas as pd
+import openpyxl
+import numpy as np
+
+# Link Direto para ficheiro XLSX
+ficheiro = r'https://dados.gov.pt/s/resources/classificacao-etaria-de-teatro/20240331-230417/classificacaoetariateatro.xlsx'
+# Importar num DataFrame
+# Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None, sheet_name='Sheet1'
+
+# Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)
+# Utilizar iloc e numpy
+# print (df.iloc[np.r_[0:3, -3:0]])  # head e tail
+# print(df.info())
+# print(df.describe())
+```
+
+#### Importar tabela da BD
+```{python}
+#| eval: false 
+
+# Obter Password e Utilizador para Ligacao SQL
+from getpass import getpass # para ler a password sem a mostrar
+my_user = '"BRUNO.LIMA"[BDIFRM]' 
+my_password = '*******'
+```
+
+```{python}
+#| eval: false 
+
+# Ler Dados da BD
+# criar conexão
+import cx_Oracle 
+import pandas as pd
+host = 'c21oradev01.int.ine.pt'
+port = '1521'
+service = 'FORMACAO'
+dsn_tns = cx_Oracle.makedsn(host, port, service_name=service) 
+
+# Criar a conexão com todos os elementos,
+# incluingo user e password
+conn = cx_Oracle.connect(user=my_user, password=my_password, dsn=dsn_tns) 
+
+# Cursor:
+# Criar o cursor na conexão conn que criámos antes
+c = conn.cursor()
+```
+
+Ler Diferentes Views para Pandas DF
+```{python}
+#| eval: false 
+
+# Dados por Municipio:
+# SQL String
+my_sql = """
+select *
+from V_BGRI2021_DTMN_PT 
+"""
+# Executar o cursor c com a string como parâmetro
+c.execute(my_sql)
+
+# Ober Nomes Colunas: (c.description devolva listagem dos atributos, nome atributo é 1º elemento - x[0])
+# No Modulo Intermédio devem discutir mais este tipo de metodo para criar Listagem
+names = [x[0] for x in c.description]
+#print(names)
+
+# Input tabela dentro DataFrame, atribuir nomes colunas
+df_mn_c2021 = pd.DataFrame(c.fetchall(), columns = names)
+
+# Dados por NUTS3:
+
+# SQL String
+my_sql = """
+select *
+from V_BGRI2021_N3_PT 
+"""
+
+# Executar o cursor c com a string como parâmetro
+c.execute(my_sql)
+# Criar Nomes colunas
+names = [ x[0] for x in c.description]
+df_n3_c2021 = pd.DataFrame(c.fetchall(), columns = names)
+```
+
+ler a partir de .xlsx
+```{python}
+#| eval: true 
+
+# Solução de recurso caso existem problemas da BD 
+import pandas as pd
+df_n3_c2021 = pd.read_excel(r'data\N3_C2021.xlsx')
+df_mn_c2021 = pd.read_excel(r'data\DTMN_C2021.xlsx')
+# Mostrar informação inicial:
+# print(df_n3_c2021.head(5))
+# print(df_mn_c2021.head(5))
+```
+
+```{python}
+# Criar DF a partir de Ficheiros EXCEL
+# "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\DTMN_C2021.xlsx"
+# "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\N3_C2021.xlsx"
+# Import Packages openxyl para poder trabalhar com XLSX
+import pandas as pd
+import numpy as np
+
+# Link Direto para ficheiro XLSX
+ficheiro_dtmn = r'data\DTMN_C2021.xlsx'
+ficheiro_n3 = r'data\N3_C2021.xlsx'
+# Importar num DataFrame
+df_n3_c2021 = pd.read_excel(ficheiro_n3)
+ficheiro_dtmn = pd.read_excel(ficheiro_dtmn) 
+# Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None
+
+# Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)
+# Utilizar iloc e numpy
+# print(df_n3_c2021.head(5))
+# print(df_mn_c2021.head(5))
+# print(df_mn_c2021.info())
+```
+
+#### importar dados da DGS
+
+Importar DGS (Certificados de Obitos por Dia)
+```{python}
+# Ver referencia: https://dados.gov.pt/pt/datasets/registos-de-certificados-de-obito/
+# Atributos: Ano, Mês, Dia do Mês, Dia da Semana, Nº Certificados de Óbito Diários
+
+import pandas as pd
+
+# Link DGS (Certificados de Obitos por Dia)  
+ficheiro = r'http://dados.gov.pt/pt/datasets/r/dde8a843-d6a8-4a3f-82ff-b0e9c6743a3a'
+# Ler ficheiro do computador:
+#ficheiro = r'data\evolucao-diaria-de-certificados-de-obito.csv'
+
+# Importar em DataFrame
+df_obitos = pd.read_csv(ficheiro, sep=';')
+
+# Mostrar informação df
+# print(df_obitos.head(5))
+# print(df_obitos.info())
+# print(df_obitos.describe())
+```
+
+## Gráficos em MATPLOTLIB e SEABORN
+
+obter dados
+```{python}
+# Solução de recurso caso existem problemas da BD 
+import pandas as pd
+
+df_n3_c2021 = pd.read_excel(r'data\N3_C2021.xlsx')
+df_mn_c2021 = pd.read_excel(r'data\DTMN_C2021.xlsx')
+# Mostrar informação inicial:
+# print(df_n3_c2021.head(5))
+# print(df_mn_c2021.head(5))
+
+```
+```{python}
+# Criar DF a partir de Ficheiros EXCEL
+# "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\DTMN_C2021.xlsx"
+# "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\N3_C2021.xlsx"
+# Import Packages openxyl para poder trabalhar com XLSX
+import pandas as pd
+import numpy as np
+
+# Link Direto para ficheiro XLSX
+ficheiro_dtmn = r'data\DTMN_C2021.xlsx'
+ficheiro_n3 = r'data\N3_C2021.xlsx'
+# Importar num DataFrame
+df_n3_c2021 = pd.read_excel(ficheiro_n3)
+ficheiro_dtmn = pd.read_excel(ficheiro_dtmn) 
+# Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None
+
+# Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)
+# Utilizar iloc e numpy
+# print(df_n3_c2021.head(5))
+# print(df_mn_c2021.head(5))
+# print(df_mn_c2021.info())
+```
+
+```{python}
+# Importar DGS (Certificados de Obitos por Dia)
+# Ver referencia: https://dados.gov.pt/pt/datasets/registos-de-certificados-de-obito/
+# Atributos: Ano, Mês, Dia do Mês, Dia da Semana, Nº Certificados de Óbito Diários
+
+import pandas as pd
+
+# Link DGS (Certificados de Obitos por Dia)  
+#ficheiro = r'http://dados.gov.pt/pt/datasets/r/dde8a843-d6a8-4a3f-82ff-b0e9c6743a3a'
+# Ler ficheiro do computador:
+ficheiro = r'data\evolucao-diaria-de-certificados-de-obito.csv'
+
+# Importar em DataFrame
+df_obitos = pd.read_csv(ficheiro, sep=';')
+
+# Mostrar informação df
+# print(df_obitos.head(5))
+# print(df_obitos.info())
+# print(df_obitos.describe())
+```
+
+
+![](images/plo_anatomy.png)
+
+### Gráfico de Dispersão (Scatterplot) em MATPLOTLIB
+
+```{python}
+# Importar pyplot do matplotlib 
+from matplotlib import pyplot as plt
+```
+
+```{python}
+# Scatterplot que conssiste de 2 plots
+# 1º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade superior a 65 
+# 2º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade inferior a 14  
+
+
+# Marker: circle ('o'), point ('.'), diamond('d'), or square ('s')
+# s - tamamnho
+# label - rótulo a colocar
+# alpha - transparência
+# Plot 1
+plt.scatter(df_mn_c2021.N_INDIVIDUOS, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS,
+                color = 'Red', 
+                marker='.', 
+                s=12,
+                label = '65 ou mais', 
+                alpha = 0.5)
+# Plot 2
+plt.scatter(df_mn_c2021.N_INDIVIDUOS, df_mn_c2021.N_INDIVIDUOS_0_14,
+                color = 'Green', 
+                marker='s', 
+                s=12,
+                label = '15 ou menos', 
+                alpha = 0.5) 
+# Definir Labels x e y áxis
+plt.xlabel('Nº Individuos')
+plt.ylabel('Nº Individuos por grupo')
+
+# Adicionar GRID
+plt.grid(True)
+
+# Definir Título
+plt.title('Relação Individuos por grupo idade ao total \n por municipio',size=12,fontweight="bold")
+
+# Mostrar Legenda
+plt.legend()
+plt.show()
+```
+### Gráfico Relação Grupos Etários com Tamanho Municipio (valores relativos)
+```{python}
+# É possivel dividir as variáveis!
+# Permita tirar conclusões dos dados
+plt.scatter(df_mn_c2021.N_INDIVIDUOS/1000, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS,
+               color = 'Red', s=12, marker='.', label = '65 ou mais', alpha = 0.5)
+# 2º plot com 
+plt.scatter(df_mn_c2021.N_INDIVIDUOS/1000, df_mn_c2021.N_INDIVIDUOS_0_14/df_mn_c2021.N_INDIVIDUOS,
+               color = 'Green', s=12, marker='s', label = '15 ou menos', alpha = 0.5) # 
+#'''
+# Labels x e y áxis
+plt.xlabel('Nº Individuos (por 1000)')
+plt.ylabel('Rácio nº Individuos')
+# Adicionar GRID
+plt.grid(True)
+plt.title('Relação Individuos por grupo idade ao total \n por municipio',size=12,fontweight="bold")
+# Mostrar Legenda
+plt.legend()
+plt.style.use('fivethirtyeight')
+#plt.title
+plt.show()
+```
+Criar a mesma Figura utilizando os objectos *fig* e *ax*
+```{python}
+# Import matplotlib
+from matplotlib import pyplot as plt
+fig,ax = plt.subplots()
+
+# Scatterplot que conssite de 2 plots
+# 1º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade superior a 65 
+# 2º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade inferior a 14  
+
+ax.scatter(df_mn_c2021.N_INDIVIDUOS/1000, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS,
+            color = 'Red', 
+           s=12, 
+           marker='.', 
+           label = '65 ou mais', 
+           alpha = 0.5)
+# 2º plot com 
+ax.scatter(df_mn_c2021.N_INDIVIDUOS/1000, df_mn_c2021.N_INDIVIDUOS_0_14/df_mn_c2021.N_INDIVIDUOS,
+               color = 'Green', 
+               s=12, 
+               marker='s', 
+               label = '15 ou menos', 
+               alpha = 0.5) # 
+
+
+
+# Definir Labels x e y áxis
+ax.set_xlabel('Nº Individuos')
+ax.set_ylabel('Nº Individuos por grupo')
+
+# Adicionar GRID
+ax.grid(True)
+
+# Definir Título
+ax.set_title('Relação Individuos por grupo idade ao total \n por municipio',size=12,fontweight="bold")
+
+
+# Mostrar Legenda
+plt.legend()
+plt.show()
+```
+
+### ScatterPlot em SEABORN
+```{python}
+# Grafico Scatterplot SEABORN - Inicial
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+# Criar Gráfico
+sns.scatterplot(x=df_mn_c2021.N_INDIVIDUOS, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, 
+                data = df_mn_c2021
+               )
+plt.show()
+```
+
+Seaborn adicionar tamanho
+```{python}
+# Grafico Scatterplot SEABORN - Incluir cor
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+sns.set_palette('Accent')
+
+# Criar Gráfico
+# size - variavel para tamanho de cada ponto
+sns.scatterplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+                data = df_mn_c2021,
+                hue = "NUTS2",
+                hue_order = ['11','15','16','17','18','20','30'],
+                # Relação entre edificios até 1980 no total de edificios
+                size = (df_mn_c2021.N_EDIFICIOS_CONSTR_ANTES_1945 + 
+                        df_mn_c2021.N_EDIFICIOS_CONSTR_1946_1980) /
+                    df_mn_c2021.N_EDIFICIOS_CLASSICOS
+               )
+plt.show()
+```
+
+### plotnine
+
+```{python}
+#| eval: true
+
+from plotnine import ggplot, geom_point, aes, stat_smooth, facet_wrap
+
+(
+    ggplot(df_mn_c2021, aes(x=df_mn_c2021.N_INDIVIDUOS, 
+    y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS))
+    + geom_point()
+    + stat_smooth(method="lm")
+)
+```
+
+### SEABORN RELPLOT
+
+SEABORN REPLOT Inicial
+```{python}
+sns.set_palette('Accent')
+
+# Criar Gráfico
+sns.relplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+                data = df_mn_c2021,
+                kind = "scatter",
+                col = "NUTS2",
+                col_order = ['11','15','16','17','18','20','30'],
+                # Numero colunas
+                col_wrap = 3,
+                size = (df_mn_c2021.N_EDIFICIOS_CONSTR_ANTES_1945 + 
+                        df_mn_c2021.N_EDIFICIOS_CONSTR_1946_1980) /
+                    df_mn_c2021.N_EDIFICIOS_CLASSICOS,
+                # Tamanho minimo e máximo
+                sizes=(10, 150),
+                alpha = 0.7
+               )
+plt.show()
+```
+```{python}
+# Outro Exemplo com Municipios com menos de 50000 e mais que 50000
+sns.set_style('whitegrid')
+
+# Criar Nova Coluna para indicar tamanho do municipio (2 classes)
+df_mn_c2021["Tipo Municipio"] = np.where(df_mn_c2021.N_INDIVIDUOS<50000, 'Menos 50.000', 'Mais 50.000')
+
+# Mostra população com mais de 65 anos por tipo de municipio
+sns.relplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS,
+                data = df_mn_c2021,
+           kind="scatter",
+           col=df_mn_c2021["Tipo Municipio"]           
+           )
+plt.show()
+```
+Mesmo Figura Utilizando MATPLOTLIB
+```{python}
+# Create subplots
+fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(16, 8))
+
+# Mudar o array de 2 dimensõe para listagem, facilitando a definição do subplot
+axes = axes.flatten()  
+
+# Define NUTS2 order
+nut2_order = ['11', '15', '16', '17', '18', '20', '30']
+
+
+# Percorrer cada NUTS2 e criar um SUBPLOT
+for i, nut2 in enumerate(nut2_order[:7]):
+    
+    # Definir ax para subplot (0...n)
+    ax = axes[i]
+    # Seleção dos dados NUTS2
+    df_nut2 = df_mn_c2021[df_mn_c2021['NUTS2'] == nut2]
+    # Criar SUBPLOT
+    ax.scatter(
+        df_nut2['N_INDIVIDUOS'] / 1000,
+        df_nut2['N_INDIVIDUOS_65_OU_MAIS'] / df_nut2['N_INDIVIDUOS'],
+        s=(df_nut2['N_EDIFICIOS_CONSTR_ANTES_1945'] +
+           df_nut2['N_EDIFICIOS_CONSTR_1946_1980']) / df_nut2['N_EDIFICIOS_CLASSICOS'] * 1000,  
+        alpha=0.7,
+        label=nut2
+    )
+    ax.set_xlabel('N_INDIVIDUOS (thousands)')
+    ax.set_ylabel('N_INDIVIDUOS_65_OU_MAIS / N_INDIVIDUOS')
+    ax.set_title(f'NUTS2: {nut2}')
+    ax.legend()
+
+plt.tight_layout(pad=1.5)
+plt.show()
+
+```
+### SeaBorn CATPLOTs
+Gráfico de contagens (CountPlot)
+```{python}
+# Criar COUNTPLOT - Contagens de registos por ano
+sns.set_palette('Accent')
+
+# Ordenar no Notebook de demonstração
+category_order = sorted(df_obitos['Ano'].unique(),reverse=True)
+
+# Criar Gráfico
+sns.catplot(x="Ano", # x ou y
+            data = df_obitos,
+            kind = "count",
+            order = category_order
+            )
+plt.show()
+
+```
+Gráfico de barras (Bar plot)
+
+```{python}
+# Criar Barplot - Contagens de nº de óbitos diarios por ano
+
+sns.set_palette('Accent')
+
+# Gráfico com nº de óbitos diários por ano
+sns.catplot(x="Ano",
+            y = 'Nº Certificados de Óbito Diários',
+            data = df_obitos,
+            kind = "bar",
+            # Error bar mostra Interval de confiança (ci) 
+            errorbar = 'ci' # None\'ci\sd\se\pi\metodo definido'
+            )
+plt.show()
+```
+Box plot
+```{python}
+# Criar BOXPLOT - Distribuição dos ceritficados Óbito Diários
+
+sns.set_palette('tab10')
+# Mudar o aspecto do output
+#sns.set_context('notebook')
+
+# Gráfico mostra a distribuição de nº de óbitos diários
+sns.catplot(x="Dia da Semana", # Dia da Semana
+            y = 'Nº Certificados de Óbito Diários',
+            data = df_obitos,
+            kind = "box",
+            whis = [5,95] # 2.0
+            # sym = '' # - controlar visualização outliers
+            )
+plt.show()
+```
+
+### Criar plots com ou sem RELPLOT\CATPLOT
+
+```{python}
+# Mostrar Percentagem pop65 no total
+
+sns.set_palette('Accent')
+
+# Nova Coluna com Ano e Mes
+# Criar Nova Coluna para indicar tamanho do municipio
+# Converter para String e Juntar
+df_obitos["ANO_MES"] = df_obitos['Ano'].astype(str) + df_obitos['Mês'].astype(str)
+
+# Criar Gráfico nº de óbitos por ano e mes
+g1 = sns.relplot(x='ANO_MES',
+                y= 'Nº Certificados de Óbito Diários', 
+                data = df_obitos,
+                kind = 'line',
+                color = 'green',
+                errorbar = 'ci' # Mudar de ci para sd
+                )
+
+plt.show()
+
+# Grafico com Lineplot com seleção dos anos 2015 até 2016
+
+df_obitos2015_2016 = df_obitos[df_obitos['Ano'].isin([2015, 2016, 2017])]
+g2 = sns.lineplot(x='ANO_MES',
+                  y= 'Nº Certificados de Óbito Diários', 
+                  data = df_obitos2015_2016,
+                  color = 'red',
+                  errorbar = 'sd' # Mudar de ci para sd
+                  )
+
+# Get the x-axis tick positions and labels
+xtick_positions = g2.get_xticks()
+xtick_labels = df_obitos2015_2016['ANO_MES'].iloc[xtick_positions].tolist()
+
+# Set x-axis tick labels to show only every 12th label
+filtered_xtick_labels = [label if i % 12 == 0 else '' for i, label in enumerate(xtick_labels)]
+g2.set_xticks(xtick_positions)
+g2.set_xticklabels(filtered_xtick_labels, rotation=45)  # You can adjust rotation as needed
+    
+g1    
+plt.show()
+```
+
+### Histograma (Histogram)
+```{python}
+# histograma que mostra a distribuição do rácio de população com mais de 65 anos
+
+sns.set_palette('Accent')
+
+# Alternativa Order List
+hue_order_list = sorted(df_mn_c2021['NUTS2'].unique())
+
+# Criar Gráfico com sns.histplot
+sns.histplot(x=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+            data = df_mn_c2021,
+             bins = 30,
+             #binwidth = 0.02, - Alternativa definir tamanho de cada bin
+            hue = "NUTS2",
+            hue_order = ['11','15','16','17','18','20','30']
+               )
+plt.show()
+```
+
+### Customização dos gráficos em SEABORN
+
+```{python}
+# Exemplo diferenças na visualização com estes 3 paramentros
+
+# Categorical Color Brewer palettes: 'tab10' (default matplotlib palette), 'Dark2', 'Pastel1', 'Set2', 'Paired'
+# Seaborn has six variations of matplotlib’s palette, called: deep, muted, pastel, bright, dark, and colorblind
+sns.set_palette('colorblind')
+# 'paper',  'notebook', 'talk', 'poster'
+sns.set_context('paper')
+# Atenção - estilo continua valido para o resto do codigo
+# darkgrid, whitegrid, dark, white, ticks
+sns.set_style('darkgrid')
+# Mudar o aspecto do output
+
+
+# Gráfico mostra a distribuição de nº de óbitos diários
+sns.catplot(x="Dia da Semana", # Dia da Semana
+            y = 'Nº Certificados de Óbito Diários',
+            data = df_obitos,
+            kind = "box",
+            whis = [5,95]# 2.0
+            #sym = '' # - controlar mostrar outliers
+            )
+plt.show()
+```
+
+```{python}
+# Demonstração diferentes STYLES
+
+# darkgrid, whitegrid, dark, white, ticks
+for estilo in ['darkgrid', 'whitegrid', 'dark', 'white', 'ticks']:
+    sns.set_style(estilo)
+    sns.set_palette('Accent')
+
+    # Criar Gráfico
+    sns.relplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                    y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+                    data = df_mn_c2021,
+                    kind = "scatter",
+                    hue = 'NUTS2')
+    print(estilo.upper())
+    plt.show()
+
+#plt.show()
+```
+
+tipos de plots em Seaborn
+```{python}
+# Diferentes tipos de plots em Seaborn
+# 
+g1 = sns.scatterplot(x=df_mn_c2021.N_INDIVIDUOS,y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, data = df_mn_c2021)
+g2 = sns.relplot(x=df_mn_c2021.N_INDIVIDUOS,y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, data = df_mn_c2021,kind='scatter')
+print(type(g1))
+print(type(g2))
+
+```
+
+Adicionar Titulos
+```{python}
+# Definições globais:
+sns.set_style('ticks')
+sns.set_palette('colorblind')
+sns.set_context('notebook')
+
+# # Criar Gráfico
+g = sns.relplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+                data = df_mn_c2021,
+                kind = "scatter",
+                hue = 'NUTS2',
+               col='NUTS1')
+
+# Definir Titulo e font do titulo
+g.fig.suptitle('Relacao população 65+ no total de população',
+               y = 1.05,
+              fontdict={'size': 20, 'color': 'black','name': 'Arial'})
+
+g.set_titles("NUTS1 {col_name}")
+
+plt.show()
+```
+
+Mudar Rotulos dos Eixos
+```{python}
+g = sns.relplot(x=df_mn_c2021.N_INDIVIDUOS/1000, 
+                y=df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS/df_mn_c2021.N_INDIVIDUOS, 
+                data = df_mn_c2021,
+                kind = "scatter",
+                hue = 'NUTS2',
+               col='NUTS1')
+
+g.fig.suptitle('Relacao população 65+ no total de população',
+               y = 1.05,
+              fontdict={'color': 'black','name': 'Arial'})
+
+g.set_titles("NUTS1 {col_name}")
+
+# Rotulos Eixos
+# .set - permite definir atributos para cada eixo de um FacetGrid
+g.set(xlabel="População por municipio (em 1000)",
+     ylabel="Rácio nº Individuos superior a 65 anos")
+
+plt.show()
+
+'''
+# Gravar Ficheiro:
+outputfile = r'c:\temp\omeuplot.png'
+g.savefig(outputfile, format='png')
+
+'''
+```
+
+## Exercícios
+
+Ler dados
+```{python}
+
+import pandas as pd
+import requests 
+# Link direto para ficheiro CSV: Despesa com Medicamentos nos Hospitais do SNS
+ficheiro = r'data\utentes-atendidos-nos-centros-de-saude-no-ambito-da-soep.csv'
+
+# Importar num Pandas Dataframe
+df = pd.read_csv(ficheiro, sep=';')
+
+df.head
+df.info
+df.describe
+
+```
+
+BOXPLOT com a distribuíção por ARS dos diferentes nº de utentes por Sexo
+```{python}
+
+import seaborn as sns
+from matplotlib import pyplot as plt
+
+sns.set_theme(style="ticks", palette="pastel")
+
+# Gráfico mostra a distribuição de nº de óbitos diários
+sns.catplot(x="ARS", # Dia da Semana
+            y = 'Nº Utentes',
+            data = df,
+            kind = "box",
+            hue = "Sexo",
+            whis = [5,95] # 2.0
+            # sym = '' # - controlar visualização outliers
+            )
+plt.show()
+```
+
+Mostrar num LINEPLOT o nº de utentos por Ano por ARS
+
+```{python}
+#| warning: false
+
+# Criar novo variável ano no Dataframe:
+# Converter "Período" para formato datetime
+df['Período'] = pd.to_datetime(df['Período'], format='%Y-%m')
+
+# Extrair o ano e criar nova coluna ANO
+df['ANO'] = df['Período'].dt.year
+
+col_order= sorted(df['ARS'].unique(),reverse=False)
+
+sns.relplot(x=df.ANO, 
+                y=df['Nº Utentes'], 
+                data = df,
+                kind = "line",
+                col = "ARS",
+                color='red',
+                col_wrap = 3, 
+                errorbar = 'ci') 
+plt.show()
+```
+
+Desafio utilizar o package CUTECHARTS para  nº de observações por ARS
+
+```{python}
+import pandas as pd
+import cutecharts.charts as ctc
+
+df2 = df['ARS'].value_counts().to_frame(name="count")
+
+# pie chart 
+pie = ctc.Pie('ARS', # title
+              width='720px',height='720px')
+
+# set the chart options
+pie.set_options(labels=list(df2.index), # ARS names as labels
+                inner_radius=0)
+
+# label to be shown on graph
+pie.add_series(list(df2['count'])) 
+
+# display the charts
+pie.render_notebook()
+
+```
 
 
 <br>

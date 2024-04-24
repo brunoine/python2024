@@ -1,4 +1,4 @@
-# Módulo 5
+# Data Science (Intermediate)
 
 ::: {.callout-tip}
 ## Conteúdos
@@ -10,6 +10,1868 @@ Manipulação de dataFrames para extrair, filtrar e transformar conjuntos de dad
 Introdução a aprendizagem supervisionada (Regressão e Classificação).
 
 :::
+
+
+## Exploração com Pandas
+
+```{python}
+# usamos por convenção np para Numpy
+# usamos por convenção pd para Pandas
+import numpy as np
+import pandas as pd
+```
+
+### Series
+
+```{python}
+data = pd.Series([0.25, 0.5, 0.75, 1.0])
+data
+```
+
+```{python}
+data.values
+
+data.index
+```
+
+```{python}
+del data[2]
+```
+
+```{python}
+data = pd.Series([0.25, 0.5, 0.75, 1.0],
+                 index=['a', 'b', 'c', 'd'])
+data
+```
+
+```{python}
+
+population_dict = {'Lisboa': 544325,'Sintra': 385989, 'Vila Nova de Gaia': 304233,
+                   'Porto': 231834, 'Cascais': 214239, 'Loures': 201349,
+                   'Braga': 193324, 'Almada': 177943}
+                   
+population = pd.Series(population_dict)
+population
+```
+
+```{python}
+population['Braga']
+
+population['Braga'] = 201000
+
+population['Braga']
+```
+
+
+### DataFrames
+
+```{python}
+area_dict = {'Lisboa': 100.1,'Sintra': 23.8, 'Vila Nova de Gaia': 56.3,
+                   'Porto': 41.4, 'Cascais': 97.1, 'Loures': 11.8,
+                   'Braga': 41, 'Almada': 14.7}
+area = pd.Series(area_dict)
+area
+```
+criar uma fataframe a partir de series:  
+```{python}
+cities = pd.DataFrame({'population': population,
+                       'area': area})
+cities
+```
+
+```{python}
+#| eval: false
+# reset index com o nome cidade
+cities.reset_index()
+
+cities
+
+```
+
+### Index
+
+```{python}
+indA = pd.Index([1, 3, 5, 7, 9])
+indA
+
+indB = pd.Index([2, 3, 5, 7, 11])
+indA.intersection(indB)
+```
+
+a intersecção é muito útil para descobrirmos registos com a mesma identificação em vários conjuntos  
+```{python}
+aerod_dict = {'Lisboa': 3, 'Porto': 4, 'Cascais': 1, 'Braga': 7, 'Viseu': 2}
+aerod = pd.Series(aerod_dict)
+aerod.index
+
+aerod.index.intersection(cities.index)
+```
+
+### Reorganizar as DataFrames
+
+Para juntar duas dataframes podemos usar os métodos:
++ Concatenate (`pd.concat()`)
++ Append (`df.append`): *As of pandas 2.0, append (previously deprecated) was removed*
++ Merge (`pd.merge()`)
+
+Por conveniência vamos definir uma função para criar dataframes
+
+```{python}
+def make_df(cols, ind):
+    """Quickly make a DataFrame"""
+    data = {c: [str(c) + str(i) for i in ind]
+            for c in cols}
+    return pd.DataFrame(data, ind)
+  
+# exemplo de DataFrame
+make_df('ABC', range(3))
+
+```
+
+#### Método concatenate  
+```{python}
+df1 = make_df('AB', [1, 2])
+df2 = make_df('AB', np.arange(3,5))
+
+df1
+df2
+```
+
+```{python}
+pd.concat([df1, df2])
+```
+```{python}
+df3 = make_df('AB', range(2))
+df4 = make_df('CD', range(2))
+
+df3 
+df4
+
+pd.concat([df3, df4], axis='columns')
+```
+
+Duplicação de indexes
+
+(Uma diferença importante entre np.concatenate e pd.concat é que a concatenação do Pandas preserva os índices, mesmo que o resultado tenha índices duplicados.)  
+```{python}
+x = make_df('AB', [0, 1])
+y = make_df('AB', [2, 3])
+y.index = x.index  # fazer o match dos indices
+
+x
+y
+
+pd.concat([x, y])
+```
+
+```{python}
+# Tratar índices repetidos como um erro, fazendo apenas a verificação
+try:
+    pd.concat([x, y], verify_integrity=True)
+except ValueError as e:
+    print("ValueError:", e)
+```
+
+```{python}
+# Ignorando o index das dataframes de origem, e refazendo na nova dataframe o index
+x
+y
+
+pd.concat([x, y], ignore_index=True)
+```
+
+```{python}
+# Adicionando chaves MultiIndex para especificar um rótulo para as fontes de dados
+x
+y
+
+pd.concat([x, y], keys=['x', 'y'])
+
+```
+
+```{python}
+teste = pd.concat([x, y], keys=['x', 'y'])
+
+teste.reset_index()
+```
+
+
+Concatenação com joins  
+```{python}
+df5 = make_df('ABC', [1, 2])
+df6 = make_df('BCD', [3, 4])
+
+df5
+df6
+pd.concat([df5, df6])
+```
+
+para juntar fazendo a união das colunas de entrada usamos join='outer', que é o valor por omissão  
+para juntar fazendo a interseção das colunas de entrada usamos join='inner'  
+```{python}
+pd.concat([df5, df6], join='inner')
+
+```
+
+se quisermos preservar todas as colunas de uma das dataframes devemos fazer reindex das colunas a preservar na outra dataframe axis=1  
+```{python}
+pd.concat([df6, df5.reindex(df6.columns, axis=1)])
+
+```
+
+#### Método merge
+
+```{python}
+df1 = pd.DataFrame({'cidade': [ 'Braga','Lisboa','Sintra', 'Vila Nova de Gaia','Porto', 'Cascais', 
+                               'Loures', 'Almada'],
+                    'populacao': [ 193324, 544325, 385989, 304233, 231834, 214239, 201349, 177943]})
+df2 = pd.DataFrame({'cidade': ['Lisboa','Sintra', 'Vila Nova de Gaia',
+                   'Porto', 'Cascais', 'Loures', 'Braga', 'Almada'],
+                    'area': [ 100.1, 23.8, 56.3, 41.4, 97.1, 11.8, 41,  14.7],
+                   'nuts3': [ '170', '170', '11A', '11A', '170', '170', '112', '170']})
+df1
+df2
+```
+
+one-to-one join
+
+```{python}
+df3 = pd.merge(df1, df2)
+
+df3
+
+```
+
+one-to-many join
+
+```{python}
+df4 = pd.DataFrame({'nuts3': [ '112', '11A', '170'],
+                   'nuts3_dsg': ['Cávado', 'Área Met. Porto', 'Área Met. Lisboa']})
+                   
+df5 = pd.merge(df3, df4)
+
+df4
+df5
+
+```
+
+many-to-many join
+
+```{python}
+df6 = pd.DataFrame({'nuts3': [ '112', '112','11A', '170'],
+                   'class': ['Urbano', 'Rural','Urbano', 'Urbano']})
+df6
+pd.merge(df5, df6)
+```
+
+merge key
+
+podemos indicar a chave para ligar, o primeiro exemplo é equivalente a display('df1', 'df2', "pd.merge(df1, df2, on='cidade')")
+
+mas nem sempre as colunas por onde queremos fazer o join têm o mesmo nome,
+nesse caso podemos usar o left_on e o right_on
+
+```{python}
+df1a = pd.DataFrame({'cidade': ['Lisboa','Sintra', 'Vila Nova de Gaia','Porto', 'Cascais', 
+                               'Loures', 'Braga', 'Almada'],
+                    'populacao': [544325, 385989, 304233, 231834, 214239, 201349, 193324, 177943]})
+df2a = pd.DataFrame({'cidade+100khab': ['Lisboa','Sintra', 'Vila Nova de Gaia',
+                   'Porto', 'Cascais', 'Loures', 'Braga', 'Almada'],
+                    'area': [ 100.1, 23.8, 56.3, 41.4, 97.1, 11.8, 41,  14.7],
+                   'nuts3': [ '170', '170', '11A', '11A', '170', '170', '112', '170']})
+
+df1a
+print()
+df2a
+print()
+pd.merge(df1a, df2a, left_on="cidade", right_on="cidade+100khab")
+```
+
+podemos fazer drop da coluna repetida
+
+```{python}
+pd.merge(df1a, df2a, left_on="cidade", right_on="cidade+100khab").drop('cidade+100khab', axis=1)
+
+```
+
+Left_index e Right_index Keywords
+
+```{python}
+df1i = df1.set_index('cidade')
+df2i = df2.set_index('cidade')
+
+df1i
+df2i
+```
+
+```{python}
+pd.merge(df1i, df2i, left_index=True, right_index=True)
+```
+
+quando temos os indices dos dois lados podemos usar apenas o join
+
+```{python}
+# método antigo
+df1i.join(df2i)
+```
+
+as keywords left_index e right_index são mais úteis quando pretendemos misturar index e colunas
+
+```{python}
+pd.merge(df1i, df2a, left_index=True, right_on='cidade+100khab')
+```
+
+```{python}
+# para fazer reset de um index
+df1i
+df1i.reset_index()
+```
+
+```{python}
+# posso continuar a fazer reset do index
+# isso irá acrescentando colunas
+df1i.reset_index(inplace = True) # o 'inplace = True' altera o dataframe original 
+df1i
+df1i.reset_index()
+```
+
+Inner e Outer Joins
+
+```{python}
+df11 = pd.DataFrame({'cidade': ['Lisboa','Sintra'],
+                    'populacao': [544325, 385989]})
+df12 = pd.DataFrame({'cidade': ['Lisboa','Porto', ],
+                    'area': [ 100.1, 97.1]})
+df11
+print()
+df12
+print()
+pd.merge(df11, df12)
+```
+
+por omissão é realizado o inner join mas podemos especificar o tipo de join
+
+```{python}
+pd.merge(df11, df12, how='outer')
+print() # paenas para acrescentr uma linha vazia
+pd.merge(df11, df12, how='left')
+```
+
+Sobreposição de Nomes de Colunas  
+
+```{python}
+df13 = pd.DataFrame({'cidade': ['Lisboa','Porto'],
+                    'area': [ 100, 97.5]})
+df12
+df13
+print()
+pd.merge(df12, df13, on='cidade')
+```
+
+podemos indicar os sufixos que prentedemos para conhecermos a origem  
+```{python}
+pd.merge(df12, df13, on="cidade", suffixes=["_12", "_13"])
+```
+
+#### Agregar e Agrupar
+
+```{python}
+df5
+
+df5.describe()
+```
+
+```{python}
+print(df5['populacao'].sum(), df5['populacao'].mean())
+```
+
+valores agrupados
+
+```{python}
+df5.groupby('nuts3').populacao.mean()
+
+# ou de forma equivalente
+df5.groupby('nuts3')['populacao'].mean()
+```
+
+o object `groupby` suporta iteração sobre os grupos, isto pode ser útil para inspeccionarmos manualmente os grupos   
+```{python}
+# inspecao da estrutura
+for (group_name, group_data) in df5.groupby('nuts3'):
+    print("{0} shape={1}".format(group_name, group_data.shape))
+    
+```
+
+```{python}
+# summary statistics por grupo
+for group_name, group_data in df5.groupby('nuts3'):
+    print("Nuts3:", group_name)
+    print("Mean value:", group_data['populacao'].mean())
+    print("Median value:", group_data['populacao'].median())
+    print("Standard deviation:", group_data['populacao'].std())
+    print()
+```
+
+```{python}
+# inspeccionar valores unicos
+for group_name, group_data in df5.groupby('nuts3'):
+    print("Category:", group_name)
+    print("Unique values:", group_data['cidade'].count())
+    print("Unique values:", group_data['cidade'].nunique())
+    print("Unique values:", group_data['cidade'].unique())
+    print()
+```
+
+```{python}
+# inspeccionar os tops
+N = 1
+for group_name, group_data in df5.groupby('nuts3'):
+    print("Category:", group_name)
+    print(group_data.nlargest(N, 'area'))
+    print()
+```
+
+```{python}
+# inspecao visual
+for group_name, group_data in df5.groupby('nuts3'):
+    print("Category:", group_name)
+    print(group_data.head())
+    print()
+```
+
+```{python}
+# filtrar grupos
+for group_name, group_data in df5.groupby('nuts3'):
+    if group_data['area'].max() > 100:
+        print("Categorias com area > 100:", group_name)
+```
+
+```{python}
+# Criar visualizacoes por grupo
+import matplotlib.pyplot as plt
+
+df5.set_index('cidade', inplace = True )
+for group_name, group_data in df5.groupby('nuts3'):
+    group_data['populacao'].plot(kind='bar', title=group_name)
+    plt.show()
+```
+
+```{python}
+# para aplicar funcao dentro do grupo
+# Function to calculate percentage change within each group
+def calculate_relative_percentage(group,col_name):
+    total_sum = group[col_name].sum()
+    group['relative_percentage'] = (group[col_name] / total_sum) * 100
+    return group
+
+# Apply the custom analysis to each group
+result_df = pd.DataFrame()
+for name, group in df5.groupby('nuts3'):
+    group = calculate_relative_percentage(group, 'populacao')
+    result_df = pd.concat([result_df, group])
+
+result_df
+```
+
+```{python}
+df5.groupby('nuts3')['populacao'].describe()
+```
+
+Funções de Agregação
+
+varias funções de agregação podem ser aplicadas em simultâneo  
+```{python}
+df5.groupby('nuts3')['populacao'].aggregate(["min", "median", "mean", "max"])
+```
+
+Utilização de filtros
+
+```{python}
+def filter_func(x):
+    """Defino a função de filtro"""
+    return x['populacao'].std() > 100000
+
+# a função de filtro é aplicado ao grupo
+df5.groupby('nuts3').filter(filter_func)
+```
+
+```{python}
+df5.groupby('nuts3')['populacao'].std()
+```
+
+Também é comum passar as colunas de mapeamento dum dicionário para operações a serem aplicadas nessa coluna    
+```{python}
+df5.groupby('nuts3').aggregate({'populacao': 'min', 'area': 'max'})
+```
+
+Método Transform (conserva o nr de linhas original)
+
+Na transformação, a saída tem o mesmo formato da entrada  
+```{python}
+def center(x):
+    return x - x.mean()
+
+df5
+print()
+df5.groupby('nuts3')['populacao'].transform(center)
+```
+
+Método Apply
+
+```{python}
+def norm_by_area(x):
+    # x is a DataFrame of group values
+    x['populacao'] /= x['area'].sum()
+    return x
+
+df5.groupby('nuts3').apply(norm_by_area)
+```
+
+```{python}
+# com o group by por nuts3 somam-se as áreas da nuts3 
+# por exemplo na 11A será 56.3 + 41.4 = 97.7
+# como pop VNGaia = 304233 Porto = 231834 
+print("Pop normalizada por nuts3 de {0} é {1}". format("VNGaia", 304233/97.7))
+print("Pop normalizada por nuts3 de {0} é {1}". format("Porto", 231834/97.7))
+```
+
+```{python}
+df5.groupby('cidade').apply(norm_by_area)
+```
+
+```{python}
+# com o group by por cidade não há lugar a somas... 
+# as áreas são VNGaia = 56.3 Porto = 41.4 
+# como pop VNGaia = 304233 Porto = 231834 
+print("Pop normalizada por cidade de{0} é {1}". format("VNGaia", 304233/56.3))
+print("Pop normalizada por cidade de{0} é {1}". format("Porto", 231834/41.4))
+```
+
+Diferenças entre Apply e Transform
+
++ transform() pode receber uma função, uma função de string, uma lista de funções e um dicionário. No entanto, apply() só é pode receber uma função.  
++ transform() não pode produzir resultados agregados  
++ apply() funciona com várias séries (várias colunas) ao mesmo tempo. No entanto, transform() só pode funcionar com uma série de cada vez.
+
+```{python}
+# Função de string
+df5['populacao'].transform('sqrt')
+
+# lista de funções
+df5['area'].transform([np.sqrt, np.exp])
+
+# Dicionário
+df5.transform({
+    'populacao': np.sqrt,
+    'area': np.exp,
+})
+```
+
+```{python}
+# Apply consegue produzir agregados
+df5.apply(lambda x:x.sum())
+```
+
+```{python}
+#| eval: false
+
+## mas não funciona com o transform
+df5.transform(lambda x:x.sum())
+```
+
+```{python}
+def subtract_two(x):
+    return x['populacao'] - x['area']
+  
+# apply funciona com várias séries em simultâneo
+df5.apply(subtract_two, axis=1)
+```
+
+```{python}
+#| eval: false
+
+# mas o transform não
+df5.transform(subtract_two, axis=1)
+```
+
+Especificar as Split Keys para os grupos
+
+Podemos fazer grupos com uma lista, série ou index a especificar as keys pelas quais se faz o agrupamento. A key pode ser uma série ou lista com o comprimento da DataFrame.
+
+```{python}
+L = [0, 1, 0, 1, 2, 0, 3, 1]
+df5.groupby(L).sum()
+```
+
+```{python}
+# forma mais verbosa equivalente ao que temos usado até agora
+# aqui explictamos que a key é df5['nuts3'] e não apenas 'nuts3'
+df5.groupby(df5['nuts3']).sum()
+```
+
+
+```{python}
+# com um dicionário
+
+df2g = df5.set_index('nuts3')
+mapping = {'11A': 'norte', '112': 'norte', '170': 'centro'}
+df2g
+print()
+df2g.groupby(mapping).sum()
+```
+
+#### Pivot Tables
+
+```{python}
+import seaborn as sns # importamos esta package para termos acesso a um dataset
+
+titanic = sns.load_dataset('titanic')
+
+titanic.head()
+print()
+titanic.describe()
+```
+
+Preparar manualmente a Pivot Table
+
+```{python}
+titanic.groupby('sex')[['survived']].mean()
+print()
+titanic.groupby(['sex', 'class'], observed=True)['survived'].mean().unstack() # unstack para ter a pivot table
+```
+
+```{python}
+print()
+titanic.pivot_table(index='sex', columns='class',
+                    values='survived', aggfunc='mean', observed=True)
+```
+
+Syntax Pivot Table
+
+```{python}
+titanic.pivot_table('survived', index='sex', columns='class', aggfunc='mean')
+print()
+age_group = pd.cut(titanic['age'], [0, 18, 80])
+age_group
+print()
+# multilevel pivot table
+titanic.pivot_table('survived', index=['sex', age_group], 
+                    columns='class', aggfunc='mean')
+```
+
+Summary Statistics na DataFrame
+
+```{python}
+titanic.describe()
+```
+
+todas estas funções estão disponíveis como fomos vendo nos exemplos anteriores
+
+```{python}
+titanic.pivot_table('fare', index=['sex'], 
+                    columns='class', aggfunc='mean')
+                    
+print()
+
+titanic.pivot_table('survived', index=['class'], aggfunc='count')
+```
+
+## Estatisticas Oficiais
+
+```{python}
+import numpy as np
+import pandas as pd
+
+datadir ="data\\"
+filename = "PT_2012_Hosp.csv"
+```
+
+ler os dados:  
+```{python}
+df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')
+df_hosp.head()
+
+print()
+df_hosp.describe()
+
+df_hosp = df_hosp.reset_index() # passar o index para uma coluna; podia ser feito com inplace = True
+print()
+df_hosp.head()
+```
+
+### Pre-processamento
+
+#### Exclusão de colunas:  
+```{python}
+# exclusão da coluna nordem
+df_hosp = df_hosp.drop(columns=['NORDEM'])
+df_hosp.head()
+```
+
+#### Variáveis com demasiadas categorias:  
+```{python}
+df_hosp['NUTS2'].value_counts().sort_values()
+print()
+df_hosp['DTCC_COD'].value_counts()
+print()
+df_hosp['DTCC_COD'].value_counts(normalize=True) # resultados percentuais
+
+
+```
+
+Agregar todos os municipios com menos de dez por cento das ocorrências na amostra:  
+```{python}
+# verifica contagens para a coluna DTCC_COD
+df_hosp['DTCC_COD_COUNT']= df_hosp.DTCC_COD.map(df_hosp.DTCC_COD.value_counts(normalize=True)) # Constroi a nova coluna
+
+# Correr sem criar a coluna primeiro
+df_hosp.loc[df_hosp['DTCC_COD_COUNT'] < 0.1, 'DTCC_COD_NEW'] = 'outro' # Constroi a nova coluna
+df_hosp.loc[df_hosp['DTCC_COD_COUNT'] >= 0.1, 'DTCC_COD_NEW'] = df_hosp['CC_DSG'] # atualiza os valores em falta
+
+print()
+df_hosp.loc[:,['DTCC_COD_NEW','DTCC_COD', 'CC_DSG']] # todas as linhas e as colunas selecionadas
+```
+
+```{python}
+# exclusão das colunas já tratadas
+df_hosp = df_hosp.drop(columns=['DTCC_COD', 'CC_DSG','DTCC_COD_COUNT'])
+df_hosp.head()
+```
+
+#### Missing data
+
+sem o scikit
+
+verificar onde temos dados em falta o método `isna()`    
+```{python}
+#Check missing data
+df_hosp.isna().sum()
+```
+
+por haver linhas com todos os valores missing então há colunas que devem ser excluídos.
+
+```{python}
+df_hosp[df_hosp.isna().any(axis=1)]
+```
+
+```{python}
+# dropna pode ser parametrizado para linhas ou colunas, e até thresholds
+df_hosp1 = df_hosp.dropna()
+df_hosp1
+```
+
+```{python}
+# vamos fazer uma cópia para testes
+df1 = df_hosp1.copy()
+df1
+```
+
+Vamos introduzir um NaN num registo para experimentarmos outras formas de tratamento
+```{python}
+df1.loc[0:3, :]
+
+df1.loc[2,'C21001'] = np.nan
+
+df1.loc[0:3, :]
+```
+
+vamos inserir o valor médio da C21001 (Médicos - Especialistas - Total) para a nuts 16, mas de uma forma genérica para qualquer que fosse a coluna numérica:    
+```{python}
+# passo 1 seleccionar a/as colunas onde há valores missing
+cols_missing = df1.isna().sum().index[df1.isna().sum().values >0].tolist()
+print(cols_missing)
+
+# passo 2 seleccionar o conjunto de colunas da dataframe que são numéricas
+cols_numerical = df1.select_dtypes(include=['number']).columns.tolist()
+print(cols_numerical)
+
+# passo 3 imputar a mediana na for missing data
+cols_numerical_missing = [ col for col in cols_missing if (col in cols_numerical)] # loop for condicional
+df1[cols_numerical_missing] = df1[cols_numerical_missing].fillna(df1.groupby('NUTS2')[cols_numerical_missing].transform('mean'))
+
+df1.loc[0:3, :]
+```
+
+quando não aplicamos o transform temos resultados diferentes:  
+```{python}
+# obtemos uma dataframe com 7 linhas e index na nuts2
+df1.groupby('NUTS2')[cols_numerical_missing].mean()
+print()
+
+# obtemos o mesmo nº de linhas que a dataframe tinha com a média calculada pelo group by
+# sem index
+df1.groupby('NUTS2')[cols_numerical_missing].transform('mean')
+print()
+
+# verificação das médias
+df1.groupby('NUTS2')['C21001'].mean()
+```
+
+usando o `scikit`  
+
+```{python}
+df1.loc[2,'C21001'] = np.nan
+df1.loc[0:3, :]
+
+# o simple imputer não pode ser usado em colunas categóricas 
+# com a estratégia de média, só em colunas numéricas
+df1 = df1.drop(columns = ['DTCC_COD_NEW'])
+
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+imputer.fit(df1)
+```
+
+e agora atua sobre a dataframe:  
+```{python}
+x = pd.DataFrame(imputer.transform(df1))
+x
+
+```
+
+o método `SimpleImputer` do `scikit.impute` não suporta o `groupby` directamente mas é muito útil e suporta categorias quando a estratégia selecionada é '`most_frequent`' ou '`constant`' além disso pode ser usado indirectamente o `groupby` recorrendo a uma função lambda aplicada nas colunas dentro da função `transform`
+
+```{python}
+x.iloc[:4,:6]
+
+df1.iloc[:4,:6]
+
+df1['C21001'] = df1.groupby('NUTS2')['C21001'].transform(
+    lambda col: imputer.fit_transform(col.to_frame()).flatten(),)
+print()
+
+df1.iloc[:4,:6]
+
+```
+
+Imputação de Variáveis Categóricas  
+
+```{python}
+# Seleciona todas as colunas categóricas e atribui-lhes 
+# um novo nível criado 'missing'
+cols_categorical = df_hosp.select_dtypes(include=['object']).columns.tolist()
+
+df_hosp[cols_categorical] = df_hosp[cols_categorical].fillna('missing')
+print(cols_categorical)
+```
+
+exemplo em que usamos vários imputadores em simultâneo, seria possível usando o ColumnTransformer do módulo `sklearn.compose` e especificando as colunas a fectar é apresentado abaixo:  
+```{python}
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+
+A = [[np.nan,2,'Jose'],[4,np.nan,'Maria'],[7,8,'Joao'],[10,5,np.nan]]
+
+col_trans = ColumnTransformer(
+[('imp0', SimpleImputer(strategy='constant', fill_value=1), [0]),
+ ('imp1', SimpleImputer(strategy='mean'), [1]),
+ ('imp2', SimpleImputer(strategy='constant', fill_value='desconhecido'), [2])],
+remainder='passthrough')
+
+col_trans.fit_transform(A)
+```
+
+Imputação com o vizinho mais próximo
+
+```{python}
+from sklearn.impute import KNNImputer
+
+X = [[1, 2, np.nan], [3, 4, 3], [np.nan, 6, 5], [8, 8, 7]]
+
+imputer = KNNImputer(n_neighbors=2, weights="uniform")
+imputer.fit_transform(X)
+```
+
+#### Variáveis Categóricas
+
+```{python}
+## Typecast da coluna para categoria em usando o pandas
+df1['NUTS2'] = pd.Categorical(df1.NUTS2)
+
+df1.dtypes
+
+print()
+## Typecast da coluna para categoria em python
+df_hosp11 = df_hosp1.copy()
+df_hosp11['NUTS2']= df_hosp1.NUTS2.astype('category')
+df_hosp11.dtypes
+```
+
+Criação de Variáveis Categóricas
+
+criar colunas à custa de outras colunas directamente usando o método `map`:  
+```{python}
+df_hosp2 = df1.copy()
+df_hosp2
+
+def label(value): # função para criar uma variável dummy
+    if value == 0:
+        return "no"
+    if value > 0:
+        return "yes"
+
+df_hosp2['t_cirurgia'] = df_hosp2['C21071'].map(label)
+df_hosp2.head()
+```
+
+Variáveis Dummy
+
+```{python}
+# Definimos y como o nosso target
+X = df_hosp2.drop(columns=['t_cirurgia'])
+y = df_hosp2['t_cirurgia'].values
+
+#Transforma as variáveis categoricas em dummies com drop da baseline
+df_x = pd.get_dummies(X, drop_first = True)
+
+df_x.head()
+```
+
+Variáveis Dummy com Scikit
+
+Scikit tem vários encoders os mais comuns são o `OrdinalEncoder` e o `HotEncoder`.
+
++ `OrdinalEncoder` é usado para transformar variáveis categóricas em numéricas.
++ `OneHotEncoder` é usado para transformar variáveis categóricas em variáveis dummy.
+
+(criar encoder, fazer o fit e efectuar a transformação)
+
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+
+encoder = OneHotEncoder(handle_unknown='ignore')
+
+# Definimos X_sk como a coluna para criar dummies nos exemplos scikit
+# atenção df_hosp2[['NUTS2']] é uma dataframe, df_hosp2['NUTS2'] é uma serie
+X_sk = df_hosp2[['NUTS2']]
+
+print(type(df_hosp2[['NUTS2']]))
+print()
+encoder = encoder.fit(X_sk)
+
+X_encoded = pd.DataFrame(encoder.transform(X_sk).toarray()) # transforma a matriz em dataframe
+X_encoded.head()
+print()
+
+X_encoded = X_encoded.rename(columns = {0 : "Nut0", 1 : "Nut1", 2 : "Nut2", 3 : "Nut3"
+                                       , 4 : "Nut4", 5 : "Nut5", 6 : "Nut6"}) # renomeia as colunas
+X_encoded
+print()
+
+# merge com a dataframe dos hospitais
+df_hosp2 = df_hosp2.join(X_encoded)
+df_hosp2 = df_hosp2.drop(columns = 'NUTS2') # drop da coluna original
+df_hosp2.head()
+```
+
+#### Variáveis Correlacionadas
+
+em modelos de regressão podemos ter problemas com variáveis correlacionadas (multicolinearidade)  
+```{python}
+# criação de matriz de correlação e selecão do triângulo superior
+cor_matrix = df_x.corr().abs()
+cor_matrix
+print()
+
+upper_tri = cor_matrix.where(np.triu(np.ones(cor_matrix.shape),k=1).astype(bool))
+print(upper_tri)
+print()
+
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# o heatmap é uma boa forma de visualizar as matrizes de correlações
+plt.figure(figsize = (20,20))
+sns.heatmap(cor_matrix)
+
+plt.show()
+```
+
+```{python}
+# seleciona para remover as colunas altamente correlacionadas
+to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > 0.9)]
+print(to_drop)
+```
+
+```{python}
+df_hosp3 = df_x.drop(columns=to_drop, axis=1)
+df_hosp3.head()
+```
+
+#### Class Imbalance
+
+```{python}
+from sklearn.linear_model import LogisticRegression
+
+# exemplo de declaração do regressor balanceando as classes
+Lr = LogisticRegression(class_weight='balanced') # declarar uma regressão logística com classes balanceadas
+```
+
+#### Normalização e Standardização
+
+```{python}
+shape = (4, 2)
+shape
+
+import numpy.random as rd
+
+# *shape faz unpack do tuplo shape
+rd.rand(*shape) # gerador de samples de uma distribuição uniforme
+```
+
+```{python}
+
+# random.RandomState.lognormal(mean=0.0, sigma=1.0, size=None) 
+# gerador de samples de uma distribuição log-normal
+rd.rand(*shape) * rd.lognormal(0, 1, shape) 
+
+```
+
+```{python}
+import numpy.random as rd
+import pandas as pd
+from sklearn.preprocessing import Normalizer
+import seaborn as sns
+
+import warnings # para suprimir warnings
+warnings.filterwarnings("ignore", "is_categorical_dtype")
+warnings.filterwarnings("ignore", "use_inf_as_na")
+
+shape = (100, 2)
+# *shape faz unpack do tuplo shape
+df = pd.DataFrame(rd.rand(*shape) * rd.lognormal(1, 0.4, shape)
+                  , columns=["weight", "age"]) # gerar um dataframe com 100 linhas e 2 colunas
+ndf = pd.DataFrame(Normalizer(norm="l2").fit_transform(df),
+                   columns=["norm_weight", "norm_age"]) # normalizar os dados
+
+# kernel density estimate (KDE) plot é um método para 
+# visualizar a distribuição de observações num dataset
+sns.kdeplot(data=pd.concat([df, ndf], axis=1), fill=True, 
+            common_norm=False, palette="crest",alpha=.5, linewidth=1,)
+            
+plt.show()
+            
+df
+```
+
+```{python}
+for d in [df]:
+    sns.pairplot(d.reset_index(), hue="index", diag_kind=None)
+    
+plt.show()
+```
+
+```{python}
+# repete o exemplo com shape(50,2) faz standardization
+import numpy.random as rd
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import seaborn as sns
+
+shape = (50, 2)
+# *shape faz unpack do tuplo shape
+df = pd.DataFrame(rd.rand(*shape) * rd.normal(10, 6, shape),
+                  columns=["weight", "age"])
+ndf = pd.DataFrame(StandardScaler().fit_transform(df),
+                   columns=["norm_weight", "norm_age"])
+
+# kernel density estimate (KDE) plot é um método para 
+# visualizar a distribuição de observações num dataset
+sns.kdeplot(data=pd.concat([df, ndf], axis=1), 
+            fill=True, common_norm=False, palette="crest",
+            alpha=.5, linewidth=1,)
+            
+plt.show()
+```
+
+```{python}
+for d in [df]:
+    sns.pairplot(d.reset_index(), hue="index", palette="crest", diag_kind=None)
+
+plt.show()
+```
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import VarianceThreshold # Feature selector
+from sklearn.pipeline import Pipeline # For setting up pipeline
+from sklearn.neighbors import KNeighborsClassifier
+
+#Define a pre-processing pipeline
+pipeline = Pipeline([
+('selector', VarianceThreshold()),
+('scaler', StandardScaler()),
+('KNN', KNeighborsClassifier())])
+```
+
+
+```{python}
+#| eval: false
+
+#Simple pipeline execution with default parameters
+pipeline.fit(X, y)
+print('Training set score: ' + str(pipeline.score(X,y)))
+
+pipeline.predict(X)
+
+y
+
+pipeline.predict_proba(X)
+```
+
+### Gravar os dados
+
+```{python}
+#| eval: false
+
+df_prep = pd.concat([X, pd.DataFrame(y, columns=["t_cirurgia"])], axis=1)
+
+df_prep.head()
+
+# Exportação da dataframe
+fileout = 'df_prep.csv'
+df_prep.to_csv(f"{datadir}{fileout}",  index=False)
+```
+
+## Introdução a Machine Learning
+
+### Regressão
+
+**QUESTÃO**:   
+Com este conjunto de dados que inclui o número de médicos e enfermeiros em várias especialidades será que consigo estimar o nº de total de Enfermeiros - Especialistas - Em Saúde Infantil e Pediátrica em cada hospital? 
+
++ Coluna **C31011**
+
+```{python}
+#| eval: true
+
+import numpy as np
+import pandas as pd
+
+datadir ="data\\"
+filename = "df_prep.csv"
+```
+
+```{python}
+df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')
+df_hosp.head()
+
+print()
+df_hosp.describe()
+```
+
+```{python}
+df_hosp = df_hosp.reset_index() # passar o index para uma coluna; podia ser feito com inplace = True
+```
+
+```{python}
+# Definimos y como o nosso target
+X = df_hosp.drop(columns=['t_cirurgia'])
+y = df_hosp['t_cirurgia'].values
+```
+
+```{python}
+# criação de matriz de correlação e selecão do triângulo superior
+cor_matrix = X.corr().abs()
+upper_tri = cor_matrix.where(np.triu(np.ones(cor_matrix.shape),k=1).astype(bool))
+```
+
+```{python}
+# seleciona para remover as colunas altamente correlacionadas
+to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > 0.9)]
+print(to_drop)
+```
+
+```{python}
+df_hosp = df_hosp.drop(columns=to_drop, axis=1) # drop das colunas altamente correlacionadas
+```
+
+```{python}
+df_hosp.head()
+```
+
+primeiro modelo de regressão linear com uma variavél explicativa:  
+```{python}
+import statsmodels.formula.api as smf
+
+est = smf.ols('C31011 ~ C31001',data = df_hosp).fit()
+print(est.summary())
+```
+
+```{python}
+# Este é o R entre as 2 variáveis
+r = cor_matrix.loc['C31001','C31011']
+r
+```
+
+```{python}
+# E este é o r quadrado
+r2 = r**2
+r2
+```
+
+modelos com duas variáveis explicativas:    
+```{python}
+import statsmodels.formula.api as smf
+
+est = smf.ols('C31011 ~ C31001 + C21011',data = df_hosp).fit()
+print(est.summary())
+```
+
+```{python}
+# import statsmodels.formula.api as smf
+
+est = smf.ols('C31011 ~ C31001 + C21361',data = df_hosp).fit()
+print(est.summary())
+```
+
+modelo com todas as variáveis explicativas:  
+```{python}
+# reorganiza as colunas para colocar a coluna target no fim
+last_cols = ['C31011']
+first_cols = [col for col in df_hosp.columns if col not in last_cols]
+
+df = df_hosp[first_cols+last_cols]
+df.head()
+```
+
+```{python}
+string_cols = ' + '.join(df.columns[:-1])
+est = smf.ols('C31011 ~ {}'.format(string_cols),data = df).fit()
+print(est.summary())
+```
+
+::: {.callout-warning}
+a variável C31001 permite construir Y directamente!
+:::
+
+```{python}
+df = df.drop(columns='C31001', axis=1)
+df.head()
+```
+
+e voltamos a fazer o modelo
+```{python}
+string_cols = ' + '.join(df.columns[:-1])
+est = smf.ols('C31011 ~ {}'.format(string_cols),data = df).fit()
+print(est.summary())
+```
+
+#### Regressão com Scikit
+
+```{python}
+df_hosp.head()
+```
+
+```{python}
+# seleciona para remover as colunas ano e ordem
+to_drop = ['ANO','NORDEM']
+df = df_hosp.drop(columns=to_drop, axis=1) # drop das colunas ano e ordem
+```
+
+```{python}
+df1 = df.dropna() # drop das linhas com valores missing
+```
+
+```{python}
+# define a variável target e as features
+X = df1.drop(columns=['C31011'])
+y = df1['C31011'].values
+```
+
+```{python}
+## Typecast da coluna para categoria em pandas
+X['NUTS2'] = pd.Categorical(X.NUTS2)
+#X.dtypes
+
+X.shape
+```
+
+```{python}
+# cria variáveis dummy e faz drop da baseline
+X = pd.get_dummies(X, drop_first = True)
+
+X.shape
+```
+
+```{python}
+from sklearn.feature_selection import VarianceThreshold # Feature selector
+
+thresholder = VarianceThreshold(threshold=.2) # define o threshold de variância 
+X = thresholder.fit_transform(X) # aplica o threshold para excluir variáveis com baixa variância
+
+X.shape
+```
+
+```{python}
+from sklearn.model_selection import train_test_split 
+
+#Split data for machine learning
+X_train, X_test, y_train, y_test = train_test_split(X,  y, test_size = 0.2 ,random_state = 2002)
+print(X_train.shape)
+print(X_test.shape)
+```
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler().fit(X_train) # escalar os dados em pre-processamento
+
+scaler.mean_
+print()
+scaler.scale_
+```
+
+```{python}
+X_scaled = scaler.transform(X_train)
+
+X_train
+
+print()
+
+X_scaled
+```
+
+```{python}
+
+from sklearn.linear_model import LinearRegression 
+
+lr = LinearRegression()
+lr.fit(X_scaled,y_train) # treina o modelo
+
+lr.coef_
+print()
+y_pred = lr.predict(X_test) # faz a previsão mas não com os dados escalados
+```
+
+```{python}
+from sklearn.metrics import r2_score
+
+r2_score(y_test, y_pred)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import warnings
+warnings.filterwarnings("ignore", "is_categorical_dtype")
+warnings.filterwarnings("ignore", "use_inf_as_na")
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred)
+plt.xlim(0, 10)
+plt.ylim(0, 1000)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+::: {.callout-warning}
+fizemos o `scale` dos dados de train mas não dos dados de teste.
+:::
+
+Vamos tentar de outra forma  
+```{python}
+# define a variável target e os predictors
+X_2nd = df1.drop(columns=['C31011'])
+y_2nd = df1['C31011'].values
+```
+
+```{python}
+## Typecast da coluna para categoria em pandas
+X_2nd['NUTS2'] = pd.Categorical(X_2nd.NUTS2)
+# cria variáveis dummy e faz drop da baseline
+X_2nd = pd.get_dummies(X_2nd, drop_first = True)
+```
+
+```{python}
+#Split data for machine learning
+X_2nd_train, X_2nd_test, y_2nd_train, y_2nd_test = train_test_split(X_2nd,  y_2nd, test_size = 0.2 ,random_state = 2002)
+print(X_2nd_train.shape)
+print(X_2nd_test.shape)
+```
+
+```{python}
+lr2 = LinearRegression()
+lr2.fit(X_2nd_train,y_2nd_train)
+```
+
+```{python}
+lr2.coef_
+```
+
+```{python}
+y_2nd_pred = lr2.predict(X_2nd_test)
+
+```
+
+```{python}
+# we choose the x axis as index, chossing year will give a discrete plot
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_2nd_test, y= y_2nd_pred)
+plt.xlim(-2, 20)
+plt.ylim(-2, 20)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+```{python}
+y_2nd_test
+
+y_2nd_pred
+
+r2_score(y_2nd_test, y_2nd_pred)
+```
+
+temos de excluir C31001!!
+```{python}
+  # define a variável target e os predictors
+X_3rd = df1.drop(columns=['C31011', 'C31001'])
+y_3rd = df1['C31011'].values
+```
+
+```{python}
+## Typecast da coluna para categoria em pandas
+X_3rd['NUTS2'] = pd.Categorical(X_3rd.NUTS2)
+# cria variáveis dummy e faz drop da baseline
+X_3rd = pd.get_dummies(X_3rd, drop_first = True)
+```
+
+```{python}
+#Split data for machine learning
+X_3rd_train, X_3rd_test, y_3rd_train, y_3rd_test = train_test_split(X_3rd,  y_3rd, test_size = 0.2 ,random_state = 2002)
+print(X_3rd_train.shape)
+print(X_3rd_test.shape)
+```
+
+```{python}
+lr3 = LinearRegression()
+lr3.fit(X_3rd_train,y_3rd_train)
+lr3.coef_
+```
+
+```{python}
+y_3rd_pred = lr3.predict(X_3rd_test)
+```
+```{python}
+r2_score(y_3rd_test, y_3rd_pred)
+```
+
+#### Avaliação dos modelos de regressão
+
+```{python}
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, median_absolute_error
+```
+
+```{python}
+print("                   MAE             MSE           RMSE          MedAE         R2")
+print("     1ª Tentativa {:.12f} {:.10f} {:.8f} {:.8f} {:.8f}"
+        .format(mean_absolute_error(y_test, y_pred),
+                mean_squared_error(y_test,y_pred),
+                mean_squared_error(y_test,y_pred,squared=False), # dá a raiz quadrada do MSE
+                median_absolute_error(y_test,y_pred),
+                r2_score(y_test,y_pred)))
+print("     2º Tentativa: {:.12f} {:.10f} {:.10f} {:.10f} {:.12f}"
+        .format(mean_absolute_error(y_2nd_test, y_2nd_pred),
+                mean_squared_error(y_2nd_test,y_2nd_pred),
+                mean_squared_error(y_2nd_test,y_2nd_pred,squared=False),
+                median_absolute_error(y_2nd_test,y_2nd_pred),
+                r2_score(y_2nd_test,y_2nd_pred)))
+print("     3º Tentativa: {:.11f} {:.8f} {:.8f} {:.8f} {:.8f}"
+        .format(mean_absolute_error(y_3rd_test, y_3rd_pred),
+                mean_squared_error(y_3rd_test,y_3rd_pred),
+                mean_squared_error(y_3rd_test,y_3rd_pred,squared=False),
+                median_absolute_error(y_3rd_test,y_3rd_pred),
+                r2_score(y_3rd_test,y_3rd_pred)))
+```
+
+::: {.callout-warning}
+o valor negativo de R2 indica que o modelo é pior que um modelo constante
+
+:::
+
+#### Gravar o modelo
+
+```{python}
+#| eval: false
+
+import pickle
+
+# escolher o nome do ficheiro
+filename = "data\linearRegression_SK.pickle"
+
+# gravar o modelo
+pickle.dump(lr3, open(filename, "wb"))
+```
+
+```{python}
+#| eval: false
+
+# fazer load do modelo
+loaded_model = pickle.load(open(filename, "rb"))
+```
+
+```{python}
+#| eval: false
+
+# ve rificar que conseguimos carregar o modelo gravado
+loaded_model.coef_
+
+```
+
+### Classificação
+
+**QUESTÃO**:  
+Com este conjunto de dados que inclui o número de médicos e enfermeiros em várias especialidades será que consigo estimar se essa unidade em particular tem serviço de cirurgia? 
+
+Coluna **t_cirurgia** criada a partir da coluna **C21071** que deve ser retirada depois de criada a etiqueta.
+
+#### Classification Trees 
+
+```{python}
+import numpy as np
+import pandas as pd
+
+df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')
+df_hosp.head()
+```
+
+```{python}
+df_hosp = df_hosp.reset_index() # 
+
+df = df_hosp.drop(columns='C21071', axis=1)  # drop da coluna C21071
+
+df['t_cirurgia'] = df['t_cirurgia'].fillna(0) # preencher os missing values com 0
+
+df['t_cirurgia'] = df['t_cirurgia'].replace({'yes': 1, 'no': 0}) # substituir os valores yes e no por 1 e 0
+
+df.head()
+```
+
+```{python}
+df1 = df.dropna() # drop das linhas com valores missing
+
+df1.describe()
+```
+
+```{python}
+# conta o nº de diferentes valores na coluna
+df1['t_cirurgia'].nunique()
+
+print()
+# verifica se há nulos no dataframe
+df1.isnull().any()
+
+```
+
+##### Information Gain - Entropia
+
+```{python}
+# função para calcular a entropia
+import warnings
+warnings.filterwarnings("ignore")
+
+def compute_impurity(feature, impurity_criterion): # função para calcular a impureza de uma feature
+    """
+    This function calculates impurity of a feature.
+    Supported impurity criteria: 'entropy', 'gini'
+    input: feature (this needs to be a Pandas series)
+    output: feature impurity
+    """
+    probs = feature.value_counts(normalize=True)
+    
+    if impurity_criterion == 'entropy':
+        impurity = -1 * np.sum(np.log2(probs) * probs)
+    elif impurity_criterion == 'gini':
+        impurity = 1 - np.sum(np.square(probs))
+    else:
+        raise ValueError('Unknown impurity criterion')
+        
+    return(round(impurity, 3))
+
+
+# Exemplos
+print('impurity using entropy:', compute_impurity(df1['t_cirurgia'], 'entropy'))
+print('impurity using gini index:', compute_impurity(df1['t_cirurgia'], 'gini'))
+```
+
+```{python}
+for level in df1['NUTS2'].unique(): # loop sobre os níveis da feature NUTS2
+    print('level name:', level)
+    df_feature_level = df1[df1['NUTS2']== level]
+    print('corresponding data partition:')
+    print(df_feature_level.head(5))
+    print('partition target feature impurity:', compute_impurity(df_feature_level['t_cirurgia'], 'entropy'))
+    print('partition weight:', str(len(df_feature_level)) + '/' + str(len(df1)))
+    print('====================')
+```
+
+```{python}
+# função para calcular o information gain
+def comp_feature_information_gain(df, target, descriptive_feature, split_criterion): 
+    """
+    This function calculates information gain for splitting on 
+    a particular descriptive feature for a given dataset
+    and a given impurity criteria.
+    Supported split criterion: 'entropy', 'gini'
+    """
+    
+    print('target feature:', target)
+    print('descriptive_feature:', descriptive_feature)
+    print('split criterion:', split_criterion)
+            
+    target_entropy = compute_impurity(df[target], split_criterion)
+    print('the target entropy is', target_entropy)
+
+    # we define two lists below:
+    # entropy_list to store the entropy of each partition
+    # weight_list to store the relative number of observations in each partition
+    entropy_list = list()
+    weight_list = list()
+    
+    # loop over each level of the descriptive feature
+    # to partition the dataset with respect to that level
+    # and compute the entropy and the weight of the level's partition
+    for level in df[descriptive_feature].unique():
+        df_feature_level = df[df[descriptive_feature] == level]
+        entropy_level = compute_impurity(df_feature_level[target], split_criterion)
+        entropy_list.append(round(entropy_level, 3))
+        weight_level = len(df_feature_level) / len(df)
+        print('the level is {} and the weight is {}'.format(level, weight_level))
+        weight_list.append(round(weight_level, 3))
+
+    print('impurity of partitions:', entropy_list)
+    print('weights of partitions:', weight_list)
+
+    feature_remaining_impurity = np.sum(np.array(entropy_list) * np.array(weight_list))
+    print('remaining impurity:', feature_remaining_impurity)
+    
+    information_gain = target_entropy - feature_remaining_impurity
+    print('information gain:', information_gain)
+    
+    print('====================')
+
+    return(information_gain)
+```
+
+Vamos ver que a variável do Número de Pessoal ao Serviço - Total **C10001** é bastante promissora para faser a divisão do espaço, e a variável do Número de Médicos - Total **C20001** é bastante melhor do que o Número de Médicos - Especialistas - Anatomia Patológica - Total **C21011**
+
+```{python}
+#| eval: false
+
+split_criterion = 'entropy' # escolher o critério de divisão
+for feature in df1.drop(columns=['t_cirurgia','ANO','NORDEM']).columns:
+    feature_info_gain = comp_feature_information_gain(df1, 't_cirurgia', feature, split_criterion) # calcular o information gain
+```
+
+##### trees 
+
+```{python}
+# define a variável target e os predictors
+X = df1.drop(columns=['t_cirurgia']) # dataframe sem a coluna target
+y = df1['t_cirurgia'].values # target em formato de array
+```
+
+```{python}
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+
+clf = DecisionTreeClassifier(max_depth=3) # define a profundidade da árvore
+
+model = clf.fit(X,y) # treina o modelo
+```
+
+```{python}
+#from sklearn import tree
+
+text_representation = tree.export_text(clf)
+print(text_representation) # visualização do modelo
+
+```
+
+```{python}
+#| eval: false
+
+# gravar o log da Árvore
+with open("data\decision_tree.log", "w") as fout: # 
+    fout.write(text_representation)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+# class_names = True em vez da lista  faz print y(0) e y(1)
+fig = plt.figure(figsize=(25,20))
+_ = tree.plot_tree(clf, class_names= ["No","Yes"], filled=True)
+
+```
+
+```{python}
+#| eval: false
+# gravar a imagem da tree
+
+fig.savefig("images/decision_tree.png")
+```
+
+
+#### Classification com Scikit
+
+```{python}
+from sklearn.feature_selection import VarianceThreshold # Feature selector
+from sklearn.pipeline import Pipeline # For setting up pipeline
+from sklearn.preprocessing import Normalizer, StandardScaler, MinMaxScaler, PowerTransformer, MaxAbsScaler, LabelEncoder # For scaling variables
+
+from sklearn.model_selection import train_test_split,cross_val_score # For splitting data
+from sklearn.tree import DecisionTreeClassifier # For Decision Tree
+
+# For model evaluation
+from sklearn.metrics import accuracy_score,confusion_matrix 
+from sklearn.metrics import roc_curve,roc_auc_score 
+```
+
+```{python}
+#Split data for machine learning
+X_train, X_test, y_train, y_test = train_test_split(X,  y, 
+                                                    test_size = 0.2 ,
+                                                    random_state = 1984)
+print(X_train.shape)
+print(X_test.shape)
+```
+
+```{python}
+from sklearn.feature_selection import VarianceThreshold # Feature selector
+from sklearn.preprocessing import StandardScaler #for scaling variables
+from sklearn.pipeline import Pipeline # For setting up pipeline
+
+#Define a pipeline
+pipeline = Pipeline([
+('scaler', StandardScaler()),
+('selector', VarianceThreshold()),
+('TREE', DecisionTreeClassifier())])
+```
+
+##### usando a Pipeline
+
+```{python}
+from sklearn import set_config # para configurar a visualização da pipeline
+
+set_config(display="diagram")
+pipeline
+```
+
+```{python}
+# execução da pipeline com parameteros de omissão
+pipeline.fit(X_train, y_train)
+print('Training set score: ' + str(pipeline.score(X_train,y_train)))
+print('Test set score: ' + str(pipeline.score(X_test,y_test)))
+
+print()
+y_pred = pipeline.predict(X_test)
+y_pred
+
+print()
+y_proba = pipeline.predict_proba(X_test)
+y_proba
+```
+
+
+```{python}
+cm = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+from sklearn.metrics import precision_score, recall_score, accuracy_score
+
+print('Precision: %.3f' % precision_score(y_test, y_pred))
+print('Recall: %.3f' % recall_score(y_test, y_pred))
+print('Accuracy: %.3f' % accuracy_score(y_test, y_pred))
+```
+
+![](images/conf_matrix.png)
+
+```{python}
+from sklearn.metrics import roc_curve, balanced_accuracy_score
+# antes era plot_roc_curve
+from sklearn.metrics import RocCurveDisplay
+
+fpr, tpr, thresholds = roc_curve(y_test,
+                                       pipeline.predict_proba(X_test)[:,1],)
+
+RocCurveDisplay.from_estimator(pipeline, X_test, y_test)
+
+plt.show()
+```
+
+##### sem Pipeline
+
+```{python}
+clf2 = DecisionTreeClassifier(max_depth=2) 
+
+model2 = clf2.fit(X_train, y_train)
+
+y_class = model2.predict(X_test)
+y_class
+
+print()
+y_class_proba = model2.predict_proba(X_test)
+y_class_proba
+
+print()
+model.predict_proba(X_test)[:, 1]
+
+tree.plot_tree(clf2, class_names= ["No","Yes"], filled=True)
+```
+
+podemos mudar o threshold  
+```{python}
+threshold = 0.7
+y_pred = (model2.predict_proba(X_test)[:, 1] > threshold)
+confusion_matrix(y_test, y_pred)
+
+print()
+cm_thr70 = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm_thr70,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+from sklearn.metrics import roc_curve,RocCurveDisplay
+
+fpr, tpr, thresholds = roc_curve(y_test,model2.predict_proba(X_test)[:,1],
+                                 drop_intermediate=False) # temos de fazer o unpack dos 3 resultados
+
+RocCurveDisplay.from_estimator(model,X_test,y_test)
+
+plt.show()
+```
+
+```{python}
+print(fpr)
+print(tpr)
+print(thresholds)
+```
+
+##### gravar o modelo  
+```{python}
+#| eval: false
+
+# escolher o nome do ficheiro
+filename = "data\Tree.pickle"
+
+# gravar o modelo
+pickle.dump(model2, open(filename, "wb"))
+```
+
 
 
 <br>

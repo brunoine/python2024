@@ -20,6 +20,14 @@ Formadores: Bartholomeus Schoenmakers, Luis Ferreira, Sónia Quaresma
 
 Formação presencial realizada nas instalações do INE - Porto.
 
+::: {.callout-caution collapse="true"}
+Os materiais de formação a utilizados estão disponiveis na cloud do INE:
+
+https://cloud2.ine.pt/index.php/s/qbLinNiMA7zpY9W
+
+password: 2024.IntPorto
+:::
+
 [Using Python with the RStudio IDE](https://support.posit.co/hc/en-us/articles/1500007929061-Using-Python-with-the-RStudio-IDE)
 
 ::: {.callout-caution collapse="true"}
@@ -32,5 +40,6 @@ Tools > Modify Keyboard Shortcuts > Insert Chunk Python >
 `Ctrl+Alt+P`
 
 :::
+
 
 
