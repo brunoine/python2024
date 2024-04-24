@@ -1,10 +1,979 @@
-# Módulo 6
-
+# Visualização de Dados Geográficos
+ 
 ::: {.callout-tip}
 ## Conteúdos
 
 Visualização de dados resultantes de modelos de *machine learning* e de dados geográficos. 
 :::
+
+
+## Dados Geográficos
+
+Sistema de Informação Geográfica (SIG) é um sistema que permite manipular, armazenar, e fazer a análise espacial de dados geográficos.
+
+### Tipo de dados
+
+pontos - Point(2,10)
+linha - LineString([(1,2),(1,5),...])
+polígonos - Polygon([(13,1),(14,4),...]) 
+
+![](images/dados_geo.png)
+Preparação do ambiente python:
+
+através do `prompt ANACONDA`, instalar os packages: 
+`GEOPANDAS`
+`FOLIUM`
+`NBB`
+ 
+ ### Coordenadas Geográficas
+ 
+ Latitude e Longitude
+ 
+ Conhecer a Projeção Geográfica é importante para combinar dados de diferentes fontes de informação.
+ 
+ Coordinate Reference System (CRS): define como as coordenadas são representadas no plano.
+ 
+ EPSG Geodetic Parameter Dataset: registo global dos diferentes CRS.
+ 
+ EPSG: European Petroleum Survey Group para identificar os diferentes sistemas de coordenadas.
+
+WGS84 - World Geodetic System 1984 associado ao sistema de posicionamento global (GPS).
+
++ EPSG 4326
++ coordenadaas em graus decimais
+
+Pseudo-Mercator/WGS84
+
++ EPSG 3857
++ coordenadas em metros
+
+#### Exercicio
+
+Mostrar Influencia do tipo de Projeção Geográfica  
+```{python}
+# Este Script Permite Visualizar diferentes Projeções
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Definir Figura do MATPLOTLIB
+# Conseguem mostrar mais SUBPLOTS alterando argumeto 2 (1,2)
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+
+# Carregar a geogrfia do mundo a partir d eum shapefile dentro um ficheiro ZIP
+# Atenção Mudar o caminho!
+world = gpd.read_file(r"data\ne_110m_admin_0_countries.zip")
+
+# # Alternativa - Ler os Dados de um Link GEOJSON:
+# url = "http://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_land.geojson"
+# # Ler Ficheiro GEOJSON do URL
+# world = gpd.read_file(url)
+
+# Sistema de coordenadas definidos na listagem em baixo:
+# 
+# WGS 84 (Lat/Lon): ['EPSG:4326','WGS 84 (Lat/Lon)']
+# Web Mercator Metros: ['EPSG:3857','Web Mercator']
+# Vander Grinten: ['ESRI:54029','World Robinson']
+# Robinson: ['ESRI:54030','World Robinson - National Geographic']
+# Gall-Peters - ['ESRI:53016','Gall Stereographic']
+# Peirce Quincuncial: ['ESRI:54091','Peirce quincuncial North Pole in a square']
+# winkel-Tripel: ['ESRI:53018','Sphere Winkel I']
+# Goode Homolosine (Molweide) - ['EPSG:7619','Interrupted Goode Homolonsine']
+# Albers Equal Area: ['ESRI:102008','North America Albers Equal Area Conic']
+# Eckert: ['ESRI:53010','Sphere Eckert VI']
+# Portugal Continental: ['EPSG:3763','Portugal Continental: PT-TM06/ETRS89']
+# Açores UTM Fuso 26: ['EPSG:5015','TRF93 / PTRA08 - UTM fuso 26 - Grupo Central e Oriental do Arquipélago dos Açores']
+
+# sistema de Coordenadas para Visualizar - 12 exemplos:
+sistcoord = [['EPSG:4326','WGS 84 (Lat/Lon)'], ['EPSG:3857','Web Mercator'],
+             ['ESRI:54029','World Robinson'], ['ESRI:54030','World Robinson - National Geographic'], 
+             ['ESRI:53016','Gall Stereographic'], ['ESRI:54091','Peirce quincuncial North Pole in a square'],
+             ['ESRI:53018','Sphere Winkel I'],['EPSG:7619','Interrupted Goode Homolonsine'],
+             ['ESRI:102008','North America Albers Equal Area Conic'], ['ESRI:53010','Sphere Eckert VI'],
+             ['EPSG:3763','Portugal Continental: PT-TM06/ETRS89'], ['EPSG:5015','TRF93 / PTRA08 - UTM fuso 26 - Grupo Central e Oriental do Arquipélago dos Açores']]
+
+
+# Para mostrar
+mapa1 = 0
+mapa2 = 11
+
+# ------------------------------------------
+# Mudar Projeçoes na indicação da Listagem
+#world.to_crs(epsg=2264).plot(ax=ax[0])
+
+world.to_crs(sistcoord[mapa1][0]).plot(ax=ax[0])
+ax[0].set_title(sistcoord[mapa1][1])
+
+#world.to_crs(epsg=4087).plot(ax=ax[1])
+world.to_crs(sistcoord[mapa2][0]).plot(ax=ax[1])
+ax[1].set_title(sistcoord[mapa2][1])
+
+
+plt.tight_layout()
+plt.show()
+```
+
+### GeoPandas e MatPlotLib
+
+As mesmas funcionalidades do package `Pandas` podem ser usadas com o `GeoPandas`, usa também outros packages como `Shapely` e `Fiona`
+
+![](images\pandas_geo.png)
+
+
+### Criar dados GeoPandas
+
+```{python}
+  # Importar GeoPandas
+import geopandas as gpd
+
+# Carregar Dados com read_file (Shapefile preferivel, GeoJSON -  Mais Lento)
+# Mudar Caminho para onde estão os dados - atenção de ter os ficheiros .shp\.shx\.dbf\.prj
+file_path = r"data\NUTS3_2015_PT.shp"
+
+# Definir o encoding para evitar problemas de desenho dos nomes
+encoding = 'utf-8'  
+# Ler Shapefile:
+gdf_nuts3 = gpd.read_file(file_path, encoding=encoding)
+
+print(gdf_nuts3.info())
+print(gdf_nuts3.head())
+gdf_nuts3.loc[1,'geometry']
+
+#gdf_nuts3.head()
+
+```
+Mostrar Objecto Geometry  
+```{python}
+# Informação de um Polygon
+# print(gdf_nuts3.loc[1,'geometry'])
+```
+
+Objecto de Geometria  
+```{python}
+# Tipo Objecto GeoPandas
+print (type(gdf_nuts3))
+# Tipo de Dados da coluna de Geometria
+print (type(gdf_nuts3.geometry))
+```
+
+Visualizar GDF  
+```{python}
+# Mostrar Geografia
+#import geopandas as gpd
+import matplotlib.pyplot as plt
+
+gdf_nuts3.plot(column = 'NUTS3_DSG',
+              legend = False)
+plt.show()
+```
+
+Selecionar registos dum GDF  
+```{python}
+# Selecção utilizando os operadores comuns
+# Selecção pode ser efetuada com ou sem a função LOC
+gdf_nuts3_continente = gdf_nuts3[gdf_nuts3['NUTS3'] < '2']
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS2 == '11']
+
+# Mostrar numero registos selecionados
+print("Nº registos Continente", len(gdf_nuts3_continente))
+print("Nº registos NUTS2 11", len(gdf_nuts3_sel))
+
+# Selecionar utilizando comparação de um String
+selected_rows_like = gdf_nuts3[gdf_nuts3['NUTS3'].str.startswith('11')]
+print('Nº registos que começam com 11',len(selected_rows_like))
+                        
+# Selecionar Linhas quando existem numa Listagem
+lista_selecao = ['11A', '11E','16E','170']
+selected_rows = gdf_nuts3[gdf_nuts3.NUTS3.isin(lista_selecao)] 
+print('Nº registos que estão numa lista - vs 1',len(selected_rows))
+selected_rows = gdf_nuts3.loc[gdf_nuts3.NUTS3.isin(lista_selecao)] 
+print('Nº registos que estão numa lista - vs 2',len(selected_rows))
+
+# Selecao dos Dados a Mostrar
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS2 == '11']
+gdf_nuts3_sel.plot(column = 'NUTS3_DSG',
+              legend = True,
+                  edgecolor = 'black')
+                  
+```
+
+
+Visualização Interactiva com Explore  
+```{python}
+#import geopandas as gpd
+
+# Selecao dos Dados a Mostrar
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS2 == '11']
+gdf_nuts3_sel.explore(column = 'NUTS3_DSG',
+              legend = True,
+                  edgecolor = 'black')
+                  
+```
+
+Mostrar geografia  
+```{python}
+# Mostrar Geografia
+
+# Mostrar Áreas NUTS3 Região Centro
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS2 == '16']
+
+# Definir Legenda 
+# Definir Localização (loc), Localização em relação ao eixos (bbox_to_anchor), Nº colunas (ncol)
+lgnd_kwds = {'title': 'Nuts3 (Centro)',
+               'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 1}
+# Argumetnos: Atributo (column), Colormap (cmap), colocar Legenda (legend), 
+#  Legenda definida (legend_kwds), 
+gdf_nuts3_sel.plot(column = 'NUTS3_DSG',
+              cmap = 'tab20',
+              legend = True,
+              legend_kwds  = lgnd_kwds,
+              edgecolor = 'dimgray')
+
+# Rotulos  Eixos
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Áreas NUTS3 de Portugal Continental')
+
+plt.show()
+```
+
+##### Exercício
+
+```{python}
+# packages necessários
+import geopandas as gpd
+
+# Carregar Dados com read_file (Shapefile preferivel, GeoJSON -  Mais Lento)
+# Mudar Caminho para onde estão os dados - atenção de ter os ficheiros .shp\.shx\.dbf\.prj
+file_path = r"data\CAOP20200_MN_PT.shp"
+
+# Definir o encoding para evitar problemas de desenho dos nomes
+encoding = 'utf-8'  
+# Ler Shapefile:
+gdf_caop = gpd.read_file(file_path, encoding=encoding)
+
+print(gdf_caop.info())
+print(gdf_caop.head())
+print(gdf_caop.DISTRITO.unique()) 
+
+gdf_caop.loc[1,'geometry']
+
+print()
+print(gdf_caop.NUTS3_02.unique()) # lista com a opções de NUTS3_02
+
+# cria nova coluna para legenda
+gdf_caop['DTMN2'] = gdf_caop['DTMNDSG'] + '(' + gdf_caop['DTMN'].astype(str) + ')'
+
+```
+
+vizualisar com `explore`  
+```{python}
+gdf_caop.explore()
+```
+
+
+contagens e filtros  
+```{python}
+# conta o número de registos por NUTS3_02
+print(gdf_caop.NUTS3_24.value_counts())
+
+# selecionar linhas a partir de uma lista
+lista_selecao = ['11A','11E','16E','170']
+
+select_rows = gdf_caop.loc[gdf_caop.NUTS3_24.isin(lista_selecao)]
+
+print('Nº de registos que estão na lista ', lista_selecao, len(select_rows))
+```
+
+Fazer a Seleção de um DISTRITO e mostrar os munícipios  
+```{python}
+import matplotlib.pyplot as plt
+
+# Selecao dos Dados a Mostrar
+gdf_caop_sel = gdf_caop.loc[gdf_caop.DISTRITO == 'Guarda'] 
+
+# Definir Legenda 
+# Definir Localização (loc), Localização em relação ao eixos (bbox_to_anchor), Nº colunas (ncol)
+lgnd_kwds = {'title': 'Municipios',
+              'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 1}
+             
+gdf_caop_sel.plot(column = 'DTMN2',
+              legend = True,
+              legend_kwds  = lgnd_kwds,
+              edgecolor = 'black')
+
+# Rotulos  Eixos
+plt.xlabel('X Coordinados')
+plt.ylabel('Y Coordinados')
+plt.title('Municipios do Distrito da Guarda')
+# Rodar xticks; ha é o alinhamento
+plt.xticks(rotation=45, ha='right')
+              
+
+
+# **Codigo Alternativo Utilizando ax objecto**
+# fig, ax = plt.subplots()
+# gdf_caop_sel.plot(ax=ax,
+#               column = 'DTMN2',
+#               cmap = 'tab20',
+#               legend = True,
+#               legend_kwds  = lgnd_kwds,
+#               edgecolor = 'dimgray')
+# 
+# # Rotulos  Eixos - Diferentes Funções
+# ax.set_xlabel('X Coordinados')
+# ax.set_ylabel('Y Coordinados')
+ 
+plt.show()
+```
+
+usando o explore  
+```{python}
+
+gdf_caop_sel.explore(column = 'DISTRITO',
+              legend = True,
+                  edgecolor = 'black')
+```
+
+### Importar dados de tabelas
+
+#### ACES 
+
+```{python}
+# Importar dados DGS Utentes em Centros de Saude
+# Ver referencia:  https://dados.gov.pt/pt/datasets/evolucao-mensal-de-utentes-atendidos-nos-centros-de-saude-agregado-por-aces-no-ambito-da-saude-oral-nos-cuidados-de-saude-primarios-socsp/#resources
+# Atributos: Período, ARS, ACES, Localização Geográfica, Sexo, Faixa Etária, Nº Utentes,ID 
+import pandas as pd
+
+# Link DGS (Utentes Centro Saude)  
+ficheiro = r'http://dados.gov.pt/pt/datasets/r/dc54ea6f-31f3-483b-a719-718d0d7451f3'
+# Ler ficheiro do computador:
+#ficheiro = r'C:\TEMp\utentes-atendidos-nos-centros-de-saude-no-ambito-da-soep.csv'
+
+# Importar em DataFrame
+encoding = 'utf-8'
+df_utentes = pd.read_csv(ficheiro, sep=';', encoding=encoding)
+
+
+# Mostrar informação df
+print(df_utentes.head(5))
+print(df_utentes.info())
+print(df_utentes.describe())
+```
+
+passar para o GDF  
+```{python}
+# Verificar os Dados
+# Total numero de Pontos Unicos para Ficheiro:
+print('Num localizações Geográficos:',len(df_utentes['Localização Geográfica'].unique()))
+
+# Verificar valores únicos de outras variáveis
+print('Num ACES:',len(df_utentes['ACES'].unique()))
+print('Num ARS:',len(df_utentes['ARS'].unique()))
+print(df_utentes['Faixa Etária'].unique())
+print(df_utentes['Sexo'].unique())
+```
+
+```{python}
+# DataFrame com dados Utentes: df_utentes
+
+# Criar Colunas lat e Long a partir da coluna 'Localização Geográfica'
+# no ficheiro original a informação existe em apenas uma coluna
+print ("Tipo de atributo", type(df_utentes['Localização Geográfica']))
+# Fazer um Split dos Valores utilizando virgula como separador
+df_utentes[['lat', 'long']] = df_utentes['Localização Geográfica'].str.split(',', expand=True)
+
+# Mostrar informação df
+print(df_utentes.info())
+
+```
+
+```{python}
+# Criar DataFrame com Pontos Unicos e Numero de Utentos
+
+# Total numero de Pontos Unicos para Ficheiro:
+print('Num loc:',len(df_utentes['Localização Geográfica'].unique()))
+
+# Converter variaveis numericos para numeric
+df_utentes['Nº Utentes'] = pd.to_numeric(df_utentes['Nº Utentes'], errors='coerce')
+df_utentes['lat'] = pd.to_numeric(df_utentes['lat'], errors='coerce')
+df_utentes['long'] = pd.to_numeric(df_utentes['long'], errors='coerce')
+
+# Criar Novo DataFrame com ACES e Soma Nº Utentes
+# Group by 'ARS', 'ACES', 'Localização Geográfica'
+# O nº de utentes é um exemplo de um atributo que podemos utilizar para visualização
+df_aces = df_utentes.groupby(['ARS', 'ACES', 'Localização Geográfica','lat', 'long']).agg({
+    'Nº Utentes': 'sum'
+}).reset_index()
+
+print(df_aces.head())
+```
+
+```{python}
+# Mesmo com Pandas DataFrame já é possível mostrar a geografia
+# Importar Bibliotecas
+#import pandas as pd
+import matplotlib.pyplot as plt
+
+# Mostrar a localização
+plt.scatter(df_aces.long, df_aces.lat)
+ 
+# Show the plot
+plt.show()
+```
+
+```{python}
+# Criar GeoDataFrame 
+#import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+
+# Criar a Coluna de geometry no DF a partir informação atributos long e lat 
+# Utiliza-se o Point Object do modulo shapely
+# lambda - função anônima no Python 
+# df_aces.apply - applica a função a cada linha do DF
+# Argumento apply: axis = 1. Função deve ocorrer para todos as linhas
+df_aces['geometry'] = df_aces.apply(lambda x: Point(float(x.long), float(x.lat)), axis=1)
+ 
+# Create a GeoDataFrame from art and verify the type
+gdf_aces = gpd.GeoDataFrame(df_aces, crs = "EPSG:4326", geometry = df_aces.geometry)
+
+print(type(gdf_aces))
+```
+
+importar dados poligonos  
+```{python}
+# Shapefile NUTS3: NUTS3_2015_PT.shp (dados estão em WebMercator)
+# Mostrar Geografia
+#import geopandas as gpd
+#import matplotlib.pyplot as plt
+
+# Carregar Dados com read_file (Shapefile preferivel, GeoJSON -  Mais Lento)
+# Mudar Caminho para onde estão os dados - atenção de ter os ficheiros .shp\.shx\.dbf\.prj
+file_path = r"data\NUTS3_2015_PT.shp"
+
+# Definir o encoding para evitar problemas de desenho dos nomes
+encoding = 'utf-8'  
+# Ler Shapefile:
+gdf_nuts3 = gpd.read_file(file_path, encoding=encoding)
+
+print(gdf_nuts3.info())
+```
+
+mostrar pontos com Polygons  
+```{python}
+    
+# Existem diferenças entre o CRS!
+print("CRS of the GeoDataFrame:", gdf_aces.crs)
+print("CRS of the GeoDataFrame:", gdf_nuts3.crs)
+
+# Diferença nos CRS -> Converter para WebMercator
+gdf_aces_m = gdf_aces.to_crs("epsg:3857")
+
+# Obter apenas Municipios do Continente:
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS1 == '1']
+
+# Mostrar os 2 mapas:
+# Argumento cmap tem a predefinição de cores
+# Lista Referencias ColorMaps: https://matplotlib.org/stable/gallery/color/colormap_reference.html
+ax = gdf_nuts3_sel.plot(column='NUTS3', 
+                        cmap='Set2', 
+                        legend=True, 
+                        figsize=(10, 8))
+
+# Imprimir os pontos no mesmo ax (subplot)
+# Lista MatPlotLib cores: https://matplotlib.org/stable/gallery/color/named_colors.html
+gdf_aces_m.plot(ax=ax, 
+                color='red',
+                markersize=30, 
+                edgecolor='Black', 
+                label='Cidades')
+
+# Adicionar Legenda
+ax.legend()
+plt.title('Localização das ACES por NUTS3')
+
+# Mostrar o plot
+plt.show()
+
+```
+
+O *package* `Contextily` permite adicionar um *basemap*  
+```{python}
+# Import contextily
+import contextily
+    
+# Existem diferenças entre o CRS!
+print("CRS of the GeoDataFrame:", gdf_aces.crs)
+print("CRS of the GeoDataFrame:", gdf_nuts3.crs)
+
+# Diferença nos CRS -> Converter para WebMercator
+gdf_aces_m = gdf_aces.to_crs("epsg:3857")
+
+# Obter apenas Municipios do Continente:
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS1 == '1']
+
+# Mostrar os 2 mapas:
+# Argumento cmap tem a predefinição de cores
+# Lista Referencias ColorMaps: https://matplotlib.org/stable/gallery/color/colormap_reference.html
+# Adicionar Transperência (alpha) ao layer
+ax = gdf_nuts3_sel.plot(column='NUTS3', 
+                        cmap='Set2', 
+                        legend=True, 
+                        figsize=(10, 8),
+                       alpha = 0.5)
+
+# Imprimir os pontos no mesmo ax (subplot)
+# Lista MatPlotLib cores: https://matplotlib.org/stable/gallery/color/named_colors.html
+gdf_aces_m.plot(ax=ax, 
+                color='red',
+                markersize=30, 
+                edgecolor='Black', 
+                label='ACES')
+
+# Adicionar um BaseMap no Ax
+contextily.add_basemap(ax)
+
+# Adicionar Legenda
+ax.legend()
+plt.title('Localização das ACES por NUTS3')
+
+# Show the plot
+plt.show()
+```
+
+Obter Informações sobre o Objecto de Geometria
+
+A partir do geometry conseguimos obter um conjunto de caracteristicas  
+```{python}
+# Tipo de Dados da coluna de Geometria
+print (type(gdf_aces.geometry))
+print (type(gdf_nuts3_sel.geometry))
+print(gdf_nuts3_sel.info())
+```
+
+obter Área e Centroid  
+```{python}
+
+# Obter Informaçao Geografia - Utilizando gdf_caop
+# Importar geometry
+from shapely.geometry import Point, Polygon
+
+# Adicionar Nova coluna com area em Km2
+# Atenção Deveriamos adicionar novos atributos sempre a (Geo)DataFrame de Origem
+# Não adicionar a seleção, neste caso gdf_nuts3_sel!
+gdf_nuts3['area_km2'] = gdf_nuts3['geometry'].area / 10**6  
+
+# Ordenar por Area
+area_gdf = gdf_nuts3.sort_values(by='area_km2', ascending=False)
+
+# Print the GeoDataFrame with the new column
+print(area_gdf[['NUTS3','NUTS3_DSG', 'area_km2']])
+```
+
+adicionar nova coluna com o centroide  
+```{python}
+# Criar Nova coluna com Centroid
+# Adicionar Nova coluna com centroid
+gdf_nuts3['mn_center'] = gdf_nuts3['geometry'].centroid  
+
+# Print the GeoDataFrame with the new column
+print(gdf_nuts3[['NUTS3','NUTS3_DSG', 'mn_center']])
+```
+
+
+calcular a distancia entre dois pontos  
+```{python}
+#import geopandas as gpd
+#from shapely.geometry import Point, Polygon
+
+# Calcular diancia entre 2 ACES ('Amadora' and 'Lisboa Central')
+
+# Como dados são em Graus Decimais será necessário de os converter para Metricos
+print("CRS gdf_aces:", gdf_aces.crs)
+
+origem = 'Amadora'
+destino = 'Grande Porto V - Porto Ocidental'
+# Converter para WebMercator
+gdf_aces_m = gdf_aces.to_crs("epsg:3857")
+
+# Filtrar as geometrias para obter a Origem e Destino definidos
+origem_geometry = gdf_aces_m[gdf_aces_m['ACES'] == origem]['geometry'].iloc[0]
+destino_geometry = gdf_aces_m[gdf_aces_m['ACES'] == destino]['geometry'].iloc[0]
+
+# Calculate the distance between 'Amadora' and 'Lisboa Central'
+distance_km = origem_geometry.distance(destino_geometry) / 1000  # Converter para quilómetro
+
+print(f"A distância entre {origem} e {destino} é aproximadamente  {distance_km:.2f} quilómetros.")
+```
+
+### Juntar Dados a um GDF
+
+#### Censos 2021
+
+importa dados de Censos2021 por NUTS3 e Municipio  
+```{python}
+#| eval: true
+
+
+# Obter Password e Utilizador para Ligacao SQL
+#from getpass import getpass # para ler a password sem a mostrar
+my_user = '"BRUNO.LIMA"'  
+my_password = 'Pa$$w0rd5' # getpass("Password: ")
+
+# Ler Dados da BD
+# criar conexão
+import cx_Oracle 
+import pandas as pd
+host = 'c21oradev01.int.ine.pt'
+port = '1521'
+service = 'FORMACAO'
+dsn_tns = cx_Oracle.makedsn(host, port, service_name=service) 
+
+# Criar a conexão com todos os elementos,
+# incluingo user e password
+conn = cx_Oracle.connect(user=my_user, password=my_password, dsn=dsn_tns) 
+
+# Cursor:
+# Criar o cursor na conexão conn que criámos antes
+c = conn.cursor()
+
+# ---------------------------------
+# Ler View com Dados por NUTS3:
+
+# SQL String
+my_sql = """
+select *
+from BDIFRM.V_BGRI2021_N3_PT 
+"""
+
+# Executar o cursor c com a string como parâmetro
+c.execute(my_sql)
+# Criar Nomes colunas
+names = [ x[0] for x in c.description]
+df_n3_c2021 = pd.DataFrame(c.fetchall(), columns = names)
+
+# Fechar cursor
+c.close()
+
+# fechar conexão
+conn.close()
+
+```
+
+
+fazer JOIN dos dados GDF com as NUTS3  
+```{python}
+# Juntar Dados NUTS3 do C2021 a GDF com as areas NUTS3
+
+# gdf_nuts3 obtido de Shapefile NUTS3: NUTS3_2015_PT.shp (dados estão em WebMercator)
+# Colunas Comuns: NUTS3 e NUTS3 - podemos ver os valores em ambos os DF
+#print(sorted(df_n3_c2021.NUTS3.unique()))
+#print(sorted(gdf_nuts3.NUTS3.unique()))
+
+# Fazer o Join, especificar: DF
+gdf_nuts3_2 = gdf_nuts3.merge(df_n3_c2021, left_on='NUTS3', right_on='NUTS3', how='left') 
+
+print(gdf_nuts3_2.info())
+```
+
+### Criar Mapas Temáticos
+
+Visualizar a classificação da relação entre 2 variáveis por NUTS3  
+```{python}
+# Import packages
+# import matplotlib.pyplot as plt
+# import pandas as pd
+# import geopandas as gpd
+ 
+# Exemplo criar Plot dos Areas NUTS3 - Mostrando total de população 65+ no total de população
+# Utilizar geodataframe com join "gdf_nuts3_2"
+
+# Selecionar Dados Portugal Continental:
+# Fazer Seleção da NUTS1_x , houve rename da coluna apos join
+gdf_nuts3_sel = gdf_nuts3_2.loc[gdf_nuts3_2.NUTS1_x == '1']
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 2}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf_nuts3_sel.plot(column=gdf_nuts3_sel.N_INDIVIDUOS_65_OU_MAIS/gdf_nuts3_sel.N_INDIVIDUOS, 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=7, 
+                      cmap='YlGn', 
+                      legend=True,
+                      edgecolor = 'dimgray',
+                      legend_kwds  = lgnd_kwds)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Relacao população 65+ no total de população')
+plt.show()
+```
+
+
+#### Exercício
+
+Criar Mapa Temático das NUTS com apresentação de cidades Estatisticas  
+```{python}
+#| eval: true
+
+# Fazer o Join de NUTS e dados dos Censos , especificar: DF
+gdf_nuts3_2 = gdf_nuts3.merge(df_n3_c2021, left_on='NUTS3', right_on='NUTS3', how='left')
+
+print(gdf_nuts3_2.info())
+
+# Importar os dados das cidades
+ficheiro = r'data\CIDADES_PONTOS_CONT.csv'
+
+# Importar em DataFrame
+encoding = 'utf-8'
+df_cidades = pd.read_csv(ficheiro, sep=';', encoding=encoding)
+
+df_cidades.head()
+
+#from shapely.geometry import Point, Polygon
+
+# Criar coluna com geometry (mudar nome df e nomes atributos)
+df_cidades['geometry'] = df_cidades.apply(lambda x: Point(float(x.LONGITUDE), float(x.LATITUDE)), axis=1)
+
+# Criar uma gdf a partir da coluna geometry (mudar nome df)
+gdf_cidades = gpd.GeoDataFrame(df_cidades, crs = "EPSG:4326", geometry = df_cidades.geometry)
+
+# Converter Cidades para WebMercator
+gdf_cidades_m = gdf_cidades.to_crs("epsg:3857")
+
+# Utilizar: gdf_nuts3_2
+# Input variáveis: gdf_aces e gdf_nuts3_2
+
+# Selecionar Dados Portugal Continental:
+# Fazer Seleção da NUTS1_x , houve rename da coluna apos join
+gdf_nuts3_sel = gdf_nuts3_2.loc[gdf_nuts3_2.NUTS1_x == '1']
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 2}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf_nuts3_sel.plot(column=(gdf_nuts3_sel.N_EDIFICIOS_CONSTR_ANTES_1945+gdf_nuts3_sel.N_EDIFICIOS_CONSTR_1946_1980)/gdf_nuts3_sel.N_EDIFICIOS_CLASSICOS, 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=7, 
+                      cmap='YlGnBu', 
+                      legend=True,
+                      edgecolor = 'gray',
+                      legend_kwds  = lgnd_kwds)
+
+# Adicionar os Pontos no mesmo AX
+gdf_cidades_m.plot(ax=ax, color='lightcoral', markersize=10, edgecolor='Black', label='Cidades')
+
+# Adicionar Legenda
+plt.title('Rácio Edificios construidos até 1980 (com representação das cidades)')
+
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Relacao edificios até 1980 no total de edificios')
+plt.show()
+```
+
+```{python}
+gdf_cidades_m.explore()
+```
+
+### Folium
+
+```{python}
+import folium
+
+# Mostrar Zona do INE 
+# Lisboa: 38.738345820101536, -9.138601637922605
+# Porto: 41.150887961411634, -8.629046747840249
+# Longitude e Latitude
+ine = folium.Map(location = [41.150887961411634, -8.629046747840249], 
+                 zoom_start = 15)
+
+ine
+```
+
+Importar Dataset com NUTS3  
+```{python}
+# Importar GeoPandas
+#import geopandas as gpd
+
+# Carregar Dados com read_file (Shapefile preferivel, GeoJSON -  Mais Lento)
+# Mudar Caminho para onde estão os dados - atenção de ter os ficheiros .shp\.shx\.dbf\.prj
+file_path = r"data\NUTS3_2015_PT.shp"
+
+# Definir o encoding para evitar problemas de desenho dos nomes
+encoding = 'utf-8'  
+# Ler Shapefile:
+gdf_nuts3 = gpd.read_file(file_path, encoding=encoding)
+
+gdf_nuts3.loc[1,'geometry']
+```
+
+Mostrar Localização Central da GDF das NUTS3  
+```{python}
+# Obter a Localização Central
+# Print the head of the urban_polygon
+#import geopandas as gdp
+import folium
+
+# Obter o centroid de toda a geometria
+# Converter para 4326 e a seguir obter o centroid de união de toda a geometria
+gdf_nuts3_sel = gdf_nuts3.loc[gdf_nuts3.NUTS1 == '1'] # Selecionar apenas o continente
+centroid = gdf_nuts3_sel.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude longitude
+center_map = [centroid.y, centroid.x]
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=8, tiles='OpenStreetMap')
+
+folium_map
+```
+
+adicionar geografia (GDF) ao mapa  
+```{python}
+# Adicionar a Geografia a mapa
+# Print the head of the urban_polygon
+# import geopandas as gdp
+# import folium
+# from shapely.geometry import Point, Polygon
+
+# Converter para 4326 e a seguir obter o centroid de união de toda a geometria
+centroid = gdf_nuts3_sel.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude  longitude
+center_map = [centroid.y, centroid.x]
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=7, tiles='OpenStreetMap')
+
+# Adicionar Geografia folium map
+# folium.GeoJson constructor
+folium.GeoJson(gdf_nuts3_sel).add_to(folium_map)
+
+folium_map
+```
+
+adicionar pop e tooltip  
+```{python}
+#| eval: true
+gdf_nuts3_sel.info()
+
+# Incluir Informação de POPUP
+# Print the head of the urban_polygon
+#import geopandas as gdp
+#import folium
+import folium.plugins 
+
+# Converter para 4326 e a seguir obter o centroid de união de toda a geometria
+centroid = gdf_nuts3_sel.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude  longitude
+center_map = [centroid.y, centroid.x]
+
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=7, tiles='OpenStreetMap')
+
+# Codigo Especifico para tooltip
+tooltip = folium.GeoJsonTooltip(
+    fields=["NUTS3"],
+    aliases=["NUTS3"],
+    localize=True,
+    sticky=False,
+    labels=True,
+    style="""
+        background-color: #F0EFEF;
+        border: 2px solid black;
+        border-radius: 3px;
+        box-shadow: 3px;
+    """,
+    max_width=800,
+)
+
+# Definir popup e nome
+folium.GeoJson(gdf_nuts3_sel,
+        zoom_on_click = True,
+        popup = folium.GeoJsonPopup(
+            fields=['NUTS3','NUTS3_DSG'],
+            aliases=['NUTS3','NUTS3_DSG']
+        ),
+        tooltip = tooltip       
+               
+    ).add_to(folium_map) 
+
+
+folium_map
+# folium_map.save(r'data\xxmap.html')
+```
+
+### Criar Mapa Temático em Folium  
+```{python}
+#| eval: false
+# Import packages
+# import pandas as pd
+# import geopandas as gpd
+# import folium, folium.plugins 
+
+# Mesmo Exemplo criar Plot dos Areas NUTS3 - Mostrando total de população 65+ no total de população
+# Assegurar que foi efetuado Merge com Dados C2021
+# GDF input: gdf_nuts3_2
+
+# Selecionar Dados Portugal Continental: (copy() para criar nova coluna)
+gdf_nuts3_sel = gdf_nuts3_2.loc[gdf_nuts3_2.NUTS1_x == '1'].copy()
+
+# Novo Atributo
+gdf_nuts3_sel['ind65'] = gdf_nuts3_sel.N_INDIVIDUOS_65_OU_MAIS/gdf_nuts3_sel.N_INDIVIDUOS
+
+# Obter o centroid de toda a geometria
+centroid = gdf_nuts3_sel.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude  longitude
+center_map = [centroid.y, centroid.x]
+
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=6, tiles='OpenStreetMap')
+
+# Criar choropleth
+choropleth = folium.Choropleth(
+    geo_data=gdf_nuts3_sel,
+    name='População 65+ mais',
+    data=gdf_nuts3_sel,
+    columns=['NUTS3', 'ind65'],
+    key_on='feature.properties.NUTS3',
+    fill_color='Reds', #
+    fill_opacity=0.5,
+    line_opacity=1.0,
+    bins =8,
+    legend_name='Relacao população 65+ no total de população'
+)
+
+folium.GeoJson(gdf_aces,
+zoom_on_click = True).add_to(folium_map)
+
+# Adicionar a mapa
+choropleth.add_to(folium_map)
+
+# Widget para controlar os layer visiveis            
+folium.LayerControl().add_to(folium_map)
+
+folium_map.save(r'data\xxmap.html')
+
+folium_map
+
+# Limpar Object da memoria
+gdf_nuts3_sel = None
+```
+
 
 
 <br>

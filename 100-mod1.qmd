@@ -1,4 +1,4 @@
-# Módulo 1
+# Programming Tecnhiques (Basics)
 
 ::: {.callout-tip}
 ## Conteúdos
@@ -6,15 +6,907 @@
 Introdução a conceitos básicos da linguagem de programação *Python*.
 :::
 
-## Código
 
-Vamos começar com o *python* em *chunks*
+## o que é o Python?
+
+linguagem de programação:
+
++ interpretada e orientada a objectos (mas permite funções)
++ aprendizagem rápida e simples
++ gratuita
+
+**modo interativo** vs modo script
+
+*Iniciar -> Anaconda prompt* (se o *Anaconda* estiver configurado).
+
+modo interativo vs **modo script**
+
+criado um *ficheiro.py*, pode ser executado:
+
+`python -u "c:\Users\documents\ficheiro.py"`
+
+## Funções básicas
 
 ```{python}
-print("hello, world!")
+# imprimir na consola
+print('olá mundo!')
 
 ```
 
+
+```{python}
+# docstring, funciona como comentário mas não é recomendado
+
+"""
+permite escrever texto 
+em multiplas
+linhas
+"""
+```
+
+imprimir números e /ou cálculos:
+```{python}
+print(3+6)
+```
+
+para concatenar texto formatado
+```{python}
+numero = 4
+print(f"O número é: {numero*2}")
+```
+
+imprimir múltiplas linas
+```{python}
+print("""
+linha1
+linha2
+""")
+```
+
+*raw strings*
+```{python}
+# forçar a imprimir exactamente o que está entre '' 
+print(r'tudo\namora')
+
+# ou então podemos imprimir com a qubra de linha
+print('tudo\namora')
+```
+
+old string formating%
+```{python}
+# se x for string
+x = '15'
+
+print("x como string = %s" %(x))
+```
+```{python}
+y = int(x)
+print("x como integer = %d" %(y))
+
+print("x como float = %09.4f" %(y))
+```
+
+```{python}
+#| eval: false
+
+input("Escreve um input: ")
+
+```
+
+função que avalia o seu argumento:
+```{python}
+numero = eval('2')
+
+# em alternativa podemos especificar o tipo que pretendemos
+numero = int('2')
+
+print(f"o dobro do numero é: {numero *2}")
+
+```
+
+em alternativa podemos especificar o tipo que pretendemos
+```{python}
+inteiro = int('2')
+
+print(f"o dobro do numero é: {inteiro *2}")
+```
+
+No modo script podemos criar um ficheiro com o código que queremos executar, por exemplo o ficheiro `mod1.py` e excecutar na linha de comandos (*Iniciar -> Anaconda prompt*):   
+
+`C:\Users\bruno.lima\Documents\Python\python2024\exercicios>python mod1.py`
+
+## Aritmética
+
+```{python}
+# quatro operações básicas
+
+print(2+2, 5-2, 4*2, 10/5)
+
+# potencias
+4**3
+
+# calcula horas
+minutos = 70
+print(f"são {minutos//60} horas e {minutos-60} minutos")
+
+```
+## Definir e alterar variáveis
+
+```{python}
+# por convenção devemos usar nome do formato case_snake
+cores_do_arco_iris = ['red','green','yellow','blue','orange','indigo', 'violet']
+
+numero_de_tons = len(cores_do_arco_iris)
+
+numero_de_tons
+
+```
+
+casting
+```{python}
+x = int(3)
+y = str(3)
+z = float(3)
+
+```
+
+## Exercicios
+
+```{python}
+# calcular o vlume de um cilindro dado o raio da base e a altura
+
+raio_base = 2
+altura = 10
+
+area_base = 3.14*raio_base**2
+
+volume = area_base*float(altura)
+
+print(f"o volume é: {volume} m3")
+
+```
+
+obtem os primeiros 4 divisores de um número N, separados por '++++'
+
+```{python}
+N = 12
+lista = []
+
+for i in range(1, N+1):
+  if N%i == 0:
+    lista.append(i)
+    
+print(*lista[:4], sep = '+++')
+
+```
+
+obtem os primeiros 4 múltiplos de um número, separados por '++++'
+
+```{python}
+numero=3
+
+print(f'os múltiplos de {numero} são: {numero *1}', numero *2, numero *3, numero *4, sep = ' ++++ ', end = " ^^")
+```
+
+## Tipos de dados
+
++ `str`
+
++ numérico:
+
+    - int
+    - float
+    - complex
++ `bool`
+
++ sequencia:
+
+    -list
+    -tuple
+    -range
++ `dict`
+
++ set / frozenset
+
++ binario:
+
+    - bytes
+    - bytearray
+    - memoryview
+
+### string
+```{python}
+a = "um conjunto de letras"
+
+tipo=type(a)
+len(a)
+
+print(f"o tipo da variável 'a' é {tipo}")
+
+print(f"a primeira letra é %s e a ultima letra é %s" % (a[0], a[-1]))
+
+print(a[:2]) # todas as letras até à segunda posição
+```
+
+### `int`
+```{python}
+i1 = 12
+i2 = -1
+
+print(type(i1), type(i2))
+```
+
+### `float`
+```{python}
+f2=-7.7e100
+f3=2E2
+
+print(f2, f3)
+```
+
+::: {.callout-important}
+A instalação dos *packages* deve ser feita através do terminal Bash com o comando: `$ pip install pandas`
+:::
+
+```{python}
+import math
+
+print(repr(math.pi))
+print(format(math.pi,'.12g'))
+print(format(math.pi,'.2f'))
+
+```
+
+arredondamento implicito
+```{python}
+print(.1+.1+.1 == .3)
+
+print(round(.1+.1+.1, 10) == round(.3, 10))
+```
+
+### complex(j=parte imaginária)
+```{python}
+c1 = 1j
+c2 = 3+5j
+
+print(type(c1), type(c2))
+```
+### `bool`
+```{python}
+print(type(True))
+
+print(f"o número zero é: {bool(0)}")
+print(f"o número 45 é: {bool(45)}")
+print(f"o nome 'INE' é: {bool('INE')}")
+print(f"o vazio é: {bool('')}")
+```
+### sem tipo
+`NoneType`
+
+### conversão entre tipos
+```{python}
+# conversão implicita
+x = 10
+y = 5
+z = x+y
+
+print(type(z))
+
+```
+
+```{python}
+#conversão para inteiro
+print(int(1))
+print(int(2.8))
+print(int(3))
+```
+
+```{python}
+# conversão para float
+print(float('3.1'))
+```
+
+
+```{python}
+# conversão para bool
+print(bool(1))
+
+```
+
+```{python}
+# conversão para string
+a = str(2)
+b = str(3.0)
+
+print(a,b)
+
+```
+
+```{python}
+#conversão com eval
+a = eval('8**2')
+print(a)
+```
+
+
+## Organização do código
+
+### Programação modular
+
++ simplicidade
++ facilidade de manutenção
++ reutilização
++ âmbito
+
+### Packages
+
+`packages`
+
+  + `subpackages`   
+    
+    - `module`: funções, classes, variáveis, código, ...
+    
+![](images/packages.jpg)
+
+### Funções
+
++ Built-in (funções standard do Python)
+
+![](images/standard.jpg)
+
++ UDF (funções definidas pelo utilizador)
++ lambda (funções anónimas)
+      
+### UDF
+
+```
+def nome_da_funcao(parametros):
+  """ comentário com propósito da função"""
+  
+  # corpo da função (instruções e lógica)
+  
+  return informacao_a_retornar
+```
+
+exemplos:
+```{python}
+def soma(x,y):
+  """ AVISO """
+  return(x+y)
+
+soma(1,2)
+
+```
+
+### exercícios
+```{python}
+# criar uma função que devolve um valor elevado a uma potencia
+
+def pot(base, expo):
+  return(base**expo)
+
+print(pot(5,2))
+
+```
+
+## Controlo da execução
+
+### Controlo condicional
+
+![](images/if_else.jpg)
+
+```{python}
+chove = True
+if (chove):
+  print("chove mesmo!")
+else:
+  print("Faz sol!")
+
+```
+
+operadores de comparação
+```
+'>', '<', '==', '>=', '<=', '!=', 'is' ['not'], ['not'] 'in' 
+```
+
+```{python}
+
+a = 1
+b = 2
+c = 3
+
+print(f"1-{a} <{b} <{c}")
+```
+### operador trenário
+
+```{python}
+idade = int('20')
+decisao = 'já pode votar' if idade >=18 else 'ainda não pode votar'
+
+print(f"com {idade} anos,  a decisão é: {decisao}")
+```
+```{python}
+# exemplo de menor legibilidade
+nr_mes = 3
+
+nome_mes = 'janeiro' if nr_mes == 1 else \
+'fevereiro' if nr_mes == 2 else \
+'março' if nr_mes == 3 else \
+'outro'
+
+print(nome_mes)
+
+```
+
+### ciclos
+
+![](images/while.jpg)
+```{python}
+# definir função oráculo usado mais em baixo
+def oraculo_mistico(pergunta):
+  ''' retorna uma resposta à pergunta feita
+  ao estilo do jogo "Bola 8 mágica"
+  '''
+  import random
+
+  respostas = [
+    "Sim", "Não", "Claro", "Com certeza", "Arrisque", "Não conte com isso", "Provavelmente",
+    "É duvidoso", "Talvez", "Não tenho certeza", "Sem dúvida", "Absolutamente",
+    "É melhor não dizer agora", "Concentre-se e pergunte novamente", "Minhas fontes dizem não",
+    "As perspectivas não são boas", "Não é possível prever agora", "Reformule sua pergunta",
+    "Não posso responder a isso", "Pergunte novamente mais tarde", "Probabilidade zero",
+    "Está nas estrelas", "Muito provável", "Os astros são favoráveis"
+  ]
+
+  return random.choice(respostas)
+```
+
+
+
+```{python}
+#| eval: false
+
+
+continuar_jogo = True
+
+while(continuar_jogo):
+  pergunta = input("faz pergunta: ")
+  if(pergunta == 'sair'):
+    continuar_jogo = False
+  else:
+    reposta = oraculo_mistico(pergunta) # oraculo_mistico() é uma função ad hoc
+    print(f"A resposta é: {resposta}")
+
+```
+
+### for loop
+
+```{python}
+for i in range(10):
+  print(i)
+```
+
+### exercícios
+
+Com um for loop escreve os primeiros 10 multiplos de 7
+```{python}
+
+for i in range(10):
+  print(i * 7)
+
+```
+
+Com recurso a loops,repita uma palavra definida pelo utilizador o número de vezes que ele pretenda, removendo a primeira letra da palavra introduzida
+```{python}
+palavra='teste'
+n=5
+
+print(palavra[1:]*n, sep=' + ')
+
+for i in range(n):
+  print(palavra[1:])
+```
+
+Simule o jogo de pedra, papel e tesoura com o computador (papel ganha pedra que ganha tesoura que ganha papel):
+
+```{python}
+from random import sample
+
+lista = ['pedra','papel','tesoura']
+
+jogador1 = sample(lista,1)[0]
+jogador2 = sample(lista,1)[0]
+
+print(jogador1, jogador2)
+
+ganhador = 'empate' if jogador1 == jogador2 else \
+'jogador1' if jogador1 == 'papel' and jogador2 == 'pedra' else \
+'jogador1' if jogador1 == 'tesoura' and jogador2 == 'papel' else \
+'jogador1' if jogador1 == 'pedra' and jogador2 == 'tesoura' else \
+'jogador2'
+
+print(f"o vencedor é o {ganhador}")
+
+```
+
+solução alternativa:
+```{python}
+#| eval: false
+
+import random
+fim_do_jogo = False
+
+while (not(fim_do_jogo)):
+  jogada_humana = int(input("escolha:\n1 - pedra\n2 - papel\n3 - tesoura\n0 - terminar o jogo\n"))
+  if (jogada_humana == 0):
+    print("fim.\n")
+    fim_do_jogo = True
+  else:
+    jogada_cpu = random.choice([1, 2, 3]) # porque ainda não conhecemos o randint()
+
+    jogada_cpu_texto = "pedra"
+    if (jogada_cpu == 2):
+      jogada_cpu_texto = "papel"
+    elif (jogada_cpu == 3):
+      jogada_cpu_texto = "tesoura"
+
+    if (jogada_cpu == jogada_humana):
+      print("empate\n")
+    else:
+      print(f"o computador jogou '{jogada_cpu_texto}'.")
+      if ((jogada_cpu == 1 and jogada_humana == 2) or (jogada_cpu == 2 and jogada_humana == 3) or (jogada_cpu == 3 and jogada_humana == 1)):
+        print("vitória humana!\n\n")
+      else:
+        print("o computador venceu\n\n")
+```
+
+## Funções mais usadas
+
+### funções built-in
+
+```{python}
+print("a lista de nomes que podemos usar:")
+dir()
+len(dir())
+```
+```{python}
+import random
+import math
+
+len(dir())
+```
+
+`range()`
+```{python}
+for i in range(1, 5, 2):
+  print(i)
+
+```
+`ord()`
+
+```{python}
+
+ord('a')
+```
+
+
+`pow()`
+```{python}
+print(pow(4,2,5) == 4**2 %5)
+```
+
+`sum()`
+
+`len()`
+
+`max()`
+```{python}
+var1 = 'teste'
+var2 = 'palavra'
+var3 = 'coisa'
+max_val = max(var1, var2, var3, key = len)
+
+print(max_val)
+```
+
+### ler a partir de ficheiros
+
+`ficheiro = open(r"c:\path\ficheiros.txt", modo_de_acesso)`
+
+tentativa de uniformizar:
+```{python}
+#| eval: false
+
+import os
+
+path = os.path.join(os.sep, rooth_path + os.sep = 'directoria')
+```
+
+ler linha a linha:
+```{python}
+#| eval: false
+
+linhas = [line.strip().split('',1)] for line in open(nome_do_ficheiro)
+
+open(nome_do_ficheiro).read()
+
+open(nome_do_ficheiro).readlines()
+```
+
+escrever ficheiros
+```{python}
+#| eval: false
+
+# @title
+ficheiro_escrita = g_path + 'texto_escrito.txt'
+
+with open(ficheiro_escrita, 'w') as f:
+  f.write('Escrita a funcionar!')
+
+f.close()
+```
+
+```{python}
+#| eval: false
+
+# @title
+ficheiro_escrita = g_path + 'texto_escrito2.txt'
+
+linhas = [
+    "aaa",
+    "bbb",
+    "ccc"
+]
+
+ficheiro = open(ficheiro_escrita, 'w')
+ficheiro.writelines(linhas)
+ficheiro.close() # to change file access modes
+```
+
+```{python}
+#| eval: false
+
+# @title
+ficheiro_append = g_path + 'texto_append.txt'
+
+linhas = [
+    "uma linha\n",
+    "duas linhas\n",
+    "tantas linhas\n"
+]
+
+ficheiro = open(ficheiro_append, 'a')
+ficheiro.writelines(linhas)
+ficheiro.close() # to change file access modes
+```
+
+
+### modulo `maths`
+```{python}
+import math
+
+dir(math)
+```
+
+### modulo `statistics`
+```{python}
+import statistics
+
+dir(statistics)
+
+sample = [10,203,54,69,221,57,84,29,46,77]
+
+# o valor NaN (Not a Number) afecta o comportamento de muitas destas funções,
+# ou seja, convém remover os NaN das listas antes de invocar estas funções
+res = statistics.mean(sample)
+print("Média: ", res)
+# fmean -> mais rápido, converte todos os valores para float
+
+res = statistics.median(sample)
+print("Mediana: ", res)
+#res = statistics.median_low(data)
+#res = statistics.median_high(data)
+
+res = statistics.stdev(sample)
+print("Devsio padrão: ", res)
+# pstdev - toda a população
+
+res = statistics.mode(sample)
+print("Moda: ", res)
+
+res = statistics.multimode(sample)
+print("Modas (por ordem de aparecimento na lista): ", res)
+
+res = statistics.variance(sample)
+print("Variância da amostra:", res)
+# pvariance - toda a população
+```
+
+### modulo `random`
+```{python}
+import random
+dir(random)
+
+print(f"Um valor aleatório entre 0 e 1: {random.random()}")
+```
+
+## Introdução a listas
+```{python}
+lista = [5,7,9]
+
+sum(lista)
+#lista.sum()
+```
+
+```{python}
+# @title juntar listas
+aves = ["águia", "papagaio", "gaivota"]
+peixes = ["salmão", "tubarão", "carpa"]
+
+animais = aves + peixes
+print(animais)
+```
+
+
+```{python}
+mamiferos = ['cao','gato','elefante']
+
+for i in range(len(mamiferos)):
+  print(i, mamiferos[i])
+```
+
+acesso posicional
+```{python}
+
+for i in reversed(lista):
+  print(i)
+```
+
+alterer listas
+`append()`, `remove()`, `pop()`, 
+```{python}
+lista.append(11)
+
+lista.pop()
+
+
+```
+
+```{python}
+del lista[2]
+
+print(lista)
+
+print(lista[1::2])
+
+invertida = lista[::-1]
+```
+
+alterar listas
+```{python}
+lista = ['a','b',3,4]
+
+lista[2:] = 'r'
+
+print(lista)
+```
+
+sem repetições - `sample()`
+
+com repetições - `choices()`
+
+baralhar - `shuffle()`
+
+```{python}
+print(' '.join(['pequena', 'pausa']))
+```
+
+```{python}
+# @title remove o elemento na posição e devolve esse elemento
+lista = [2, 5, 3, 7]
+print("lista:",lista)
+
+p = 1
+removido = lista.pop(p) #
+
+print(f'\n{p+1}º elemento da lista: {removido}')
+print(f'lista após remoção do {p+1}º elemento: {lista}')
+
+ultimo = lista.pop()
+print(f'lista após remoção do último elemento: {lista}')
+```
+
+```{python}
+# @title insere o elemento x na posição p da lista
+lista = [2, 3, 7]
+print("lista:",lista)
+
+x = 8
+p = 2
+lista.insert(p, x)
+
+print(f'\napós inserção do {x} na {p+1}ª posição: {lista}')
+```
+
+segmentar listas (slicing)
+possiblidades de segmentação
+lista[ indice_pos_inicial : indice_pos_final : incremento_do_indice ]
+```{python}
+# @title
+lista = [1, 2, 3, 4, 5, 6]
+
+pares = lista[1::2]
+
+print(lista, pares, sep="\n")
+```
+
+slicing - alterando a lista
+```{python}
+# @title
+lista = ["a", "b", 3, 4]
+
+lista[2:] = ["r"]
+
+print(lista)
+```
+
+### exercicios
+
+ver ficheiro `mod1_ex_dia2_manha.py`
+
+## Strings e dicionários
+
+string é uma sequencia de caracteres
+
+`str()`
+```{python}
+string = 'teste'
+
+dir(string)
+```
+
+unir - `.join()`
+
+
+
+o dicionário é um array associativo: conjunto de chave / valor
+
+`dict()`
+```{python}
+paises_iso = {
+  'Portugal': 'PT',
+  'Espanha': 'ES',
+  'Franca': 'FR',
+  'Alemanha': 'DE',
+  'Brasil': 'BR',
+  'Argentina': 'AR'
+}
+
+paises_iso['Italia'] = 'IT'
+
+print(paises_iso)
+```
+
+```{python}
+paises_iso.get('Brasil')
+```
+
+```{python}
+# for k, v in paises_iso:
+#   print(k,'{: }', sep = ': ')
+```
+
+exercicio
+```{python}
+users = {
+  '': 'pass1',
+  '': 'pass2',
+  '': 'pass3',
+  '': 'pass4'
+}
+```
+
+## mais código
 
 podemos definir uma função com um input
 
@@ -28,6 +920,7 @@ def fib(n):
   
 fib(1000)
 ```
+
 e criar uma lista que queremos transformar e enumerar
 
 ```{python}
@@ -40,6 +933,7 @@ print(loud_fruits)
 list(enumerate(fruits))
 
 ```
+
 e tentar um `if` `else`
 ```{python}
 fechado = True
@@ -50,7 +944,7 @@ else:
   print('vamos lá!')
 ```
 
-Operadores logicos
+Operadores lógicos
 ```{python}
 True and False
 ```
@@ -63,6 +957,39 @@ True or False
 not True == False
 ```
 
+## Packages
+
+Formas de importar
+
+`import <modulo>[, <nome_modulo>]`
+`from <modulo> import <name(s)> as <alt_name>`
+`import <modulo> as <alt_name>`
+
+packages disponíveis:
+```{python}
+#| eval: false
+
+
+!pip freeze
+```
+
+exemplo de importação de package
+```{python}
+#| eval: false
+
+import humanize
+
+humanize.i18n.activate("pt_PT")
+
+print(humanize.apnumber(4))
+```
+
+```{python}
+
+import random
+
+print(random.random())
+```
 
 
 ## [The Zen of Python](https://peps.python.org/pep-0020/)
@@ -72,6 +999,5 @@ import this
 ```
 
 [Lessons from the Zen of Python](https://www.datacamp.com/blog/lessons-from-the-zen-of-python?utm_source=google&utm_medium=paid_search&utm_campaignid=19589720818&utm_adgroupid=152984010374&utm_device=c&utm_keyword=&utm_matchtype=&utm_network=g&utm_adpostion=&utm_creative=691747307221&utm_targetid=aud-517318241987:dsa-2222697811398&utm_loc_interest_ms=&utm_loc_physical_ms=1011781&utm_content=DSA~blog~Python&utm_campaign=230119_1-sea~dsa~tofu_2-b2c_3-eu_4-prc_5-na_6-na_7-le_8-pdsh-go_9-na_10-na_11-na-feb24&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppGroHdOu1Op9NirjhJ1kjMgm5Oh95bf5VQpcOHRo3B6322TlLc0jUxoCKaQQAvD_BwE)
-
 
 <br>

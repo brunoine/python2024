@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Python 2024 - 3&nbsp; Módulo 3</title>
+<title>Python 2024 - 3&nbsp; Jupyter e Visualizações (Basics)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -64,6 +98,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="epub.css">
@@ -78,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./100-mod1.html">Basic</a></li><li class="breadcrumb-item"><a href="./300-mod3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Módulo 3</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./100-mod1.html">Basic</a></li><li class="breadcrumb-item"><a href="./300-mod3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Jupyter e Visualizações (Basics)</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -142,19 +179,19 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./100-mod1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Módulo 1</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Programming Tecnhiques (Basics)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./200-mod2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Módulo 2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Science (Basics)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./300-mod3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Módulo 3</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Jupyter e Visualizações (Basics)</span></span></a>
   </div>
 </li>
       </ul>
@@ -171,19 +208,19 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./400-mod4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Módulo 4</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Programming Tecnhiques (Intermediate)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./500-mod5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Módulo 5</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data Science (Intermediate)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./600-mod6.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Módulo 6</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Visualização de Dados Geográficos</span></span></a>
   </div>
 </li>
       </ul>
@@ -229,14 +266,36 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#jupyter-e-markdown" id="toc-jupyter-e-markdown" class="nav-link active" data-scroll-target="#jupyter-e-markdown"><span class="header-section-number">3.1</span> Jupyter e Markdown</a>
+  <ul class="collapse">
+  <li><a href="#data-exploration-and-visualization-basics" id="toc-data-exploration-and-visualization-basics" class="nav-link" data-scroll-target="#data-exploration-and-visualization-basics"><span class="header-section-number">3.1.1</span> Data Exploration and Visualization (Basics)</a></li>
+  </ul></li>
+  <li><a href="#gráficos-em-matplotlib-e-seaborn" id="toc-gráficos-em-matplotlib-e-seaborn" class="nav-link" data-scroll-target="#gráficos-em-matplotlib-e-seaborn"><span class="header-section-number">3.2</span> Gráficos em MATPLOTLIB e SEABORN</a>
+  <ul class="collapse">
+  <li><a href="#gráfico-de-dispersão-scatterplot-em-matplotlib" id="toc-gráfico-de-dispersão-scatterplot-em-matplotlib" class="nav-link" data-scroll-target="#gráfico-de-dispersão-scatterplot-em-matplotlib"><span class="header-section-number">3.2.1</span> Gráfico de Dispersão (Scatterplot) em MATPLOTLIB</a></li>
+  <li><a href="#gráfico-relação-grupos-etários-com-tamanho-municipio-valores-relativos" id="toc-gráfico-relação-grupos-etários-com-tamanho-municipio-valores-relativos" class="nav-link" data-scroll-target="#gráfico-relação-grupos-etários-com-tamanho-municipio-valores-relativos"><span class="header-section-number">3.2.2</span> Gráfico Relação Grupos Etários com Tamanho Municipio (valores relativos)</a></li>
+  <li><a href="#scatterplot-em-seaborn" id="toc-scatterplot-em-seaborn" class="nav-link" data-scroll-target="#scatterplot-em-seaborn"><span class="header-section-number">3.2.3</span> ScatterPlot em SEABORN</a></li>
+  <li><a href="#plotnine" id="toc-plotnine" class="nav-link" data-scroll-target="#plotnine"><span class="header-section-number">3.2.4</span> plotnine</a></li>
+  <li><a href="#seaborn-relplot" id="toc-seaborn-relplot" class="nav-link" data-scroll-target="#seaborn-relplot"><span class="header-section-number">3.2.5</span> SEABORN RELPLOT</a></li>
+  <li><a href="#seaborn-catplots" id="toc-seaborn-catplots" class="nav-link" data-scroll-target="#seaborn-catplots"><span class="header-section-number">3.2.6</span> SeaBorn CATPLOTs</a></li>
+  <li><a href="#criar-plots-com-ou-sem-relplot" id="toc-criar-plots-com-ou-sem-relplot" class="nav-link" data-scroll-target="#criar-plots-com-ou-sem-relplot"><span class="header-section-number">3.2.7</span> Criar plots com ou sem RELPLOT</a></li>
+  <li><a href="#histograma-histogram" id="toc-histograma-histogram" class="nav-link" data-scroll-target="#histograma-histogram"><span class="header-section-number">3.2.8</span> Histograma (Histogram)</a></li>
+  <li><a href="#customização-dos-gráficos-em-seaborn" id="toc-customização-dos-gráficos-em-seaborn" class="nav-link" data-scroll-target="#customização-dos-gráficos-em-seaborn"><span class="header-section-number">3.2.9</span> Customização dos gráficos em SEABORN</a></li>
+  </ul></li>
+  <li><a href="#exercícios" id="toc-exercícios" class="nav-link" data-scroll-target="#exercícios"><span class="header-section-number">3.3</span> Exercícios</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-git"></i></div><div class="action-links"><p><a href="https://git.ine.pt/nda/formacao/python2024/edit/main/300-mod3.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Módulo 3</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Jupyter e Visualizações (Basics)</span></h1>
 </div>
 
 
@@ -265,9 +324,978 @@ Conteúdos
 <p>Introdução ao <code>Pyplot</code> do <em>package</em> <code>Matplotlib</code>.</p>
 </div>
 </div>
+<section id="jupyter-e-markdown" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="jupyter-e-markdown"><span class="header-section-number">3.1</span> Jupyter e Markdown</h2>
+<p>Um <strong>JUPYTER</strong> Notebook é composto de uma combinação de células de código e documentação.</p>
+<p>Abrir através do prompt: <code>Anaconda prompt -&gt; jupyter notebook</code></p>
+<p>Ficheiros do tipo <code>.ipynb</code></p>
+<p><img src="images/notebook.png" class="img-fluid"></p>
+<p>Shortcuts <img src="images/shortcuts.png" class="img-fluid"></p>
+<p>The Zen of Python, by Tim Peters</p>
+<hr>
+<p><img src="https://cdn-blog.adafruit.com/uploads/2020/06/20200602zen.jpg"></p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> this</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!</code></pre>
+</div>
+</div>
+<section id="data-exploration-and-visualization-basics" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="data-exploration-and-visualization-basics"><span class="header-section-number">3.1.1</span> Data Exploration and Visualization (Basics)</h3>
+<section id="importar-dados-externos-para-pandas-dataframe" class="level4" data-number="3.1.1.1">
+<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="importar-dados-externos-para-pandas-dataframe"><span class="header-section-number">3.1.1.1</span> Importar Dados Externos para Pandas Dataframe</h4>
+<p><a href="https://dados.gov.pt/pt/datasets/despesa-com-medicamentos-nos-hospitais-do-sns-1/">Exemplo .csv</a> <a href="https://data.europa.eu/data/datasets/classificacao-etaria-de-teatro?locale=pt">Exemplo .xlsx</a></p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obter dados a partir do Link Direto ao dados</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar Bibliotecas</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># No ambiente formação devem-se utilizar os ficheiros locais (poderá dar erro "http error 404")</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Link direto para ficheiro CSV: Despesa com Medicamentos nos Hospitais do SNS</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ficheiro <span class="op">=</span> <span class="vs">r'https://dados.gov.pt/pt/datasets/r/8803343f-6e1b-47de-87ac-26432adb45f0'</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar num Pandas Dataframe</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(ficheiro, sep<span class="op">=</span><span class="st">';'</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Informação</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df.head(5))</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df.info())</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df.describe())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Packages openxyl para poder trabalhar com XLSX</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openpyxl</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Link Direto para ficheiro XLSX</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ficheiro <span class="op">=</span> <span class="vs">r'https://dados.gov.pt/s/resources/classificacao-etaria-de-teatro/20240331-230417/classificacaoetariateatro.xlsx'</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar num DataFrame</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None, sheet_name='Sheet1'</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizar iloc e numpy</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># print (df.iloc[np.r_[0:3, -3:0]])  # head e tail</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df.info())</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df.describe())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importar-tabela-da-bd" class="level4" data-number="3.1.1.2">
+<h4 data-number="3.1.1.2" class="anchored" data-anchor-id="importar-tabela-da-bd"><span class="header-section-number">3.1.1.2</span> Importar tabela da BD</h4>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Obter Password e Utilizador para Ligacao SQL</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> getpass <span class="im">import</span> getpass <span class="co"># para ler a password sem a mostrar</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>my_user <span class="op">=</span> <span class="st">'"BRUNO.LIMA"[BDIFRM]'</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>my_password <span class="op">=</span> <span class="st">'*******'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler Dados da BD</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># criar conexão</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cx_Oracle </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>host <span class="op">=</span> <span class="st">'c21oradev01.int.ine.pt'</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>port <span class="op">=</span> <span class="st">'1521'</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>service <span class="op">=</span> <span class="st">'FORMACAO'</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>dsn_tns <span class="op">=</span> cx_Oracle.makedsn(host, port, service_name<span class="op">=</span>service) </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar a conexão com todos os elementos,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># incluingo user e password</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> cx_Oracle.<span class="ex">connect</span>(user<span class="op">=</span>my_user, password<span class="op">=</span>my_password, dsn<span class="op">=</span>dsn_tns) </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Cursor:</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar o cursor na conexão conn que criámos antes</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> conn.cursor()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ler Diferentes Views para Pandas DF</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dados por Municipio:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL String</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>my_sql <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">select *</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">from V_BGRI2021_DTMN_PT </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar o cursor c com a string como parâmetro</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>c.execute(my_sql)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Ober Nomes Colunas: (c.description devolva listagem dos atributos, nome atributo é 1º elemento - x[0])</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># No Modulo Intermédio devem discutir mais este tipo de metodo para criar Listagem</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> [x[<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> c.description]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#print(names)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Input tabela dentro DataFrame, atribuir nomes colunas</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>df_mn_c2021 <span class="op">=</span> pd.DataFrame(c.fetchall(), columns <span class="op">=</span> names)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Dados por NUTS3:</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL String</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>my_sql <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="st">select *</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="st">from V_BGRI2021_N3_PT </span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar o cursor c com a string como parâmetro</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>c.execute(my_sql)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Nomes colunas</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> [ x[<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> c.description]</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>df_n3_c2021 <span class="op">=</span> pd.DataFrame(c.fetchall(), columns <span class="op">=</span> names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>ler a partir de .xlsx</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solução de recurso caso existem problemas da BD </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df_n3_c2021 <span class="op">=</span> pd.read_excel(<span class="vs">r'data\N3_C2021.xlsx'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>df_mn_c2021 <span class="op">=</span> pd.read_excel(<span class="vs">r'data\DTMN_C2021.xlsx'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar informação inicial:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_n3_c2021.head(5))</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.head(5))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar DF a partir de Ficheiros EXCEL</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\DTMN_C2021.xlsx"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\N3_C2021.xlsx"</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Packages openxyl para poder trabalhar com XLSX</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Link Direto para ficheiro XLSX</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>ficheiro_dtmn <span class="op">=</span> <span class="vs">r'data\DTMN_C2021.xlsx'</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>ficheiro_n3 <span class="op">=</span> <span class="vs">r'data\N3_C2021.xlsx'</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar num DataFrame</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>df_n3_c2021 <span class="op">=</span> pd.read_excel(ficheiro_n3)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>ficheiro_dtmn <span class="op">=</span> pd.read_excel(ficheiro_dtmn) </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizar iloc e numpy</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_n3_c2021.head(5))</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.head(5))</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.info())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importar-dados-da-dgs" class="level4" data-number="3.1.1.3">
+<h4 data-number="3.1.1.3" class="anchored" data-anchor-id="importar-dados-da-dgs"><span class="header-section-number">3.1.1.3</span> importar dados da DGS</h4>
+<p>Importar DGS (Certificados de Obitos por Dia)</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver referencia: https://dados.gov.pt/pt/datasets/registos-de-certificados-de-obito/</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Atributos: Ano, Mês, Dia do Mês, Dia da Semana, Nº Certificados de Óbito Diários</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Link DGS (Certificados de Obitos por Dia)  </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ficheiro <span class="op">=</span> <span class="vs">r'http://dados.gov.pt/pt/datasets/r/dde8a843-d6a8-4a3f-82ff-b0e9c6743a3a'</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler ficheiro do computador:</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#ficheiro = r'data\evolucao-diaria-de-certificados-de-obito.csv'</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar em DataFrame</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>df_obitos <span class="op">=</span> pd.read_csv(ficheiro, sep<span class="op">=</span><span class="st">';'</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar informação df</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.head(5))</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.info())</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.describe())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="gráficos-em-matplotlib-e-seaborn" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="gráficos-em-matplotlib-e-seaborn"><span class="header-section-number">3.2</span> Gráficos em MATPLOTLIB e SEABORN</h2>
+<p>obter dados</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solução de recurso caso existem problemas da BD </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df_n3_c2021 <span class="op">=</span> pd.read_excel(<span class="vs">r'data\N3_C2021.xlsx'</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>df_mn_c2021 <span class="op">=</span> pd.read_excel(<span class="vs">r'data\DTMN_C2021.xlsx'</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar informação inicial:</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_n3_c2021.head(5))</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.head(5))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar DF a partir de Ficheiros EXCEL</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\DTMN_C2021.xlsx"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># "C:\Users\bart.schoen\OneDrive - ineportugal\Documents\2024_FormacaoPython\Dados\N3_C2021.xlsx"</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Packages openxyl para poder trabalhar com XLSX</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Link Direto para ficheiro XLSX</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>ficheiro_dtmn <span class="op">=</span> <span class="vs">r'data\DTMN_C2021.xlsx'</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ficheiro_n3 <span class="op">=</span> <span class="vs">r'data\N3_C2021.xlsx'</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar num DataFrame</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>df_n3_c2021 <span class="op">=</span> pd.read_excel(ficheiro_n3)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>ficheiro_dtmn <span class="op">=</span> pd.read_excel(ficheiro_dtmn) </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Argumentos uteis: skiprows=[0,1], usecols='A', nrows=2, header=None</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar primeiras 3 linhas e ultimas 3 linhas (head e tail em conjunto)</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilizar iloc e numpy</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_n3_c2021.head(5))</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.head(5))</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_mn_c2021.info())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar DGS (Certificados de Obitos por Dia)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver referencia: https://dados.gov.pt/pt/datasets/registos-de-certificados-de-obito/</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Atributos: Ano, Mês, Dia do Mês, Dia da Semana, Nº Certificados de Óbito Diários</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Link DGS (Certificados de Obitos por Dia)  </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#ficheiro = r'http://dados.gov.pt/pt/datasets/r/dde8a843-d6a8-4a3f-82ff-b0e9c6743a3a'</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler ficheiro do computador:</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ficheiro <span class="op">=</span> <span class="vs">r'data\evolucao-diaria-de-certificados-de-obito.csv'</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar em DataFrame</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>df_obitos <span class="op">=</span> pd.read_csv(ficheiro, sep<span class="op">=</span><span class="st">';'</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar informação df</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.head(5))</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.info())</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># print(df_obitos.describe())</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/plo_anatomy.png" class="img-fluid"></p>
+<section id="gráfico-de-dispersão-scatterplot-em-matplotlib" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="gráfico-de-dispersão-scatterplot-em-matplotlib"><span class="header-section-number">3.2.1</span> Gráfico de Dispersão (Scatterplot) em MATPLOTLIB</h3>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar pyplot do matplotlib </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatterplot que conssiste de 2 plots</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade superior a 65 </span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade inferior a 14  </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Marker: circle ('o'), point ('.'), diamond('d'), or square ('s')</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># s - tamamnho</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># label - rótulo a colocar</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha - transparência</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(df_mn_c2021.N_INDIVIDUOS, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>                color <span class="op">=</span> <span class="st">'Red'</span>, </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'.'</span>, </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>                s<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">'65 ou mais'</span>, </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>                alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>plt.scatter(df_mn_c2021.N_INDIVIDUOS, df_mn_c2021.N_INDIVIDUOS_0_14,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>                color <span class="op">=</span> <span class="st">'Green'</span>, </span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'s'</span>, </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                s<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                label <span class="op">=</span> <span class="st">'15 ou menos'</span>, </span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>                alpha <span class="op">=</span> <span class="fl">0.5</span>) </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir Labels x e y áxis</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Nº Individuos'</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Nº Individuos por grupo'</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar GRID</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir Título</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Relação Individuos por grupo idade ao total </span><span class="ch">\n</span><span class="st"> por municipio'</span>,size<span class="op">=</span><span class="dv">12</span>,fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Legenda</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-15-output-1.png" width="619" height="468"></p>
+</div>
+</div>
+</section>
+<section id="gráfico-relação-grupos-etários-com-tamanho-municipio-valores-relativos" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="gráfico-relação-grupos-etários-com-tamanho-municipio-valores-relativos"><span class="header-section-number">3.2.2</span> Gráfico Relação Grupos Etários com Tamanho Municipio (valores relativos)</h3>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># É possivel dividir as variáveis!</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Permita tirar conclusões dos dados</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>               color <span class="op">=</span> <span class="st">'Red'</span>, s<span class="op">=</span><span class="dv">12</span>, marker<span class="op">=</span><span class="st">'.'</span>, label <span class="op">=</span> <span class="st">'65 ou mais'</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2º plot com </span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, df_mn_c2021.N_INDIVIDUOS_0_14<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>               color <span class="op">=</span> <span class="st">'Green'</span>, s<span class="op">=</span><span class="dv">12</span>, marker<span class="op">=</span><span class="st">'s'</span>, label <span class="op">=</span> <span class="st">'15 ou menos'</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>) <span class="co"># </span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#'''</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Labels x e y áxis</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Nº Individuos (por 1000)'</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Rácio nº Individuos'</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar GRID</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Relação Individuos por grupo idade ao total </span><span class="ch">\n</span><span class="st"> por municipio'</span>,size<span class="op">=</span><span class="dv">12</span>,fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Legenda</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.title</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-16-output-1.png" width="589" height="468"></p>
+</div>
+</div>
+<p>Criar a mesma Figura utilizando os objectos <em>fig</em> e <em>ax</em></p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import matplotlib</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fig,ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatterplot que conssite de 2 plots</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade superior a 65 </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2º plot: Mostrar nº de indivíduos no áxis X, Y áxis: nº de indivíduos com idade inferior a 14  </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>ax.scatter(df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>            color <span class="op">=</span> <span class="st">'Red'</span>, </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>           s<span class="op">=</span><span class="dv">12</span>, </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>           marker<span class="op">=</span><span class="st">'.'</span>, </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>           label <span class="op">=</span> <span class="st">'65 ou mais'</span>, </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>           alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 2º plot com </span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>ax.scatter(df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, df_mn_c2021.N_INDIVIDUOS_0_14<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>               color <span class="op">=</span> <span class="st">'Green'</span>, </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>               s<span class="op">=</span><span class="dv">12</span>, </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>               marker<span class="op">=</span><span class="st">'s'</span>, </span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>               label <span class="op">=</span> <span class="st">'15 ou menos'</span>, </span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>               alpha <span class="op">=</span> <span class="fl">0.5</span>) <span class="co"># </span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir Labels x e y áxis</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Nº Individuos'</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Nº Individuos por grupo'</span>)</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar GRID</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir Título</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Relação Individuos por grupo idade ao total </span><span class="ch">\n</span><span class="st"> por municipio'</span>,size<span class="op">=</span><span class="dv">12</span>,fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Legenda</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-17-output-1.png" width="665" height="496"></p>
+</div>
+</div>
+</section>
+<section id="scatterplot-em-seaborn" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="scatterplot-em-seaborn"><span class="header-section-number">3.2.3</span> ScatterPlot em SEABORN</h3>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico Scatterplot SEABORN - Inicial</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-18-output-1.png" width="707" height="458"></p>
+</div>
+</div>
+<p>Seaborn adicionar tamanho</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico Scatterplot SEABORN - Incluir cor</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># size - variavel para tamanho de cada ponto</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                hue <span class="op">=</span> <span class="st">"NUTS2"</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                hue_order <span class="op">=</span> [<span class="st">'11'</span>,<span class="st">'15'</span>,<span class="st">'16'</span>,<span class="st">'17'</span>,<span class="st">'18'</span>,<span class="st">'20'</span>,<span class="st">'30'</span>],</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Relação entre edificios até 1980 no total de edificios</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                size <span class="op">=</span> (df_mn_c2021.N_EDIFICIOS_CONSTR_ANTES_1945 <span class="op">+</span> </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                        df_mn_c2021.N_EDIFICIOS_CONSTR_1946_1980) <span class="op">/</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                    df_mn_c2021.N_EDIFICIOS_CLASSICOS</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-19-output-1.png" width="650" height="458"></p>
+</div>
+</div>
+</section>
+<section id="plotnine" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="plotnine"><span class="header-section-number">3.2.4</span> plotnine</h3>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, geom_point, aes, stat_smooth, facet_wrap</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    ggplot(df_mn_c2021, aes(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point()</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> stat_smooth(method<span class="op">=</span><span class="st">"lm"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="seaborn-relplot" class="level3" data-number="3.2.5">
+<h3 data-number="3.2.5" class="anchored" data-anchor-id="seaborn-relplot"><span class="header-section-number">3.2.5</span> SEABORN RELPLOT</h3>
+<p>SEABORN REPLOT Inicial</p>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                kind <span class="op">=</span> <span class="st">"scatter"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                col <span class="op">=</span> <span class="st">"NUTS2"</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>                col_order <span class="op">=</span> [<span class="st">'11'</span>,<span class="st">'15'</span>,<span class="st">'16'</span>,<span class="st">'17'</span>,<span class="st">'18'</span>,<span class="st">'20'</span>,<span class="st">'30'</span>],</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Numero colunas</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>                col_wrap <span class="op">=</span> <span class="dv">3</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>                size <span class="op">=</span> (df_mn_c2021.N_EDIFICIOS_CONSTR_ANTES_1945 <span class="op">+</span> </span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>                        df_mn_c2021.N_EDIFICIOS_CONSTR_1946_1980) <span class="op">/</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>                    df_mn_c2021.N_EDIFICIOS_CLASSICOS,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Tamanho minimo e máximo</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>                sizes<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">150</span>),</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>                alpha <span class="op">=</span> <span class="fl">0.7</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-21-output-1.png" width="1531" height="1416"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Outro Exemplo com Municipios com menos de 50000 e mais que 50000</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Nova Coluna para indicar tamanho do municipio (2 classes)</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>df_mn_c2021[<span class="st">"Tipo Municipio"</span>] <span class="op">=</span> np.where(df_mn_c2021.N_INDIVIDUOS<span class="op">&lt;</span><span class="dv">50000</span>, <span class="st">'Menos 50.000'</span>, <span class="st">'Mais 50.000'</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostra população com mais de 65 anos por tipo de municipio</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>           kind<span class="op">=</span><span class="st">"scatter"</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>           col<span class="op">=</span>df_mn_c2021[<span class="st">"Tipo Municipio"</span>]           </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>           )</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-22-output-1.png" width="913" height="459"></p>
+</div>
+</div>
+<p>Mesmo Figura Utilizando MATPLOTLIB</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create subplots</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mudar o array de 2 dimensõe para listagem, facilitando a definição do subplot</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()  </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define NUTS2 order</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>nut2_order <span class="op">=</span> [<span class="st">'11'</span>, <span class="st">'15'</span>, <span class="st">'16'</span>, <span class="st">'17'</span>, <span class="st">'18'</span>, <span class="st">'20'</span>, <span class="st">'30'</span>]</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Percorrer cada NUTS2 e criar um SUBPLOT</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, nut2 <span class="kw">in</span> <span class="bu">enumerate</span>(nut2_order[:<span class="dv">7</span>]):</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Definir ax para subplot (0...n)</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> axes[i]</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Seleção dos dados NUTS2</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    df_nut2 <span class="op">=</span> df_mn_c2021[df_mn_c2021[<span class="st">'NUTS2'</span>] <span class="op">==</span> nut2]</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Criar SUBPLOT</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    ax.scatter(</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>        df_nut2[<span class="st">'N_INDIVIDUOS'</span>] <span class="op">/</span> <span class="dv">1000</span>,</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>        df_nut2[<span class="st">'N_INDIVIDUOS_65_OU_MAIS'</span>] <span class="op">/</span> df_nut2[<span class="st">'N_INDIVIDUOS'</span>],</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>        s<span class="op">=</span>(df_nut2[<span class="st">'N_EDIFICIOS_CONSTR_ANTES_1945'</span>] <span class="op">+</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>           df_nut2[<span class="st">'N_EDIFICIOS_CONSTR_1946_1980'</span>]) <span class="op">/</span> df_nut2[<span class="st">'N_EDIFICIOS_CLASSICOS'</span>] <span class="op">*</span> <span class="dv">1000</span>,  </span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>        alpha<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span>nut2</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">'N_INDIVIDUOS (thousands)'</span>)</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">'N_INDIVIDUOS_65_OU_MAIS / N_INDIVIDUOS'</span>)</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f'NUTS2: </span><span class="sc">{</span>nut2<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>plt.tight_layout(pad<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-23-output-1.png" width="1505" height="732"></p>
+</div>
+</div>
+</section>
+<section id="seaborn-catplots" class="level3" data-number="3.2.6">
+<h3 data-number="3.2.6" class="anchored" data-anchor-id="seaborn-catplots"><span class="header-section-number">3.2.6</span> SeaBorn CATPLOTs</h3>
+<p>Gráfico de contagens (CountPlot)</p>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar COUNTPLOT - Contagens de registos por ano</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordenar no Notebook de demonstração</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>category_order <span class="op">=</span> <span class="bu">sorted</span>(df_obitos[<span class="st">'Ano'</span>].unique(),reverse<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>sns.catplot(x<span class="op">=</span><span class="st">"Ano"</span>, <span class="co"># x ou y</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df_obitos,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>            kind <span class="op">=</span> <span class="st">"count"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>            order <span class="op">=</span> category_order</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-24-output-1.png" width="460" height="458"></p>
+</div>
+</div>
+<p>Gráfico de barras (Bar plot)</p>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Barplot - Contagens de nº de óbitos diarios por ano</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico com nº de óbitos diários por ano</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>sns.catplot(x<span class="op">=</span><span class="st">"Ano"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> <span class="st">'Nº Certificados de Óbito Diários'</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df_obitos,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>            kind <span class="op">=</span> <span class="st">"bar"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Error bar mostra Interval de confiança (ci) </span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>            errorbar <span class="op">=</span> <span class="st">'ci'</span> <span class="co"># None\'ci\sd\se\pi\metodo definido'</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-25-output-1.png" width="460" height="458"></p>
+</div>
+</div>
+<p>Box plot</p>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar BOXPLOT - Distribuição dos ceritficados Óbito Diários</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'tab10'</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mudar o aspecto do output</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#sns.set_context('notebook')</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico mostra a distribuição de nº de óbitos diários</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>sns.catplot(x<span class="op">=</span><span class="st">"Dia da Semana"</span>, <span class="co"># Dia da Semana</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> <span class="st">'Nº Certificados de Óbito Diários'</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df_obitos,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>            kind <span class="op">=</span> <span class="st">"box"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>            whis <span class="op">=</span> [<span class="dv">5</span>,<span class="dv">95</span>] <span class="co"># 2.0</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># sym = '' # - controlar visualização outliers</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-26-output-1.png" width="460" height="458"></p>
+</div>
+</div>
+</section>
+<section id="criar-plots-com-ou-sem-relplot" class="level3" data-number="3.2.7">
+<h3 data-number="3.2.7" class="anchored" data-anchor-id="criar-plots-com-ou-sem-relplot"><span class="header-section-number">3.2.7</span> Criar plots com ou sem RELPLOT</h3>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar Percentagem pop65 no total</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Nova Coluna com Ano e Mes</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Nova Coluna para indicar tamanho do municipio</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter para String e Juntar</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>df_obitos[<span class="st">"ANO_MES"</span>] <span class="op">=</span> df_obitos[<span class="st">'Ano'</span>].astype(<span class="bu">str</span>) <span class="op">+</span> df_obitos[<span class="st">'Mês'</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico nº de óbitos por ano e mes</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>g1 <span class="op">=</span> sns.relplot(x<span class="op">=</span><span class="st">'ANO_MES'</span>,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span> <span class="st">'Nº Certificados de Óbito Diários'</span>, </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_obitos,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                kind <span class="op">=</span> <span class="st">'line'</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                color <span class="op">=</span> <span class="st">'green'</span>,</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>                errorbar <span class="op">=</span> <span class="st">'ci'</span> <span class="co"># Mudar de ci para sd</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico com Lineplot com seleção dos anos 2015 até 2016</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>df_obitos2015_2016 <span class="op">=</span> df_obitos[df_obitos[<span class="st">'Ano'</span>].isin([<span class="dv">2015</span>, <span class="dv">2016</span>, <span class="dv">2017</span>])]</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> sns.lineplot(x<span class="op">=</span><span class="st">'ANO_MES'</span>,</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>                  y<span class="op">=</span> <span class="st">'Nº Certificados de Óbito Diários'</span>, </span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>                  data <span class="op">=</span> df_obitos2015_2016,</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>                  color <span class="op">=</span> <span class="st">'red'</span>,</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>                  errorbar <span class="op">=</span> <span class="st">'sd'</span> <span class="co"># Mudar de ci para sd</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the x-axis tick positions and labels</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>xtick_positions <span class="op">=</span> g2.get_xticks()</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>xtick_labels <span class="op">=</span> df_obitos2015_2016[<span class="st">'ANO_MES'</span>].iloc[xtick_positions].tolist()</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Set x-axis tick labels to show only every 12th label</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>filtered_xtick_labels <span class="op">=</span> [label <span class="cf">if</span> i <span class="op">%</span> <span class="dv">12</span> <span class="op">==</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">''</span> <span class="cf">for</span> i, label <span class="kw">in</span> <span class="bu">enumerate</span>(xtick_labels)]</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>g2.set_xticks(xtick_positions)</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>g2.set_xticklabels(filtered_xtick_labels, rotation<span class="op">=</span><span class="dv">45</span>)  <span class="co"># You can adjust rotation as needed</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>g1    </span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\ProgramData\anaconda3\Lib\site-packages\seaborn\_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.
+C:\ProgramData\anaconda3\Lib\site-packages\seaborn\_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-27-output-2.png" width="461" height="459"></p>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\ProgramData\anaconda3\Lib\site-packages\seaborn\_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.
+C:\ProgramData\anaconda3\Lib\site-packages\seaborn\_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-27-output-4.png" width="666" height="487"></p>
+</div>
+</div>
+</section>
+<section id="histograma-histogram" class="level3" data-number="3.2.8">
+<h3 data-number="3.2.8" class="anchored" data-anchor-id="histograma-histogram"><span class="header-section-number">3.2.8</span> Histograma (Histogram)</h3>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># histograma que mostra a distribuição do rácio de população com mais de 65 anos</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternativa Order List</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>hue_order_list <span class="op">=</span> <span class="bu">sorted</span>(df_mn_c2021[<span class="st">'NUTS2'</span>].unique())</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar Gráfico com sns.histplot</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>sns.histplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>             bins <span class="op">=</span> <span class="dv">30</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>             <span class="co">#binwidth = 0.02, - Alternativa definir tamanho de cada bin</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>            hue <span class="op">=</span> <span class="st">"NUTS2"</span>,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>            hue_order <span class="op">=</span> [<span class="st">'11'</span>,<span class="st">'15'</span>,<span class="st">'16'</span>,<span class="st">'17'</span>,<span class="st">'18'</span>,<span class="st">'20'</span>,<span class="st">'30'</span>]</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>               )</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\ProgramData\anaconda3\Lib\site-packages\seaborn\_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-28-output-2.png" width="655" height="430"></p>
+</div>
+</div>
+</section>
+<section id="customização-dos-gráficos-em-seaborn" class="level3" data-number="3.2.9">
+<h3 data-number="3.2.9" class="anchored" data-anchor-id="customização-dos-gráficos-em-seaborn"><span class="header-section-number">3.2.9</span> Customização dos gráficos em SEABORN</h3>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemplo diferenças na visualização com estes 3 paramentros</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorical Color Brewer palettes: 'tab10' (default matplotlib palette), 'Dark2', 'Pastel1', 'Set2', 'Paired'</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Seaborn has six variations of matplotlib’s palette, called: deep, muted, pastel, bright, dark, and colorblind</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'colorblind'</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 'paper',  'notebook', 'talk', 'poster'</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">'paper'</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Atenção - estilo continua valido para o resto do codigo</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># darkgrid, whitegrid, dark, white, ticks</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'darkgrid'</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Mudar o aspecto do output</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico mostra a distribuição de nº de óbitos diários</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>sns.catplot(x<span class="op">=</span><span class="st">"Dia da Semana"</span>, <span class="co"># Dia da Semana</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> <span class="st">'Nº Certificados de Óbito Diários'</span>,</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df_obitos,</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>            kind <span class="op">=</span> <span class="st">"box"</span>,</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>            whis <span class="op">=</span> [<span class="dv">5</span>,<span class="dv">95</span>]<span class="co"># 2.0</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>            <span class="co">#sym = '' # - controlar mostrar outliers</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-29-output-1.png" width="472" height="473"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstração diferentes STYLES</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># darkgrid, whitegrid, dark, white, ticks</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> estilo <span class="kw">in</span> [<span class="st">'darkgrid'</span>, <span class="st">'whitegrid'</span>, <span class="st">'dark'</span>, <span class="st">'white'</span>, <span class="st">'ticks'</span>]:</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    sns.set_style(estilo)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    sns.set_palette(<span class="st">'Accent'</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Criar Gráfico</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>                    y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>                    data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>                    kind <span class="op">=</span> <span class="st">"scatter"</span>,</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>                    hue <span class="op">=</span> <span class="st">'NUTS2'</span>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(estilo.upper())</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.show()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DARKGRID</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-30-output-2.png" width="510" height="473"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WHITEGRID</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-30-output-4.png" width="510" height="473"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DARK</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-30-output-6.png" width="510" height="473"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WHITE</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-30-output-8.png" width="510" height="473"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TICKS</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-30-output-10.png" width="510" height="473"></p>
+</div>
+</div>
+<p>tipos de plots em Seaborn</p>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diferentes tipos de plots em Seaborn</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>g1 <span class="op">=</span> sns.scatterplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS,y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, data <span class="op">=</span> df_mn_c2021)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS,y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS, data <span class="op">=</span> df_mn_c2021,kind<span class="op">=</span><span class="st">'scatter'</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(g1))</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(g2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'matplotlib.axes._axes.Axes'&gt;
+&lt;class 'seaborn.axisgrid.FacetGrid'&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-31-output-2.png" width="671" height="448"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-31-output-3.png" width="472" height="473"></p>
+</div>
+</div>
+<p>Adicionar Titulos</p>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definições globais:</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'ticks'</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">'colorblind'</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">'notebook'</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # Criar Gráfico</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>                kind <span class="op">=</span> <span class="st">"scatter"</span>,</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>                hue <span class="op">=</span> <span class="st">'NUTS2'</span>,</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>               col<span class="op">=</span><span class="st">'NUTS1'</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir Titulo e font do titulo</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>g.fig.suptitle(<span class="st">'Relacao população 65+ no total de população'</span>,</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>               y <span class="op">=</span> <span class="fl">1.05</span>,</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>              fontdict<span class="op">=</span>{<span class="st">'size'</span>: <span class="dv">20</span>, <span class="st">'color'</span>: <span class="st">'black'</span>,<span class="st">'name'</span>: <span class="st">'Arial'</span>})</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>g.set_titles(<span class="st">"NUTS1 </span><span class="sc">{col_name}</span><span class="st">"</span>)</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-32-output-1.png" width="1480" height="505"></p>
+</div>
+</div>
+<p>Mudar Rotulos dos Eixos</p>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> sns.relplot(x<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS<span class="op">/</span><span class="dv">1000</span>, </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df_mn_c2021.N_INDIVIDUOS_65_OU_MAIS<span class="op">/</span>df_mn_c2021.N_INDIVIDUOS, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df_mn_c2021,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                kind <span class="op">=</span> <span class="st">"scatter"</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                hue <span class="op">=</span> <span class="st">'NUTS2'</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>               col<span class="op">=</span><span class="st">'NUTS1'</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>g.fig.suptitle(<span class="st">'Relacao população 65+ no total de população'</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>               y <span class="op">=</span> <span class="fl">1.05</span>,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>              fontdict<span class="op">=</span>{<span class="st">'color'</span>: <span class="st">'black'</span>,<span class="st">'name'</span>: <span class="st">'Arial'</span>})</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>g.set_titles(<span class="st">"NUTS1 </span><span class="sc">{col_name}</span><span class="st">"</span>)</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotulos Eixos</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="co"># .set - permite definir atributos para cada eixo de um FacetGrid</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>g.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"População por municipio (em 1000)"</span>,</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>     ylabel<span class="op">=</span><span class="st">"Rácio nº Individuos superior a 65 anos"</span>)</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a><span class="co">'''</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Gravar Ficheiro:</span></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a><span class="co">outputfile = r'c:</span><span class="ch">\t</span><span class="co">emp\omeuplot.png'</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="co">g.savefig(outputfile, format='png')</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a><span class="co">'''</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-33-output-1.png" width="1499" height="505"></p>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="28">
+<pre><code>"\n# Gravar Ficheiro:\noutputfile = r'c:\temp\\omeuplot.png'\ng.savefig(outputfile, format='png')\n\n"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exercícios" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="exercícios"><span class="header-section-number">3.3</span> Exercícios</h2>
+<p>Ler dados</p>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Link direto para ficheiro CSV: Despesa com Medicamentos nos Hospitais do SNS</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>ficheiro <span class="op">=</span> <span class="vs">r'data\utentes-atendidos-nos-centros-de-saude-no-ambito-da-soep.csv'</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar num Pandas Dataframe</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(ficheiro, sep<span class="op">=</span><span class="st">';'</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>df.head</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>df.info</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>df.describe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<pre><code>&lt;bound method NDFrame.describe of        Período      ARS                                    ACES  \
+0      2019-07    Norte                            ULS Nordeste   
+1      2019-07    Norte  Trás-os-Montes - Alto Tâmega e Barroso   
+2      2019-07    Norte           Douro I - Marão e Douro Norte   
+3      2019-07    Norte           Douro I - Marão e Douro Norte   
+4      2019-07    Norte                    Douro II - Douro Sul   
+...        ...      ...                                     ...   
+27347  2023-09  Algarve                     Algarve I - Central   
+27348  2023-09  Algarve                 Algarve II - Barlavento   
+27349  2023-09  Algarve                 Algarve II - Barlavento   
+27350  2023-09  Algarve                  AlgarveIII - Sotavento   
+27351  2023-09  Algarve                  AlgarveIII - Sotavento   
+
+      Localização Geográfica       Sexo Faixa Etária  Nº Utentes  \
+0      41.8069684,-6.7587977  Masculino       65 e +          57   
+1       41.741781,-7.4731648   Feminino        50-64          30   
+2      41.2968711,-7.7483727  Masculino       65 e +          54   
+3      41.2968711,-7.7483727   Feminino        35-49          42   
+4      41.0953745,-7.8123805  Masculino          &lt;20           9   
+...                      ...        ...          ...         ...   
+27347  37.0274264,-7.9395984   Feminino        50-64          84   
+27348  37.1387554,-8.5445093  Masculino        20-34          24   
+27349  37.1387554,-8.5445093  Masculino       65 e +          77   
+27350   37.383008,-7.7293275  Masculino          &lt;20          23   
+27351   37.383008,-7.7293275   Feminino        20-34          25   
+
+                                                      ID  
+0                   2019-7/65 e +/Masculino/ULS Nordeste  
+1      2019-7/50-64/Feminino/Trás-os-Montes - Alto Tâ...  
+2      2019-7/65 e +/Masculino/Douro I - Marão e Dour...  
+3      2019-7/35-49/Feminino/Douro I - Marão e Douro ...  
+4              2019-7/&lt;20/Masculino/Douro II - Douro Sul  
+...                                                  ...  
+27347          2023-9/50-64/Feminino/Algarve I - Central  
+27348     2023-9/20-34/Masculino/Algarve II - Barlavento  
+27349    2023-9/65 e +/Masculino/Algarve II - Barlavento  
+27350        2023-9/&lt;20/Masculino/AlgarveIII - Sotavento  
+27351       2023-9/20-34/Feminino/AlgarveIII - Sotavento  
+
+[27352 rows x 8 columns]&gt;</code></pre>
+</div>
+</div>
+<p>BOXPLOT com a distribuíção por ARS dos diferentes nº de utentes por Sexo</p>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"ticks"</span>, palette<span class="op">=</span><span class="st">"pastel"</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico mostra a distribuição de nº de óbitos diários</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>sns.catplot(x<span class="op">=</span><span class="st">"ARS"</span>, <span class="co"># Dia da Semana</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> <span class="st">'Nº Utentes'</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> df,</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>            kind <span class="op">=</span> <span class="st">"box"</span>,</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>            hue <span class="op">=</span> <span class="st">"Sexo"</span>,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>            whis <span class="op">=</span> [<span class="dv">5</span>,<span class="dv">95</span>] <span class="co"># 2.0</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># sym = '' # - controlar visualização outliers</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-35-output-1.png" width="575" height="464"></p>
+</div>
+</div>
+<p>Mostrar num LINEPLOT o nº de utentos por Ano por ARS</p>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar novo variável ano no Dataframe:</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter "Período" para formato datetime</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Período'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'Período'</span>], <span class="bu">format</span><span class="op">=</span><span class="st">'%Y-%m'</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extrair o ano e criar nova coluna ANO</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ANO'</span>] <span class="op">=</span> df[<span class="st">'Período'</span>].dt.year</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>col_order<span class="op">=</span> <span class="bu">sorted</span>(df[<span class="st">'ARS'</span>].unique(),reverse<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>sns.relplot(x<span class="op">=</span>df.ANO, </span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>df[<span class="st">'Nº Utentes'</span>], </span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> df,</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>                kind <span class="op">=</span> <span class="st">"line"</span>,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                col <span class="op">=</span> <span class="st">"ARS"</span>,</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'red'</span>,</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>                col_wrap <span class="op">=</span> <span class="dv">3</span>, </span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>                errorbar <span class="op">=</span> <span class="st">'ci'</span>) </span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="300-mod3_files/figure-html/cell-36-output-1.png" width="1424" height="944"></p>
+</div>
+</div>
+<p>Desafio utilizar o package CUTECHARTS para nº de observações por ARS</p>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cutecharts.charts <span class="im">as</span> ctc</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> df[<span class="st">'ARS'</span>].value_counts().to_frame(name<span class="op">=</span><span class="st">"count"</span>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pie chart </span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>pie <span class="op">=</span> ctc.Pie(<span class="st">'ARS'</span>, <span class="co"># title</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>              width<span class="op">=</span><span class="st">'720px'</span>,height<span class="op">=</span><span class="st">'720px'</span>)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="co"># set the chart options</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>pie.set_options(labels<span class="op">=</span><span class="bu">list</span>(df2.index), <span class="co"># ARS names as labels</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>                inner_radius<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="co"># label to be shown on graph</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>pie.add_series(<span class="bu">list</span>(df2[<span class="st">'count'</span>])) </span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a><span class="co"># display the charts</span></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>pie.render_notebook()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+
+<script>
+    require.config({
+        paths: {
+            'chartXkcd':'https://cdn.jsdelivr.net/npm/chart.xkcd@1.1/dist/chart.xkcd.min'
+        }
+    });
+</script>
+
+<div id="be2e761d2d28448cac59eb11363f3aab" class="chart-container" style="width: 720px">
+        <svg id="chart_be2e761d2d28448cac59eb11363f3aab"></svg>
+    </div>
+    <script>
+        require(['chartXkcd'], function(chartXkcd) {
+            const svg_be2e761d2d28448cac59eb11363f3aab = document.querySelector('#chart_be2e761d2d28448cac59eb11363f3aab')
+            const chart_be2e761d2d28448cac59eb11363f3aab = new chartXkcd.Pie(svg_be2e761d2d28448cac59eb11363f3aab, {"title": "ARS", "data": {"datasets": [{"data": [12717, 9233, 2445, 2124, 833]}], "labels": ["Norte", "Lisboa e Vale do Tejo", "Centro", "Algarve", "Alentejo"]}, "options": {"innerRadius": 0, "legendPosition": 1}});
+        })
+    </script>
+</div>
+</div>
 <p><br></p>
 
 
+</section>
 
 <p><img src="images/ine_logo_secundario_cores_491x57.png" class="img-fluid" style="width:50.0%"></p></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -621,12 +1649,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./200-mod2.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Módulo 2</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Science (Basics)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./400-mod4.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Módulo 4</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Programming Tecnhiques (Intermediate)</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -634,4 +1662,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-git"></i></div><div class="action-links"><p><a href="https://git.ine.pt/nda/formacao/python2024/edit/main/300-mod3.qmd" class="toc-action">Edit this page</a></p></div></div></div></div></footer></body></html>
+</body></html>
