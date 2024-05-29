@@ -616,7 +616,7 @@ print(f"A distância entre {origem} e {destino} é aproximadamente  {distance_km
 
 importa dados de Censos2021 por NUTS3 e Municipio  
 ```{python}
-#| eval: true
+#| eval: false
 
 
 # Obter Password e Utilizador para Ligacao SQL
@@ -667,6 +667,7 @@ conn.close()
 
 fazer JOIN dos dados GDF com as NUTS3  
 ```{python}
+#| eval: false
 # Juntar Dados NUTS3 do C2021 a GDF com as areas NUTS3
 
 # gdf_nuts3 obtido de Shapefile NUTS3: NUTS3_2015_PT.shp (dados estão em WebMercator)
@@ -684,6 +685,7 @@ print(gdf_nuts3_2.info())
 
 Visualizar a classificação da relação entre 2 variáveis por NUTS3  
 ```{python}
+#| eval: false
 # Import packages
 # import matplotlib.pyplot as plt
 # import pandas as pd
@@ -723,7 +725,7 @@ plt.show()
 
 Criar Mapa Temático das NUTS com apresentação de cidades Estatisticas  
 ```{python}
-#| eval: true
+#| eval: false
 
 # Fazer o Join de NUTS e dados dos Censos , especificar: DF
 gdf_nuts3_2 = gdf_nuts3.merge(df_n3_c2021, left_on='NUTS3', right_on='NUTS3', how='left')
@@ -786,12 +788,14 @@ plt.show()
 ```
 
 ```{python}
+#| eval: false
 gdf_cidades_m.explore()
 ```
 
 ### Folium
 
 ```{python}
+#| eval: false
 import folium
 
 # Mostrar Zona do INE 

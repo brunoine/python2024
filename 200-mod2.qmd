@@ -1044,6 +1044,7 @@ plt.show()
 estabelecer ligação a base de dados
 
 ```{python}
+#| eval: false
 # importar package 
 import cx_Oracle # cx_Oracle to access Oracle database
 
