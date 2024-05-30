@@ -237,19 +237,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./700-mod7.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Módulo 7</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Programming Techniques (Advanced)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./800-mod8.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Módulo 8</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Data Science (Advanced)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./900-mod9.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Módulo 9</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Dados Geográficos</span></span></a>
   </div>
 </li>
       </ul>
@@ -2809,7 +2809,7 @@ Name: populacao, dtype: float64</code></pre>
 <span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>df5.groupby(<span class="st">'nuts3'</span>).<span class="bu">apply</span>(norm_by_area)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\2164890277.py:6: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\2164890277.py:6: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
   df5.groupby('nuts3').apply(norm_by_area)</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="57">
@@ -3507,9 +3507,9 @@ dtype: float64</code></pre>
 </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4189409504.py:1: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\4189409504.py:1: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
   titanic.pivot_table('survived', index='sex', columns='class', aggfunc='mean')
-C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4189409504.py:7: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
+C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\4189409504.py:7: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
   titanic.pivot_table('survived', index=['sex', age_group],</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="70">
@@ -3676,9 +3676,9 @@ C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4189409504.py:7: FutureWa
 <pre><code></code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4083826376.py:1: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\4083826376.py:1: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
   titanic.pivot_table('fare', index=['sex'],
-C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4083826376.py:6: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
+C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\4083826376.py:6: FutureWarning: The default value of observed=False is deprecated and will change to observed=True in a future version of pandas. Specify observed=False to silence this warning and retain the current behavior
   titanic.pivot_table('survived', index=['class'], aggfunc='count')</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="72">
@@ -3738,12 +3738,12 @@ C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\4083826376.py:6: FutureWa
 <span id="cb114-7"><a href="#cb114-7" aria-hidden="true" tabindex="-1"></a>df_hosp <span class="op">=</span> df_hosp.reset_index() <span class="co"># passar o index para uma coluna; podia ser feito com inplace = True</span></span>
 <span id="cb114-8"><a href="#cb114-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
 <span id="cb114-9"><a href="#cb114-9" aria-hidden="true" tabindex="-1"></a>df_hosp.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\281557973.py:1: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
-  df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')</code></pre>
-</div>
 <div class="cell-output cell-output-stdout">
 <pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\281557973.py:1: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
+  df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code></code></pre>
@@ -7414,10 +7414,10 @@ NUTS2_30       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 <span id="cb160-6"><a href="#cb160-6" aria-hidden="true" tabindex="-1"></a><span class="co"># *shape faz unpack do tuplo shape</span></span>
 <span id="cb160-7"><a href="#cb160-7" aria-hidden="true" tabindex="-1"></a>rd.rand(<span class="op">*</span>shape) <span class="co"># gerador de samples de uma distribuição uniforme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="101">
-<pre><code>array([[0.67990644, 0.17029312],
-       [0.13332023, 0.87907197],
-       [0.02816634, 0.38036025],
-       [0.65046877, 0.46764812]])</code></pre>
+<pre><code>array([[0.95569962, 0.94993731],
+       [0.68944862, 0.12672182],
+       [0.66743279, 0.91807003],
+       [0.16408514, 0.83971314]])</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="105">
@@ -7425,10 +7425,10 @@ NUTS2_30       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 <span id="cb162-2"><a href="#cb162-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gerador de samples de uma distribuição log-normal</span></span>
 <span id="cb162-3"><a href="#cb162-3" aria-hidden="true" tabindex="-1"></a>rd.rand(<span class="op">*</span>shape) <span class="op">*</span> rd.lognormal(<span class="dv">0</span>, <span class="dv">1</span>, shape) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="102">
-<pre><code>array([[1.78713792, 1.51205203],
-       [0.04938606, 0.05755813],
-       [0.00308035, 0.15499421],
-       [0.54919712, 2.13729148]])</code></pre>
+<pre><code>array([[3.07867567, 0.29107532],
+       [0.32893935, 0.25393341],
+       [1.13404802, 1.4326565 ],
+       [0.38529293, 2.77981218]])</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="106">
@@ -7474,28 +7474,28 @@ NUTS2_30       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>0.342849</td>
-<td>5.180668</td>
+<td>0.558178</td>
+<td>0.301456</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>2.755412</td>
-<td>1.808409</td>
+<td>1.108466</td>
+<td>2.647193</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>0.732323</td>
-<td>0.370073</td>
+<td>3.675595</td>
+<td>0.501199</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
-<td>1.826203</td>
-<td>2.140827</td>
+<td>1.056189</td>
+<td>3.962007</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
-<td>0.990985</td>
-<td>0.438438</td>
+<td>2.272442</td>
+<td>0.045789</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">...</td>
@@ -7504,28 +7504,28 @@ NUTS2_30       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">95</td>
-<td>1.725187</td>
-<td>0.504171</td>
+<td>2.162981</td>
+<td>0.937799</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">96</td>
-<td>2.463615</td>
-<td>3.370624</td>
+<td>2.416412</td>
+<td>0.363348</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">97</td>
-<td>0.805599</td>
-<td>1.107084</td>
+<td>0.691724</td>
+<td>1.134979</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">98</td>
-<td>0.860474</td>
-<td>0.102522</td>
+<td>0.237128</td>
+<td>1.090808</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">99</td>
-<td>0.195935</td>
-<td>3.549530</td>
+<td>3.202288</td>
+<td>2.941029</td>
 </tr>
 </tbody>
 </table>
@@ -7565,7 +7565,7 @@ NUTS2_30       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 <span id="cb166-19"><a href="#cb166-19" aria-hidden="true" tabindex="-1"></a>            </span>
 <span id="cb166-20"><a href="#cb166-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="500-mod5_files/figure-html/cell-109-output-1.png" width="597" height="413"></p>
+<p><img src="500-mod5_files/figure-html/cell-109-output-1.png" width="589" height="411"></p>
 </div>
 </div>
 <div class="cell" data-execution_count="109">
@@ -7637,12 +7637,12 @@ Com este conjunto de dados que inclui o número de médicos e enfermeiros em vá
 <span id="cb172-3"><a href="#cb172-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb172-4"><a href="#cb172-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
 <span id="cb172-5"><a href="#cb172-5" aria-hidden="true" tabindex="-1"></a>df_hosp.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\390302264.py:1: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
-  df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')</code></pre>
-</div>
 <div class="cell-output cell-output-stdout">
 <pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\390302264.py:1: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
+  df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="109">
 <div>
@@ -8072,8 +8072,8 @@ Com este conjunto de dados que inclui o número de médicos e enfermeiros em vá
 Dep. Variable:                 C31011   R-squared:                       0.679
 Model:                            OLS   Adj. R-squared:                  0.675
 Method:                 Least Squares   F-statistic:                     177.9
-Date:                Wed, 29 May 2024   Prob (F-statistic):           1.89e-22
-Time:                        22:27:40   Log-Likelihood:                -206.66
+Date:                Thu, 30 May 2024   Prob (F-statistic):           1.89e-22
+Time:                        11:56:49   Log-Likelihood:                -206.66
 No. Observations:                  86   AIC:                             417.3
 Df Residuals:                      84   BIC:                             422.2
 Df Model:                           1                                         
@@ -8122,8 +8122,8 @@ Notes:
 Dep. Variable:                 C31011   R-squared:                       0.681
 Model:                            OLS   Adj. R-squared:                  0.673
 Method:                 Least Squares   F-statistic:                     88.60
-Date:                Wed, 29 May 2024   Prob (F-statistic):           2.55e-21
-Time:                        22:27:40   Log-Likelihood:                -206.43
+Date:                Thu, 30 May 2024   Prob (F-statistic):           2.55e-21
+Time:                        11:56:49   Log-Likelihood:                -206.43
 No. Observations:                  86   AIC:                             418.9
 Df Residuals:                      83   BIC:                             426.2
 Df Model:                           2                                         
@@ -8156,8 +8156,8 @@ Notes:
 Dep. Variable:                 C31011   R-squared:                       0.697
 Model:                            OLS   Adj. R-squared:                  0.689
 Method:                 Least Squares   F-statistic:                     95.36
-Date:                Wed, 29 May 2024   Prob (F-statistic):           3.12e-22
-Time:                        22:27:40   Log-Likelihood:                -204.26
+Date:                Thu, 30 May 2024   Prob (F-statistic):           3.12e-22
+Time:                        11:56:49   Log-Likelihood:                -204.26
 No. Observations:                  86   AIC:                             414.5
 Df Residuals:                      83   BIC:                             421.9
 Df Model:                           2                                         
@@ -8356,8 +8356,8 @@ Notes:
 Dep. Variable:                 C31011   R-squared:                       1.000
 Model:                            OLS   Adj. R-squared:                  1.000
 Method:                 Least Squares   F-statistic:                 1.313e+25
-Date:                Wed, 29 May 2024   Prob (F-statistic):          4.89e-260
-Time:                        22:27:41   Log-Likelihood:                 1869.0
+Date:                Thu, 30 May 2024   Prob (F-statistic):          4.89e-260
+Time:                        11:56:49   Log-Likelihood:                 1869.0
 No. Observations:                  71   AIC:                            -3638.
 Df Residuals:                      21   BIC:                            -3525.
 Df Model:                          49                                         
@@ -8616,8 +8616,8 @@ Warning
 Dep. Variable:                 C31011   R-squared:                       0.988
 Model:                            OLS   Adj. R-squared:                  0.963
 Method:                 Least Squares   F-statistic:                     39.38
-Date:                Wed, 29 May 2024   Prob (F-statistic):           1.05e-13
-Time:                        22:27:41   Log-Likelihood:                -55.748
+Date:                Thu, 30 May 2024   Prob (F-statistic):           1.05e-13
+Time:                        11:56:49   Log-Likelihood:                -55.748
 No. Observations:                  71   AIC:                             209.5
 Df Residuals:                      22   BIC:                             320.4
 Df Model:                          48                                         
@@ -9635,7 +9635,7 @@ Com este conjunto de dados que inclui o número de médicos e enfermeiros em vá
 <span id="cb248-4"><a href="#cb248-4" aria-hidden="true" tabindex="-1"></a>df_hosp <span class="op">=</span> pd.read_csv(<span class="ss">f"</span><span class="sc">{</span>datadir<span class="sc">}{</span>filename<span class="sc">}</span><span class="ss">"</span>, index_col<span class="op">=</span><span class="dv">0</span>, verbose <span class="op">=</span> <span class="va">False</span>, encoding<span class="op">=</span><span class="st">'latin-1'</span>)</span>
 <span id="cb248-5"><a href="#cb248-5" aria-hidden="true" tabindex="-1"></a>df_hosp.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\2009169450.py:4: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\2009169450.py:4: FutureWarning: The 'verbose' keyword in pd.read_csv is deprecated and will be removed in a future version.
   df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="154">
@@ -9832,7 +9832,7 @@ Com este conjunto de dados que inclui o número de médicos e enfermeiros em vá
 <span id="cb250-8"><a href="#cb250-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb250-9"><a href="#cb250-9" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_12592\1416912252.py:7: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+<pre><code>C:\Users\bruno.lima\AppData\Local\Temp\ipykernel_8160\1416912252.py:7: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
   df['t_cirurgia'] = df['t_cirurgia'].replace({'yes': 1, 'no': 0}) # substituir os valores yes e no por 1 e 0</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="155">
@@ -10304,22 +10304,22 @@ corresponding data partition:
 0   2012.0   229.0   17.0  1458.0   247.0   159.0     2.0    11.0     0.0   
 1   2012.0   206.0   17.0   144.0     0.0     0.0     0.0     0.0     0.0   
 3   2012.0   106.0   17.0   801.0   166.0   108.0     0.0    12.0     0.0   
-21  2012.0   151.0   17.0  2587.0   529.0   337.0     3.0    32.0     0.0   
-27  2012.0    12.0   17.0    71.0     7.0     7.0     0.0     0.0     0.0   
+27  2012.0   151.0   17.0  2587.0   529.0   337.0     3.0    32.0     0.0   
+33  2012.0    12.0   17.0    71.0     7.0     7.0     0.0     0.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
 0      5.0  ...    39.0     8.0    19.0     2.0     2.0     3.0     5.0   
 1      0.0  ...     0.0     0.0     0.0     0.0     0.0     0.0     0.0   
 3      7.0  ...    36.0     4.0    16.0     5.0     2.0     2.0     7.0   
-21    14.0  ...    40.0     8.0    11.0     6.0     3.0     0.0     0.0   
-27     0.0  ...     4.0     0.0     0.0     0.0     4.0     0.0     0.0   
+27    14.0  ...    40.0     8.0    11.0     6.0     3.0     0.0     0.0   
+33     0.0  ...     4.0     0.0     0.0     0.0     4.0     0.0     0.0   
 
     C31071  C32001  t_cirurgia  
 0      0.0   454.0           1  
 1      0.0    46.0           0  
 3      0.0   228.0           1  
-21    12.0   793.0           0  
-27     0.0     8.0           1  
+27    12.0   793.0           0  
+33     0.0     8.0           1  
 
 [5 rows x 62 columns]
 partition target feature impurity: 1.0
@@ -10332,21 +10332,21 @@ corresponding data partition:
 5   2012.0   115.0   16.0  1461.0   246.0  171.00     2.0    20.0     0.0   
 6   2012.0   189.0   16.0   136.0    10.0    8.00     0.0     0.0     0.0   
 7   2012.0   199.0   16.0  2032.0   483.0  299.00     2.0    30.0     2.0   
-11  2012.0    88.0   16.0   190.0    17.0   15.00     0.0     2.0     0.0   
+17  2012.0    88.0   16.0   190.0    17.0   15.00     0.0     2.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
 2      5.0  ...     0.0     0.0     0.0     0.0     0.0     0.0     0.0   
 5      6.0  ...    48.0    11.0    21.0     3.0     8.0     1.0     3.0   
 6      0.0  ...     5.0     2.0     0.0     1.0     0.0     1.0     1.0   
 7     12.0  ...   103.0    21.0    26.0    17.0    18.0     4.0    14.0   
-11     2.0  ...    10.0     2.0     0.0     1.0     1.0     1.0     5.0   
+17     2.0  ...    10.0     2.0     0.0     1.0     1.0     1.0     5.0   
 
     C31071  C32001  t_cirurgia  
 2      0.0   337.0           1  
 5      1.0   518.0           1  
 6      0.0    53.0           1  
 7      3.0   577.0           1  
-11     0.0    76.0           1  
+17     0.0    76.0           1  
 
 [5 rows x 62 columns]
 partition target feature impurity: 0.99
@@ -10359,21 +10359,21 @@ corresponding data partition:
 8   2012.0    57.0   11.0   586.0    86.0    51.0     0.0     5.0     0.0   
 9   2012.0   148.0   11.0   262.0    17.0    13.0     0.0     1.0     0.0   
 10  2012.0   124.0   11.0   293.0    36.0    33.0     0.0     4.0     0.0   
-20  2012.0    14.0   11.0   392.0    53.0    33.0     0.0     0.0     0.0   
+26  2012.0    14.0   11.0   392.0    53.0    33.0     0.0     0.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
 4      0.0  ...     8.0     0.0     0.0     1.0     0.0     1.0     6.0   
 8      0.0  ...    53.0     7.0    12.0    14.0     7.0     4.0     7.0   
 9      0.0  ...    17.0     0.0     0.0     7.0     0.0     0.0    10.0   
 10     1.0  ...    15.0     4.0     0.0     7.0     0.0     1.0     3.0   
-20     0.0  ...    76.0     0.0     0.0     0.0    72.0     2.0     2.0   
+26     0.0  ...    76.0     0.0     0.0     0.0    72.0     2.0     2.0   
 
     C31071  C32001  t_cirurgia  
 4      0.0    80.0           1  
 8      2.0   184.0           1  
 9      0.0    73.0           0  
 10     0.0    91.0           1  
-20     0.0    52.0           0  
+26     0.0    52.0           0  
 
 [5 rows x 62 columns]
 partition target feature impurity: 1.0
@@ -10382,16 +10382,16 @@ partition weight: 30/86
 level name: 30.0
 corresponding data partition:
        ANO  NORDEM  NUTS2  C10001  C20001  C21001  C21011  C21021  C21031  \
-13  2012.0   205.0   30.0   515.0    83.0    57.0     0.0     0.0     0.0   
-14  2012.0   131.0   30.0   169.0     1.0     1.0     0.0     0.0     0.0   
+19  2012.0   205.0   30.0   515.0    83.0    57.0     0.0     0.0     0.0   
+20  2012.0   131.0   30.0   169.0     1.0     1.0     0.0     0.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
-13     0.0  ...    10.0     0.0     0.0     3.0     2.0     0.0     5.0   
-14     0.0  ...     3.0     0.0     0.0     1.0     1.0     0.0     1.0   
+19     0.0  ...    10.0     0.0     0.0     3.0     2.0     0.0     5.0   
+20     0.0  ...     3.0     0.0     0.0     1.0     1.0     0.0     1.0   
 
     C31071  C32001  t_cirurgia  
-13     0.0   187.0           1  
-14     0.0    48.0           0  
+19     0.0   187.0           1  
+20     0.0    48.0           0  
 
 [2 rows x 62 columns]
 partition target feature impurity: 1.0
@@ -10400,13 +10400,13 @@ partition weight: 2/86
 level name: 20.0
 corresponding data partition:
        ANO  NORDEM  NUTS2  C10001  C20001  C21001  C21011  C21021  C21031  \
-15  2012.0    41.0   20.0   488.0    46.0    30.0     0.0     3.0     0.0   
+21  2012.0    41.0   20.0   488.0    46.0    30.0     0.0     3.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
-15     2.0  ...    19.0     1.0     8.0     7.0     0.0     0.0     1.0   
+21     2.0  ...    19.0     1.0     8.0     7.0     0.0     0.0     1.0   
 
     C31071  C32001  t_cirurgia  
-15     2.0   107.0           1  
+21     2.0   107.0           1  
 
 [1 rows x 62 columns]
 partition target feature impurity: -0.0
@@ -10415,25 +10415,25 @@ partition weight: 1/86
 level name: 18.0
 corresponding data partition:
        ANO  NORDEM  NUTS2  C10001  C20001  C21001  C21011  C21021  C21031  \
-16  2012.0   130.0   18.0   415.0    43.0    34.0     0.0     3.0     0.0   
-34  2012.0   105.0   18.0  1359.0   251.0   146.0     2.0    14.0     1.0   
-50  2012.0   223.0   18.0  1454.0   273.0   154.0     3.0    11.0     0.0   
-53  2012.0   224.0   18.0   800.0    87.0    46.0     0.0     2.0     0.0   
-54  2012.0   190.0   18.0   384.0    35.0    30.0     0.0     3.0     0.0   
+22  2012.0   130.0   18.0   415.0    43.0    34.0     0.0     3.0     0.0   
+40  2012.0   105.0   18.0  1359.0   251.0   146.0     2.0    14.0     1.0   
+62  2012.0   223.0   18.0  1454.0   273.0   154.0     3.0    11.0     0.0   
+65  2012.0   224.0   18.0   800.0    87.0    46.0     0.0     2.0     0.0   
+66  2012.0   190.0   18.0   384.0    35.0    30.0     0.0     3.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
-16     0.0  ...    12.0     0.0     1.0     5.0     0.0     0.0     0.0   
-34     8.0  ...    75.0    14.0    17.0    13.0     9.0     4.0    10.0   
-50    10.0  ...    72.0    12.0    18.0    13.0    14.0     2.0    12.0   
-53     0.0  ...    36.0     4.0    10.0     3.0    10.0     6.0     3.0   
-54     0.0  ...    14.0     1.0     2.0     4.0     1.0     3.0     2.0   
+22     0.0  ...    12.0     0.0     1.0     5.0     0.0     0.0     0.0   
+40     8.0  ...    75.0    14.0    17.0    13.0     9.0     4.0    10.0   
+62    10.0  ...    72.0    12.0    18.0    13.0    14.0     2.0    12.0   
+65     0.0  ...    36.0     4.0    10.0     3.0    10.0     6.0     3.0   
+66     0.0  ...    14.0     1.0     2.0     4.0     1.0     3.0     2.0   
 
     C31071  C32001  t_cirurgia  
-16     6.0   153.0           0  
-34     8.0   382.0           0  
-50     1.0   411.0           0  
-53     0.0   235.0           1  
-54     1.0   110.0           1  
+22     6.0   153.0           0  
+40     8.0   382.0           0  
+62     1.0   411.0           0  
+65     0.0   235.0           1  
+66     1.0   110.0           1  
 
 [5 rows x 62 columns]
 partition target feature impurity: 0.918
@@ -10442,16 +10442,16 @@ partition weight: 6/86
 level name: 15.0
 corresponding data partition:
        ANO  NORDEM  NUTS2  C10001  C20001  C21001  C21011  C21021  C21031  \
-41  2012.0   208.0   15.0   183.0     5.0     5.0     0.0     0.0     0.0   
-42  2012.0   164.0   15.0  1391.0   172.0   118.0     1.0    11.0     0.0   
+47  2012.0   208.0   15.0   183.0     5.0     5.0     0.0     0.0     0.0   
+48  2012.0   164.0   15.0  1391.0   172.0   118.0     1.0    11.0     0.0   
 
     C21041  ...  C31001  C31011  C31021  C31031  C31041  C31051  C31061  \
-41     0.0  ...     0.0     0.0     0.0     0.0     0.0     0.0     0.0   
-42     2.0  ...    34.0     9.0    13.0     6.0     4.0     0.0     0.0   
+47     0.0  ...     0.0     0.0     0.0     0.0     0.0     0.0     0.0   
+48     2.0  ...    34.0     9.0    13.0     6.0     4.0     0.0     0.0   
 
     C31071  C32001  t_cirurgia  
-41     0.0    71.0           1  
-42     2.0   492.0           1  
+47     0.0    71.0           1  
+48     2.0   492.0           1  
 
 [2 rows x 62 columns]
 partition target feature impurity: -0.0
@@ -10547,9 +10547,9 @@ partition weight: 2/86
 |   |   |   |--- class: 1
 |--- feature_58 &gt;  1.50
 |   |--- feature_60 &lt;= 73.50
-|   |   |--- feature_51 &lt;= 57.50
+|   |   |--- feature_55 &lt;= 2.50
 |   |   |   |--- class: 1
-|   |   |--- feature_51 &gt;  57.50
+|   |   |--- feature_55 &gt;  2.50
 |   |   |   |--- class: 0
 |   |--- feature_60 &gt;  73.50
 |   |   |--- feature_58 &lt;= 9.50
@@ -11050,7 +11050,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <span id="cb274-12"><a href="#cb274-12" aria-hidden="true" tabindex="-1"></a>y_proba</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Training set score: 1.0
-Test set score: 0.5555555555555556
+Test set score: 0.5
 
 </code></pre>
 </div>
@@ -11068,7 +11068,7 @@ Test set score: 0.5555555555555556
        [1., 0.],
        [1., 0.],
        [0., 1.],
-       [0., 1.],
+       [1., 0.],
        [1., 0.],
        [0., 1.],
        [1., 0.],
@@ -11082,7 +11082,7 @@ Test set score: 0.5555555555555556
 <div class="cell-output cell-output-stdout">
 <pre><code>           pred: No  pred: Yes
 real: No          5          5
-real: Yes         3          5</code></pre>
+real: Yes         4          4</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="182">
@@ -11092,9 +11092,9 @@ real: Yes         3          5</code></pre>
 <span id="cb279-4"><a href="#cb279-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Recall: </span><span class="sc">%.3f</span><span class="st">'</span> <span class="op">%</span> recall_score(y_test, y_pred))</span>
 <span id="cb279-5"><a href="#cb279-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Accuracy: </span><span class="sc">%.3f</span><span class="st">'</span> <span class="op">%</span> accuracy_score(y_test, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Precision: 0.500
-Recall: 0.625
-Accuracy: 0.556</code></pre>
+<pre><code>Precision: 0.444
+Recall: 0.500
+Accuracy: 0.500</code></pre>
 </div>
 </div>
 <p><img src="images/conf_matrix.png" class="img-fluid"></p>

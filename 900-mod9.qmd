@@ -1,4 +1,4 @@
-# Módulo 9
+# Dados Geográficos
 
 ::: {.callout-tip}
 ## Conteúdos
@@ -9,6 +9,3376 @@ Os formatos de dados JSON e GEOJSON.
 
 Como obter dados através de um API.
 :::
+
+## Manipulação de dados
+
+Geometria em GeoPandas
+
++ `Geoseries` 
++ `Geometry` 
+
+Operações sobre a coluna GeoMetry
+
++ simplificar é importar
++ facilita a visualização
+
+```{python}
+import geopandas as gpd
+import folium
+
+# Simplify: https://geopandas.org/en/stable/docs/reference/api/geopandas.GeoSeries.simplify.html
+# Exemplo Importar os dados da BGRI2021 
+# Caminho para o arquivo GeoPackage
+gpk = r"data\geo\BGRI2021_1106.gpkg"
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1106 = gpd.read_file(gpk)
+gdf1106_2 = gpd.read_file(gpk)
+# Simplificar a geografia para uma precisão de 5 metros
+# Experimenta - diferentes valores para ver o efeito na geometria
+gdf1106_2['geometry'] = gdf1106_2['geometry'].simplify(tolerance=10)
+
+# ------------------
+# Mostrar a localização com Folium
+# Obter Centroid
+centroid = gdf1106.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude  longitude
+center_map = [centroid.y, centroid.x]
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=12, tiles='OpenStreetMap')
+
+# Adicionar Geografia folium map
+# folium.GeoJson constructor
+folium.GeoJson(gdf1106).add_to(folium_map)
+
+# Mudar a cor
+style_function = lambda x: {'fillColor': '#ffffff', 'color': '#000000'}
+folium.GeoJson(gdf1106_2, style_function=style_function).add_to(folium_map)
+
+#  Widget para controloar os diferentes layers:
+folium.LayerControl().add_to(folium_map)
+
+folium_map
+# Visualizar o GeoDataFrame
+#gdf1106.plot(column = 'DTMNFR21',
+#              legend = False)
+```
+
+```{python}
+# explore() forma fácil de ver uma GeoDataFrame
+
+# Mostrar a geografia do GeoDataFrame
+gdf1106_2.explore(column = 'DTMNFR21',
+              legend = True,
+                  edgecolor = 'black')
+```
+
+
+Utilizar a área de cada elemento
+
+```{python}
+#print(gdf1106.info())
+
+# Codigo que mostra como calcular a população por KM2
+
+# Verificar o CRS da GDF 
+print (gdf1106.crs)
+# Area 1º registo
+print('BGRI21:', gdf1106.iloc[10].BGRI2021, 'Area:', gdf1106.iloc[10].geometry.area)
+
+# Adicionar nova coluna 
+# Caso GDF está noutra CRS será necessario uma correção: gdf1106['geometry'].to_crs(epsg=3857).area
+gdf1106['AREA_KM2'] = gdf1106['geometry'].area / 1000000
+gdf1106['INDIV_KM2'] = gdf1106['N_INDIVIDUOS'] / gdf1106['AREA_KM2']
+
+# Mostrar resultado:
+print(gdf1106[['DTMNFR21', 'N_INDIVIDUOS','AREA_KM2', 'INDIV_KM2']].head(10))
+
+```
+
+Mostrar resultado como mapa  
+```{python}
+# Import packages
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+
+# Definir figura:
+f, ax = plt.subplots(1, figsize=(9, 9))
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 3}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+gdf1106.plot(column=gdf1106.INDIV_KM2, 
+              scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+              k=9, 
+              cmap='PuBu', 
+              legend=True,
+              edgecolor = 'None', # sem outline
+              legend_kwds  = lgnd_kwds,
+              ax = ax)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('População por Km2')
+plt.show()
+
+```
+
+Alterar o tipo de Geometria  
+```{python}
+#print(gdf1106.info())
+
+import geopandas as gpd
+import folium
+
+# Criar um novo GeoDataFrame de pontos
+gdf1106_points = gdf1106.copy()
+
+# Neste momento a Geometria ainda é de Polygons:
+print (gdf1106_points['geometry'].iloc[0].geom_type)
+```
+
+converter para pontos  
+```{python}
+# Calcular o centróide de cada polígono
+gdf1106_points['geometry'] = gdf1106['geometry'].centroid
+
+# Calcular ponto dentro poligono
+#gdf1106_points['geometry'] = gdf1106['geometry'].representative_point()
+
+print("Geometria original e nova:",gdf1106.iloc[0]['geometry'].geom_type,gdf1106_points.iloc[0]['geometry'].geom_type)
+
+```
+
+visualizar resultado  
+```{python}
+# Fazer Seleção dos Registos para facilitar visualização
+gdf_pnt110657 = gdf1106_points[gdf1106_points['DTMNFR21'] == '110655']
+gdf_poly110657 = gdf1106[gdf1106['DTMNFR21'] == '110655']
+
+# --------------------------------------
+# Mostrar a localização com Folium
+# São muitos dados - visualização é lento
+centroid = gdf_pnt110657.to_crs(epsg=4326).unary_union.centroid
+
+# Criar Listagem com localização de latitude  longitude
+center_map = [centroid.y, centroid.x]
+# Criar Mapa e mostrar
+folium_map = folium.Map(location=center_map, zoom_start=15, tiles='OpenStreetMap')
+
+# Adicionar Geografia folium map
+# folium.GeoJson constructor
+folium.GeoJson(gdf_pnt110657).add_to(folium_map)
+folium.GeoJson(gdf_poly110657).add_to(folium_map)
+
+#  Widget para controloar os diferentes layers:
+folium.LayerControl().add_to(folium_map)
+
+folium_map
+```
+
+criar nova geografia a partir de um `dissolve`  
+```{python}
+import geopandas as gpd
+
+# Codigo que mostra um dissolve das subsecções para freguesias
+# Utilizar argumento aggfunc (default = first)
+
+# Alternativa 1: DTMNFR21 passa a ser o index - sem reset_index()
+# gdf1106_freg = gdf1106.dissolve(by='DTMNFR21', aggfunc='sum')
+
+# Alternativa 2 reset_index para manter a coluna
+gdf1106_freg = gdf1106.dissolve(by='DTMNFR21', aggfunc='sum').reset_index()
+
+
+# Mostrar Resultado da nova gdf
+# print(gdf1106_freg.info())
+
+# De seguido será necessária fazer limpeza e correção das colunas
+# Apagar Colunas desnecessários
+gdf1106_freg = gdf1106_freg.drop(columns=['BGRI2021','DTMNFRSEC21','SECNUM21','SSNUM21','SECSSNUM21','SUBSECCAO','NUTS1','NUTS2','NUTS3'])
+
+# Mudar os valores das colunas nivel superior a DTMNFR21
+gdf1106_freg['DTMN21'] = '1106'
+gdf1106_freg['DT21'] = '1106'
+
+gdf1106_freg.head()
+```
+
+```{python}
+# Mostrar o resultado (a geografia do GeoDataFrame)
+gdf1106_freg.explore(column = 'DTMNFR21',
+              legend = True,
+                  edgecolor = 'black')
+```
+
+### Operações entre Datasets
+
+*Spatial join*  
+```{python}
+import geopandas as gpd
+import folium
+
+# Importar Paragens de autocarro
+gpk = r"data\geo\GPK_CARRIS.gpkg"
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdfCarris = gpd.read_file(gpk,encoding='utf-8')
+
+print(gdfCarris.head())
+# Total de 1983 registos
+print(gdfCarris.info())
+
+
+print('BGRI21:', gdfCarris.iloc[10].other_tags)
+
+# ------------------
+# Mostrar a localização 
+gdfCarris.explore(legend = True,
+                  edgecolor = 'black',
+                  marker_type = 'marker')
+```
+
+*Spatial join* de *polygons* para *points*  
+```{python}
+# Realizar o spatial join
+gdf_join = gpd.sjoin(gdf1106_freg, gdfCarris, how="inner", predicate="contains")
+
+# Limitar Colunas:
+# gdf_join = gpd.sjoin(gdf1106_freg[['DTMNFR21', 'geometry']], gdfCarris, how="left", predicate="contains")
+
+print (f"Tipo de Geometria: {gdf_join['geometry'].iloc[0].geom_type}")
+print (f"Nº de Registos Input: {len(gdf1106_freg)}")
+print (f"Nº de Registos Output: {len(gdf_join)}", "\n")
+
+
+#gdf_join.info()
+```
+
+*Join* de *points* para *polygons*  
+
+por exemplo, obter a freguesia para cada paragem de autocarro  
+```{python}
+import geopandas as gpd
+
+# Perform spatial join
+gdf_join = gpd.sjoin(gdfCarris, gdf1106_freg[['DTMNFR21', 'geometry']], how='left', predicate='within')
+
+# Mostrar Resultado
+print (f"Tipo de Geometria: {gdf_join['geometry'].iloc[0].geom_type}")
+print (f"Nº de Registos Input: {len(gdfCarris)}")
+print (f"Nº de Registos Output: {len(gdf_join)}", "\n")
+
+gdf_join[['osm_id','DTMNFR21']].head()
+```
+
+obter a contagem das paragens de freguesia  
+```{python}
+#gdf1106_freg.drop(columns=['n_paragens_x','n_paragens_y'], inplace=True)
+
+# Realiza o spatial join
+# '''
+# 1. Fazer sjoin: resultado um GDF com o memso numero de registos que os pontos
+# 2. Adicionar uma nova coluna n_paragens com total de registos existentes por Freguesia
+# 3. Obter Dataframe com numero de Valores unicos 
+# 4. Fazer merge do novo valor obtido com Geodataframe original
+# 5. Apagar o objecto do join
+# '''
+# Realizar o spatial join
+# Resultado terá o mesmo nº de registos que gdfCarris
+gdf_join = gpd.sjoin(gdf1106_freg, gdfCarris, how="inner", predicate="contains")
+
+print (f"Nº de Registos Output Join: {len(gdf_join)}")
+
+
+# Contar o número de pontos em cada polígono (novo atributo n_paragens)
+# Informação está duplicada para cada Freguesia
+gdf_join["n_paragens"] = gdf_join.groupby("DTMNFR21")["geometry"].transform("size")
+
+# # Selecionar o primeiro valor de 'n_paragens' dentro de cada grupo 'DTMNFR21'
+unique_values = gdf_join.groupby('DTMNFR21')['n_paragens'].first().reset_index()
+
+print(unique_values.info())
+
+# Exibir o DataFrame resultante
+#print(unique_values.head())
+
+# Apagar coluna - caso repetir o codigo (o merge) sem recriar gdf1106
+# gdf1106_freg.drop(columns=['n_paragens','n_paragens_x','n_paragens_y'], inplace=True)
+gdf1106_freg = gdf1106_freg.merge(unique_values, on='DTMNFR21', how='left')
+
+del gdf_join
+
+
+# Exibir a GeoDataFrame resultante com o atributo 'n_paragens' adicionado
+# print(gdf1106_freg.info())
+print(gdf1106_freg[['DTMNFR21', 'n_paragens']].head(10))
+```
+
+
+```{python}
+# Desenhar mapa com resultado:
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 2}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf1106_freg.plot(column=gdf1106_freg.n_paragens, 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=5, 
+                      cmap='YlGn', 
+                      legend=True,
+                      edgecolor = 'None', 
+                      legend_kwds  = lgnd_kwds)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Nº de paragens Carris')
+plt.show()
+
+
+```
+
+
+outra possibilidade - fazer a seleção de nº de pontos para freguesia específica  
+```{python}
+# Fazer seleção de nº de pontos para freguesia especifica
+from geopandas.tools import sjoin
+
+# Selecionar o polígono específico da freguesia 110655 (Areeiro)
+poligono_especifico = gdf1106_freg[gdf1106_freg['DTMNFR21'] == '110655']
+
+# Fazer Join com gdfCArris para obter os pontos
+joined = sjoin(gdfCarris, poligono_especifico, how='inner', predicate='within')
+
+# Contar quantos pontos estão dentro do polígono específico
+quantidade_pontos = len(joined)
+
+# Mostrar o resultado
+print(f"Quantidade de paragens de autocarro dentro a freguesia 110655: {quantidade_pontos}")
+```
+
+efectuar um *overlay*
+
+exemplo de cortar um círculo (buffer) em volta e um ponto  
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import contextily as ctx
+from shapely.geometry import Point
+
+# Criar variáveis para a figura
+f, ax = plt.subplots(1, figsize=(9, 9))
+
+# Criar um objeto Point
+# Atenção primeiro o valor x (longitude) e depois o y (latitutde) - Google Maps devolve Latitude, Longitude
+ponto = Point(-9.184111016,38.768216306)
+# 38.76821630632057, -9.184111016081756
+# Cria um GeoDataFrame do ponto com CRS WGS84
+gdf_ponto = gpd.GeoDataFrame([1], geometry=[ponto], crs='EPSG:4326')
+
+# Mudar a projeção do pontos para a projeção da gdf1106:
+gdf_ponto = gdf_ponto.to_crs(gdf1106.crs)
+
+print (f"Tipo de Geometria: {gdf_ponto['geometry'].iloc[0].geom_type}")
+
+# Cria um buffer de 500 metros em volta do ponto
+gdf_ponto['geometry'] = gdf_ponto.geometry.buffer(1500)
+print (f"Tipo de Geometria: {gdf_ponto['geometry'].iloc[0].geom_type}")
+
+# Realiza a interseção entre o buffer e os polígonos
+# Opções: intersection’, ‘union’, ‘identity’, ‘symmetric_difference’ or ‘difference’ 
+intersecao = gpd.overlay(gdf1106, gdf_ponto, how='symmetric_difference')
+
+# Visualizar o Resultado
+intersecao.plot(column = 'DTMNFR21',
+              legend = False,
+               ax = ax)
+
+# Add basemap do contextily
+ctx.add_basemap(
+    ax,
+    crs=intersecao.crs,
+    source=ctx.providers.CartoDB.VoyagerNoLabels,
+)
+
+
+ax.set_axis_off()
+
+plt.show()
+```
+
+
+### Exportar dados GeoDataframe
+
+principais formatos de output
+
+- Shapefile: Sem necessidade de especificar driver
+- GeoJSON: driver='GeoJSON'
+- GeoPackage: driver='GPKG'
+
+```{python}
+gdf1106_freg.to_file(r'data\geo\c2021_fr1106.gpkg', layer='FR1106', driver="GPKG")
+```
+
+listar outputs possíveis  
+```{python}
+import fiona
+fiona.supported_drivers
+```
+
+exemplo para obter informação a partir de uma seleção dentro dum `buffer`  
+
+importar dados  
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Simplify: https://geopandas.org/en/stable/docs/reference/api/geopandas.GeoSeries.simplify.html
+# Exemplo Importar os dados da BGRI2021 
+# Caminho para o arquivo GeoPackage
+gpk = r'data\geo\BGRI2021_1106.gpkg'
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1106 = gpd.read_file(gpk,encoding='utf-8')
+```
+
+mostrar mapa como follium 
+```{python}
+# Function para mostrar folium
+def mostrarFolium(gdfExtent,gdfDesenhar):
+    centroid = gdfExtent.to_crs(epsg=4326).unary_union.centroid
+
+    # Criar Listagem com localização de latitude  longitude
+    center_map = [centroid.y, centroid.x]
+    # Criar Mapa e mostrar
+    folium_map = folium.Map(location=center_map, zoom_start=15, tiles='OpenStreetMap')
+
+    # Adicionar Geografia folium map
+    # folium.GeoJson constructor
+    for lay in gdfDesenhar:
+        folium.GeoJson(lay).add_to(folium_map)
+    
+    folium_map
+```
+
+executar o *buffer*  
+```{python}
+from shapely.geometry import Point
+
+# Cria um objeto Point (podem escolher um ponto no google maps)
+# Atenção primeiro o valor x (longitude) e depois o y (latitutde)
+ponto = Point(-9.137616,38.738561)
+
+# Cria um GeoDataFrame do ponto com CRS WGS84
+gdf_ponto = gpd.GeoDataFrame([1], geometry=[ponto], crs='EPSG:4326')
+
+# Manteer ponto Original
+gdf_ponto_original = gdf_ponto.copy()
+
+# Mudar a projeção:
+gdf_ponto = gdf_ponto.to_crs(gdf1106.crs)
+
+# Fazer o Buffer
+gdf_ponto['geometry'] = gdf_ponto.geometry.buffer(500)
+
+# Executar o Spatial join entre o ponto e as subsecções da BGRI2021
+join = gpd.sjoin(gdf1106, gdf_ponto, how="inner", predicate='intersects')
+
+# Somar os valores do atributo N_INDIVIDUOS
+soma = join['N_INDIVIDUOS'].sum()
+
+print(f"Soma de N_INDIVIDUOS nos polígonos selecionados: {soma} em volta do ponto ({ponto.y},{ponto.x})")
+
+
+#-----------------------------------------------------------------
+# Mostrar 
+mostrarFolium(gdf_ponto,[gdf_ponto,gdf_ponto_original])
+```
+
+## Desafio
+
+- Definir um ponto, valores latitude e longitude
+- Criar um Buffer em volta desse ponto
+- Fazer o cálculo da população nas subsecções envolventes
+
+Podem fazer download de outros GPK no site do INE: https://mapas.ine.pt/download/index2021.phtml
+
+```{python}
+# Exemplo Importar os dados da BGRI2021 para o municipio de Valongo
+# Caminho para o arquivo GeoPackage
+gpk = r'data\geo\BGRI2021_1315.gpkg'
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1315 = gpd.read_file(gpk,encoding='utf-8')
+
+from shapely.geometry import Point
+
+# Cria um objeto Point (podem escolher um ponto no google maps)
+# Atenção primeiro o valor x (longitude) e depois o y (latitutde)
+# ponto do google maps Sta Rita (Ermesinde)
+# 41.20722032311807, -8.541960984473912
+ponto = Point(-8.541960984473912,41.20722032311807)
+
+# Cria um GeoDataFrame do ponto com CRS WGS84
+gdf_ponto = gpd.GeoDataFrame([1], geometry=[ponto], crs='EPSG:4326')
+
+# Manteer ponto Original
+gdf_ponto_original = gdf_ponto.copy()
+
+# Mudar a projeção:
+gdf_ponto = gdf_ponto.to_crs(gdf1315.crs)
+
+# Fazer o Buffer
+gdf_ponto['geometry'] = gdf_ponto.geometry.buffer(500)
+
+# Executar o Spatial join entre o ponto e as subsecções da BGRI2021
+join = gpd.sjoin(gdf1315, gdf_ponto, how="inner", predicate='intersects')
+
+# Somar os valores do atributo N_INDIVIDUOS
+soma = join['N_INDIVIDUOS'].sum()
+
+print(f"Soma de N_INDIVIDUOS nos polígonos selecionados: {soma} em volta do ponto ({ponto.y},{ponto.x})")
+
+mostrarFolium(gdf_ponto,[gdf_ponto,gdf_ponto_original])
+```
+
+## GeoEstatistica
+
++ Análise de Padroes espaciais
+
+    - autocorrelação espacial
+    - Média do vizinho mais próximo
+
++ Mapeamento de clusters
+
+    - Análise de clusters e outliers
+    - Análise de Hot Spots
+    - Clusterização multivariada
+    - Indices compostos
+    
++ Modelação de relações espaciais
+
+    - Regressão linear
+    - Regressão geograficamente ponderada
+    - Regressão multiescalar geograficamente opnderada
+    - Minimos quadrados
+    - Relações locais bivariadas
+
+### Autocorrelação Espacial
+
+Clacular medidas
+
+    - Moran Global
+    - Moran Local
+    - Getis and Ord's local statistics
+    
+```{python}
+#| warning: false  
+import matplotlib.pyplot as plt  # Graphics
+from matplotlib import colors
+import seaborn as sns  # Graphics
+import geopandas as gpd # Spatial data manipulation
+import pandas as pd  # Tabular data manipulation
+# Para Evitar Aviso Point Patterns
+from shapely.geometry import Point
+
+# Bibliotecas pysal
+import pysal.lib # importação geral
+from pysal.explore import esda  # Exploratory Spatial analytics
+from pysal.lib import weights  # Spatial weights
+import contextily  # Background tiles
+
+# Bibliotecas última parte notebook exemplo
+#import rioxarray  # Surface data manipulation
+#import xarray  # Surface data manipulation
+```
+
+importar dados do Geopackage com variáveis do C2021 da BRGI2021  
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Caminho para o arquivo GeoPackage
+gpk = r'data\geo\BGRI2021_1106.gpkg'
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1106 = gpd.read_file(gpk)
+
+# Simplificar a geografia para uma precisão de 5 metros
+gdf1106['geometry'] = gdf1106['geometry'].simplify(tolerance=5)
+
+# Visualizar o GeoDataFrame
+gdf1106.plot(column = 'DTMNFR21',
+              legend = False)
+```
+
+adicionar alguns atributos que permitem fazer a análise   
+```{python}
+# Calcular Novo Atributo Racio de População 65+ anos
+gdf1106['IND65'] = gdf1106.N_INDIVIDUOS_65_OU_MAIS/gdf1106.N_INDIVIDUOS
+
+# Calcular Outros Atributos de interesse para Analisar: , N_EDIFICIOS_3_OU_MAIS_PISOS, N_INDIVIDUOS_H, N_INDIVIDUOS_M
+gdf1106['IND14'] = gdf1106.N_INDIVIDUOS_0_14/gdf1106.N_INDIVIDUOS
+gdf1106['IND_H'] = gdf1106.N_INDIVIDUOS_H/gdf1106.N_INDIVIDUOS
+gdf1106['IND_M'] = gdf1106.N_INDIVIDUOS_M/gdf1106.N_INDIVIDUOS
+gdf1106['EDIF_3PISOS'] = gdf1106.N_EDIFICIOS_3_OU_MAIS_PISOS/gdf1106.N_EDIFICIOS_CLASSICOS
+
+
+# Mostrar Dados
+print(gdf1106[['BGRI2021', 'DTMNFR21', 'N_INDIVIDUOS_65_OU_MAIS', 'N_INDIVIDUOS', 'IND65', 'IND14', 'IND_H', 'IND_M','EDIF_3PISOS']].head(10))
+
+
+# Manter apenas as colunas de interesse: (não é necessário - simplifica o GeoDataFrame)
+manter_colunas = ['geometry','BGRI2021', 'DTMNFR21', 'N_INDIVIDUOS_65_OU_MAIS', 'N_INDIVIDUOS', 'IND65','IND14', 'IND_H', 'IND_M','N_EDIFICIOS_CLASSICOS','EDIF_3PISOS']
+gdf1106 = gdf1106.loc[:, manter_colunas]
+
+#print(gdf1106.info())
+```
+
+tartar `NaN`  
+```{python}
+# Contar o número total de NaNs no DataFrame
+total_nans = gdf1106.isna().sum().sum()
+print('Número total de registros com NaN:', total_nans)
+
+# Contar o número de NaNs em cada coluna
+nans_por_coluna = gdf1106.isna().sum()
+print('Número de registros com NaN por coluna:\n', nans_por_coluna)
+
+# Corrigir NaN
+# Existem 2 possibilidades
+# 1. Deixar fora
+#gdf1106 = gdf1106.dropna()
+# 2. Substituir por outros valores
+gdf1106 = gdf1106.fillna(0)
+```
+
+visualização inicial  
+```{python}
+# Set up figure and a single axis
+f, ax = plt.subplots(1, figsize=(9, 9))
+# Build choropleth
+gdf1106.plot(
+    column="IND65",
+    cmap="viridis",
+    scheme="quantiles",
+    k=5,
+    edgecolor="white",
+    linewidth=0.0,
+    alpha=0.75,
+    legend=True,
+    legend_kwds=dict(loc=2),
+    ax=ax,
+)
+# Add basemap
+contextily.add_basemap(
+    ax,
+    crs=gdf1106.crs,
+    source=contextily.providers.CartoDB.VoyagerNoLabels,
+)
+# Remove axes
+ax.set_axis_off()
+
+plt.show()
+```
+
+### Matriz de vizinhança e Moran Global
+
+**Queen**
+
+f we wanted them to be considered as neighbours, we can switch to the more inclusive notion of Queen contiguity, which requires the pair of polygons to only share one or more vertices. We can create the neighbor relations for this same configuration as follows:
+
+**KNN**
+
+The first type of distance based weights defines the neighbor set of a particular observation as containing its nearest 
+ observations, where the user specifies the value of 
+. To illustrate this for the San Diego tracts, we take 
+. This still leaves the issue of how to measure the distance between these polygon objects, however. To do so we develop a representative point for each of the polygons using the centroid.
+
+
+```{python}
+from pysal.model import spreg
+
+# Input gdf1106 (BGRI de Lisboa)
+
+# Calcular a matriz de pesos espaciais
+# Metodo Original: 0.13069266093679838 e Valor-p: 0.001
+w = pysal.lib.weights.Queen.from_dataframe(gdf1106, use_index=True)
+# Metodo knn (I de Moran: 0.11720923169446687; Valor-p: 0.001)
+#w = pysal.lib.weights.KNN.from_dataframe(gdf1106, k=5)
+
+# Lidar com ilhas
+# Normalizar a matriz de pesos
+# Row-standardization 
+w.transform = "r"
+
+# Corrigir para ilhas
+#w.set_transform('r')
+islands = w.islands
+if islands:
+    for island in islands:
+        w.neighbors[island] = [island]
+        w.weights[island] = [1]  
+```
+
+
+```{python}
+# Selecionar a coluna com a percentagem de população superior a 65 anos
+data = gdf1106['IND65']
+
+# Calcular a estatística de Moran
+moran = esda.Moran(data, w)
+
+# Imprimir o valor I de Moran e o valor-p
+print('I de Moran:', moran.I)
+print('Valor-p:', moran.p_sim)
+
+# Plotar o gráfico de dispersão de Moran (desatividado - vai ser efetuado em tarefas na próxima seção)
+#plot_moran(moran, zstandard=True, fill=True, figsize=(10,4))
+```
+
+**Interpretação do valor Moran Global**
+
+$H_0: I = 0$ (padran aleatorio) _vs_ $H_1 \ne 0$ (padrão espacial com clusters)
+
+
+
+### Motivating local spatial autocorrelation (Moran Plot)
+
+Nesta Parte é efetuado o seguinte:  
+
+- Calcular o Spatial Lag
+- Calcular as versões centradas
+- Criar um Scatterplot
+- Visualizar a distribuição dos valores em relação ao médio e aos valores nos polígonos vizinhos
+
+**Moran Plot**
+
+The Moran Plot is a way of visualizing a spatial dataset to explore the nature and strength of spatial autocorrelation. It is essentially a traditional scatter plot in which the variable of interest is displayed against its spatial lag. In order to be able to interpret values as above or below the mean, the variable of interest is usually standardized by subtracting its mean:
+
+
+Calcular o Spatial log
+
+```{python}
+# Calcular o Spatial Lag
+# 
+gdf1106["w_IND65"] = weights.lag_spatial(w, gdf1106['IND65'])
+
+# And their respective centered versions, where we subtract the average off of every value
+gdf1106["IND65_std"] = gdf1106["IND65"] - gdf1106["IND65"].mean()
+gdf1106["w_IND65_std"] = weights.lag_spatial(w, gdf1106['IND65_std'])
+```
+
+```{python}
+# Visualizar Valores em Cima e Baixo do Médio
+# Set up the figure and axis
+f, ax = plt.subplots(1, figsize=(6, 6))
+# Plot values
+
+sns.regplot(
+    x="IND65_std", y="w_IND65_std", data=gdf1106, ci=None
+)
+plt.show()
+```
+
+Figura com a relação das vizinhanças (Moran Plot)
+
+**Mesma figura com indicação dos 4 quadrantos**
+
+- LH: Valores na subsecção em baixo do médio, valores circundantes em cima do médio
+- HH: Valores na subsecção em cima do médio, valores circundantes em cima do médio
+- LL: Valores na subsecção em baixo do médio, valores circundantes em baixo do médio
+- HL: Valores na subsecção em cima do médio, valores circundantes em baixo do médio
+
+```{python}
+# Criar os Quadrantos
+# Set up the figure and axis
+f, ax = plt.subplots(1, figsize=(6, 6))
+# Plot values
+sns.regplot(
+    x="IND65_std", y="w_IND65_std", data=gdf1106, ci=None
+)
+
+# Esta Parte demora muito tempo
+
+# Add vertical and horizontal lines (definição valor onde adicionar)
+plt.axvline(0, c="k", alpha=0.5)
+plt.axhline(0, c="k", alpha=0.5)
+
+# Adicionar Text para Cada Quadrant - coordinados Text tendo em conta a distribuição dos dados
+plt.text(0.6, 0.20, "HH", fontsize=25, c="r")
+plt.text(0.6, -0.15, "HL", fontsize=25, c="r")
+plt.text(-0.2, 0.20, "LH", fontsize=25, c="r")
+plt.text(-0.15, -0.15, "LL", fontsize=25, c="r")
+
+# Displaby
+plt.show()
+```
+
+### Local Moran's I
+
+Calcular LISA (Local Indicators of Spatial Association) e Visualização Inicial 
+
+```{python}
+# https://pysal.org/esda/generated/esda.Moran_Local.html
+# lisa = moran_loc
+# Diferença com Notebook da Formação - dá erro porque os valores são NaN
+from splot.esda import lisa_cluster
+# data = 
+lisa = esda.moran.Moran_Local(gdf1106['IND65'], w)
+
+# Plotar o mapa de clusters de Moran
+lisa_cluster(lisa, gdf1106, figsize=(9,9))
+```
+
+Kernel Estimate Plotting
+
+```{python}
+import numpy as np
+
+# Valores LISa primeiros 10 registos
+print(lisa.Is[:10])
+
+# alguns indacores dos valores
+print(f'''Minimum: {np.min(lisa.Is)}
+Maximum: {np.max(lisa.Is)}
+STD: {np.std(lisa.Is)}''')
+
+```
+
+```{python}
+import warnings
+
+# Nao mostrar aviso FutereWarning (não aconselhável)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Draw KDE line
+ax = sns.kdeplot(lisa.Is)
+
+# Add one small bar (rug) for each observation
+# along horizontal axis
+sns.rugplot(lisa.Is, ax=ax)
+
+plt.show()
+```
+
+Visualizações diferentes, mapas com medidas LISA
+
+Significado dos 4 mapas:
+1. Valor LISA cada polígono (valor lisa.Is)
+2. Valor do quadrante cada área (esdaplot.lisa_cluster, p = 1)
+3. Indicação da significância estatística (lisa.p_sim < 0.05)
+4. Combinação dos anterior 2 (esdaplot.lisa_cluster, p = 0.05)
+
+```{python}
+from splot import esda as esdaplot
+
+
+# Set up figure and axes
+f, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 12))
+# Make the axes accessible with single indexing
+axs = axs.flatten()
+
+# Subplot 1 #
+# Choropleth of local statistics
+# Grab first axis in the figure
+ax = axs[0]
+# Assign new column with local statistics on-the-fly
+gdf1106.assign(
+    Is=lisa.Is
+    # Plot choropleth of local statistics
+).plot(
+    column="Is",
+    cmap="plasma",
+    scheme="quantiles",
+    k=5,
+    edgecolor="white",
+    linewidth=0.1,
+    alpha=0.75,
+    legend=True,
+    ax=ax,
+)
+
+# Subplot 2 #
+# Quadrant categories
+# Grab second axis of local statistics
+ax = axs[1]
+# Plot Quadrant colors (note to ensure all polygons are assigned a
+# quadrant, we "trick" the function by setting significance level to
+# 1 so all observations are treated as "significant" and thus assigned
+# a quadrant color
+esdaplot.lisa_cluster(lisa, gdf1106, p=1, ax=ax)
+
+# Subplot 3 #
+# Significance map
+# Grab third axis of local statistics
+ax = axs[2]
+#
+# Find out significant observations
+labels = pd.Series(
+    1 * (lisa.p_sim < 0.05),  # Assign 1 if significant, 0 otherwise
+    index=gdf1106.index  # Use the index in the original data
+    # Recode 1 to "Significant and 0 to "Non-significant"
+).map({1: "Significant", 0: "Non-Significant"})
+# Assign labels to `gdf1106` on the fly
+gdf1106.assign(
+    cl=labels
+    # Plot choropleth of (non-)significant areas
+).plot(
+    column="cl",
+    categorical=True,
+    k=2,
+    cmap="Paired",
+    linewidth=0.1,
+    edgecolor="white",
+    legend=True,
+    ax=ax,
+)
+
+
+# Subplot 4 #
+# Cluster map
+# Grab second axis of local statistics
+ax = axs[3]
+# Plot Quadrant colors In this case, we use a 5% significance
+# level to select polygons as part of statistically significant
+# clusters
+esdaplot.lisa_cluster(lisa, gdf1106, p=0.05, ax=ax)
+
+# Figure styling #
+# Set title to each subplot
+for i, ax in enumerate(axs.flatten()):
+    ax.set_axis_off()
+    ax.set_title(
+        [
+            "Local Statistics",
+            "Scatterplot Quadrant",
+            "Statistical Significance",
+            "Moran Cluster Map",
+        ][i],
+        y=0,
+    )
+# Tight layout to minimize in-between white space
+f.tight_layout()
+
+# Display the figure
+plt.show()
+```
+
+Diferentes contagens (Atributo "q")
+
+- Atributo 'q' do Moran Local mostra os valores nos 4 quadrantos
+
+```{python}
+# Criar pd.series do resultado
+counts = pd.Series(lisa.q).value_counts() # Original: pd.value_counts(lisa.q)
+counts
+
+# Visualizar os valores do primeiros 10 registos 
+
+lisa.q[:10]
+
+# Visualizar o numero de áreas com valores estatitisticamente significante
+
+(lisa.p_sim < 0.05).sum() * 100 / len(lisa.p_sim)
+```
+### Getis and Ord's local statistics
+
+**Outras medidas para representar a autocorrelação espacial (Getis and Ord’s)**
+
+- the G<sup>i</sup>: statistic, which omits the value at a site in its local summary
+- the G<sup>i*</sup>: statistic, which includes the site’s own value in the local summary  
+
+
+calcular indicadores
+
+```{python}
+# Gi
+go_i = esda.getisord.G_Local(gdf1106["IND65"], w) # , star=None
+# Gi*
+go_i_star = esda.getisord.G_Local(gdf1106["IND65"], w, star=True)
+```
+
+visualizar o resultado
+
+```{python}
+def g_map(g, db, ax, title):
+    """
+    Create a cluster map
+    ...
+
+    Arguments
+    ---------
+    g      : G_Local
+             Object from the computation of the G statistic
+    db     : GeoDataFrame
+             Table aligned with values in `g` and containing
+             the geometries to plot
+    ax     : AxesSubplot
+             `matplotlib` axis to draw the map on
+
+    Returns
+    -------
+    ax     : AxesSubplot
+             Axis with the map drawn
+    """
+    ec = "0.8"
+
+    # Break observations into significant or not
+    sig = g.p_sim < 0.05
+
+    # Plot non-significant clusters
+    ns = db.loc[sig == False, "geometry"]
+    ns.plot(ax=ax, color="lightgrey", edgecolor=ec, linewidth=0.1)
+    # Plot HH clusters
+    hh = db.loc[(g.Zs > 0) & (sig == True), "geometry"]
+    hh.plot(ax=ax, color="red", edgecolor=ec, linewidth=0.1)
+    # Plot LL clusters
+    ll = db.loc[(g.Zs < 0) & (sig == True), "geometry"]
+    ll.plot(ax=ax, color="blue", edgecolor=ec, linewidth=0.1)
+    # Style and draw
+    contextily.add_basemap(
+        ax,
+        crs=db.crs,
+        source=contextily.providers.Esri.WorldTerrain,
+    )
+    # Flag to add a star to the title if it's G_i*
+    st = ""
+    if g.star:
+        st = "*"
+    # Add title
+    ax.set_title(f"G{st} statistic {title}", size=15)
+    # Remove axis for aesthetics
+    ax.set_axis_off()
+    return ax
+```
+
+```{python}
+# Set up figure and axes
+f, axs = plt.subplots(1, 2, figsize=(12, 6))
+# Loop over the two statistics
+for g, ax in zip([go_i, go_i_star], axs.flatten()):
+    # Generate the statistic's map
+    ax = g_map(g, gdf1106, ax, 'Rácio Popuação 65+ Anos')
+# Tight layout to minimise blank spaces
+f.tight_layout()
+# Render
+plt.show()
+```
+
+### Exercício
+
+**Repetir o código com outras variáveis e\ou com município de Porto ou outro município
+
+- Utilizar o codigo Anterior para Calcular para outras variaveis
+    - Lista variáveis: 'IND65','IND14', 'IND_H', 'IND_M','EDIF_3PISOS'
+- Repete a mesma análise para outro municipio
+    - Faz download do gpk de um municipio no link: https://mapas.ine.pt/download/index2021.phtml
+    
+```{python}
+# Caminho para o arquivo GeoPackage do municipio de Valongo
+gpk = r"data\geo\BGRI2021_1315.gpkg"
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1315 = gpd.read_file(gpk)
+
+# Calcular Novo Atributo Racio de População 65+ anos
+gdf1315['IND65'] = gdf1315.N_INDIVIDUOS_65_OU_MAIS/gdf1315.N_INDIVIDUOS
+
+# Calcular Outros Atributos de interesse para Analisar: , N_EDIFICIOS_3_OU_MAIS_PISOS, N_INDIVIDUOS_H, N_INDIVIDUOS_M
+gdf1315['IND14'] = gdf1315.N_INDIVIDUOS_0_14/gdf1315.N_INDIVIDUOS
+gdf1315['IND_H'] = gdf1315.N_INDIVIDUOS_H/gdf1315.N_INDIVIDUOS
+gdf1315['IND_M'] = gdf1315.N_INDIVIDUOS_M/gdf1315.N_INDIVIDUOS
+gdf1315['EDIF_3PISOS'] = gdf1315.N_EDIFICIOS_3_OU_MAIS_PISOS/gdf1315.N_EDIFICIOS_CLASSICOS
+
+
+# Mostrar Dados
+print(gdf1315[['BGRI2021', 'DTMNFR21', 'N_INDIVIDUOS_65_OU_MAIS', 'N_INDIVIDUOS', 'IND65', 'IND14', 'IND_H', 'IND_M','EDIF_3PISOS']].head(10))
+
+
+from pysal.model import spreg
+
+# Input gdf1106 (BGRI de Lisboa)
+
+# Calcular a matriz de pesos espaciais
+# Metodo Original: 0.13069266093679838 e Valor-p: 0.001
+w = pysal.lib.weights.Queen.from_dataframe(gdf1315, use_index=True)
+# Metodo knn (I de Moran: 0.11720923169446687; Valor-p: 0.001)
+#w = pysal.lib.weights.KNN.from_dataframe(gdf1106, k=5)
+
+# Lidar com ilhas
+# Normalizar a matriz de pesos
+# Row-standardization 
+w.transform = "r"
+
+# Corrigir para ilhas
+#w.set_transform('r')
+islands = w.islands
+if islands:
+    for island in islands:
+        w.neighbors[island] = [island]
+        w.weights[island] = [1]  
+        
+# Selecionar a coluna com a percentagem de população superior a 65 anos
+data = gdf1315['IND65']
+
+
+# Calcular a estatística de Moran
+moran = esda.Moran(data, w)
+
+# Imprimir o valor I de Moran e o valor-p
+print('I de Moran:', moran.I)
+print('Valor-p:', moran.p_sim)
+
+```
+
+
+```{python}
+# Calcular o Spatial Lag
+# 
+gdf1315["w_IND14"] = weights.lag_spatial(w, gdf1315['IND14'])
+
+# And their respective centered versions, where we subtract the average off of every value
+gdf1315["IND14_std"] = gdf1315["IND14"] - gdf1315["IND14"].mean()
+gdf1315["w_IND14_std"] = weights.lag_spatial(w, gdf1315['IND14_std'])
+```
+
+```{python}
+#| eval: false
+
+# Visualizar Valores em Cima e Baixo do Médio
+# Set up the figure and axis
+f, ax = plt.subplots(1, figsize=(6, 6))
+# Plot values
+
+sns.regplot(
+    x="IND14_std", y="w_IND14_std", data=gdf1315 ci=None
+)
+
+
+# Criar os Quadrantos
+# Set up the figure and axis
+f, ax = plt.subplots(1, figsize=(6, 6))
+# Plot values
+sns.regplot(
+    x="IND14_std", y="w_IND14_std", data=gdf1315, ci=None
+)
+
+# Esta Parte demora muito tempo
+
+# Add vertical and horizontal lines (definição valor onde adicionar)
+plt.axvline(0, c="k", alpha=0.5)
+plt.axhline(0, c="k", alpha=0.5)
+
+# # Adicionar Text para Cada Quadrant - coordinados Text tendo em conta a distribuição dos dados
+# plt.text(0.6, 0.20, "HH", fontsize=25, c="r")
+# plt.text(0.6, -0.15, "HL", fontsize=25, c="r")
+# plt.text(-0.2, 0.20, "LH", fontsize=25, c="r")
+# plt.text(-0.15, -0.15, "LL", fontsize=25, c="r")
+
+# Displaby
+plt.show()
+```
+
+## Clustering e Regionalization
+
+```{python}
+import matplotlib.pyplot as plt  # Graphics
+from matplotlib import colors
+import seaborn as sns  # Graphics
+import geopandas as gpd # Spatial data manipulation
+import pandas as pd  # Tabular data manipulation
+import numpy as np
+
+# Para Evitar Aviso Point Patterns
+from shapely.geometry import Point
+import contextily  # Background tiles
+
+# Bibliotecas Referidos no Notebook
+from esda.moran import Moran
+from libpysal.weights import Queen, KNN
+#import pysal.lib # importação geral
+from pysal.explore import esda  # Exploratory Spatial analytics
+from pysal.lib import weights  # Spatial weights
+
+```
+
+preparação dos dados
+
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Caminho para o arquivo GeoPackage
+gpk = r'data\geo\BGRI2021_1106.gpkg'
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1106 = gpd.read_file(gpk)
+
+# Simplificar a geografia para uma precisão de 5 metros
+gdf1106['geometry'] = gdf1106['geometry'].simplify(tolerance=5)
+
+# Visualizar o GeoDataFrame
+gdf1106.plot(column = 'DTMNFR21',
+              legend = False)
+              
+# Nomes Atributos
+#gdf1106.info()
+
+```
+
+```{python}
+# Incluir os nomes das variáveis que devem ser utilizados para criar os agrupamentos (clusters)
+cluster_variables = [
+    gdf1106.columns[13],  # 
+    gdf1106.columns[14],  # 
+    gdf1106.columns[15],  # 
+    gdf1106.columns[31],  # 
+    gdf1106.columns[32],  # 
+    gdf1106.columns[37],  # 
+    gdf1106.columns[41],  # 
+    gdf1106.columns[42],  # E
+    gdf1106.columns[44] # 
+]
+```
+
+
+```{python}
+# Tratamento NaN
+# Contar o número total de NaNs no DataFrame
+total_nans = gdf1106.isna().sum().sum()
+print('Número total de registros com NaN:', total_nans)
+
+# Contar o número de NaNs em cada coluna
+nans_por_coluna = gdf1106.isna().sum()
+print('Número de registros com NaN por coluna:\n', nans_por_coluna)
+
+# Preencher com valor 0
+gdf1106 = gdf1106.fillna(0)
+```
+
+
+```{python}
+# Mostrar como mapas temáticos os valores dos atributos escolhidos  
+
+f, axs = plt.subplots(nrows=3, ncols=3, figsize=(12, 12))
+# Make the axes accessible with single indexing
+axs = axs.flatten()
+# Start a loop over all the variables of interest
+for i, col in enumerate(cluster_variables):
+    # select the axis where the map will go
+    ax = axs[i]
+    # Plot the map
+    gdf1106.plot(
+        column=col,
+        ax=ax,
+        scheme="Quantiles",
+        linewidth=0,
+        cmap="RdPu",
+    )
+    # Remove axis clutter
+    ax.set_axis_off()
+    # Set the axis title to the name of variable being plotted
+    ax.set_title(col)
+# Display the figure
+plt.show()
+```
+
+
+Calcular Moran I para todas as variáveis
+
+```{python}
+# Generate W from the GeoDataFrame
+# w = weights.distance.KNN.from_dataframe(gdf1106, k=8)
+# Metodo Alternativo:
+w = weights.Queen.from_dataframe(gdf1106, use_index=True)
+```
+
+```{python}
+# Set seed for reproducibility
+np.random.seed(123456)
+# Calculate Moran's I for each variable
+mi_results = [
+    Moran(gdf1106[variable], w) for variable in cluster_variables
+    ]
+# Structure results as a list of tuples
+mi_results = [
+    (variable, res.I, res.p_sim)
+    for variable, res in zip(cluster_variables, mi_results)
+]
+# Display on table
+table = pd.DataFrame(
+    mi_results, columns=["Variable", "Moran's I", "P-value"]
+).set_index("Variable")
+table
+```
+
+```{python}
+# Utilizar kdeplot dá um aviso
+import warnings
+
+# Nao mostrar aviso FutereWarning (não aconselhável)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Mostrar kdeplot para cada variável
+# _: Convenção Python que mostra que o resultado não está a ser utilizado
+
+sns.pairplot(
+    gdf1106[cluster_variables], kind="reg", diag_kind="kde"
+)
+```
+
+```{python}
+# The distance between observations in terms of these variates can be computed easily using
+from sklearn import metrics
+metrics.pairwise_distances(
+    gdf1106[[cluster_variables[0], cluster_variables[5]]].head()
+).round(4)
+
+```
+
+```{python}
+from sklearn.preprocessing import robust_scale
+# And create the db_scaled object which contains only the variables we are interested in, scaled:
+db_scaled = robust_scale(gdf1106[cluster_variables])
+print(type(db_scaled))
+```
+
+### Cluster GeoDemograficos
+
+### K-means
+
+```{python}
+# Initialize KMeans instance
+from sklearn.cluster import KMeans
+
+# Initialize KMeans instance
+# Definir n_init explicitemente
+kmeans = KMeans(n_clusters=5,n_init=10)
+
+# Set the seed for reproducibility
+np.random.seed(1234)
+# Run K-Means algorithm
+k5cls = kmeans.fit(db_scaled)
+
+# Print first five labels
+k5cls.labels_[:5]
+```
+
+visualização dos resultados
+
+```{python}
+# Assign labels into a column
+gdf1106["k5cls"] = k5cls.labels_
+# Set up figure and ax
+f, ax = plt.subplots(1, figsize=(9, 9))
+# Plot unique values choropleth including
+# a legend and with no boundary lines
+gdf1106.plot(
+    column="k5cls", categorical=True, legend=True, linewidth=0, ax=ax,
+    legend_kwds={'loc': 'upper left'}
+)
+# Remove axis
+ax.set_axis_off()
+# Display the map
+plt.show()
+```
+
+Análise dos resultados obtidos
+
+```{python}
+# Group data table by cluster label and count observations
+k5sizes = gdf1106.groupby("k5cls").size()
+k5sizes
+```
+
+obter a área de cada grupo (dissolve) utilizando o atributo SHAPE_Area
+
+```{python}
+# Dissolve areas by Cluster, aggregate by summing,
+# and keep column for area
+areas = gdf1106.dissolve(by="k5cls", aggfunc="sum")["SHAPE_Area"]
+areas
+```
+
+nº de elementos _vs_ área de cada grupo
+
+```{python}
+# Visualizar o nº de elementos vs a Área total
+
+# Bind cluster figures in a single table
+area_tracts = pd.DataFrame({"No. Tracts": k5sizes, "Area": areas})
+# Convert raw values into percentages
+area_tracts = area_tracts * 100 / area_tracts.sum()
+# Bar plot
+ax = area_tracts.plot.bar()
+# Rename axes
+ax.set_xlabel("Cluster labels")
+ax.set_ylabel("Percentage by cluster")
+
+plt.show()
+
+```
+
+**Criar um perfil de cada cluster, executamos as seguintes tarefas:**
+
+1. Calcular os médios de cada variável
+2. Arrumar (tidy up) os dados, assegurando que cada linha é uma observação e cada coluna é uma variável  
+3. Visualizar a distribuição dos valores das variáveis por grupo
+
+```{python}
+# Criar os Perfis de cada Cluster em relação as variáveis de input
+# Mostrar os médios das variáveis em cada cluster
+# Group table by cluster label, keep the variables used
+# for clustering, and obtain their mean
+k5means = gdf1106.groupby("k5cls")[cluster_variables].mean()
+# Transpose the table and print it rounding each value
+# to three decimals
+k5means.T.round(3)
+```
+
+
+```{python}
+# Index db on cluster ID
+tidy_db = gdf1106.set_index("k5cls")
+# Keep only variables used for clustering
+tidy_db = tidy_db[cluster_variables]
+# Stack column names into a column, obtaining
+# a "long" version of the dataset
+tidy_db = tidy_db.stack()
+# Take indices into proper columns
+tidy_db = tidy_db.reset_index()
+# Rename column names
+tidy_db = tidy_db.rename(
+    columns={"level_1": "Attribute", 0: "Values"}
+)
+# Check out result
+tidy_db.head()
+```
+
+```{python}
+# hows the distribution of each cluster’s values for each variable. 
+# This gives us the full distributional profile of each cluster:
+# Scale fonts to make them more readable
+sns.set(font_scale=1.5)
+# Setup the facets
+facets = sns.FacetGrid(
+    data=tidy_db,
+    col="Attribute",
+    hue="k5cls",
+    sharey=False,
+    sharex=False,
+    aspect=2,
+    col_wrap=3,
+)
+# Build the plot from `sns.kdeplot`
+facets.map(sns.kdeplot, "Values", shade=True).add_legend()
+```
+
+### Hierarchical Clustering
+
+```{python}
+from sklearn.cluster import AgglomerativeClustering
+
+# Set seed for reproducibility
+np.random.seed(0)
+# Initialize the algorithm
+model = AgglomerativeClustering(linkage="ward", n_clusters=5)
+# Run clustering (input dataset é sempre o db_scaled com valores estandarizados)
+model.fit(db_scaled)
+# Assign labels to main data table
+gdf1106["ward5"] = model.labels_
+
+ward5sizes = gdf1106.groupby("ward5").size()
+ward5sizes
+```
+
+visualizar dados
+
+```{python}
+# Index db on cluster ID
+tidy_db = gdf1106.set_index("ward5")
+# Keep only variables used for clustering
+tidy_db = tidy_db[cluster_variables]
+# Stack column names into a column, obtaining
+# a "long" version of the dataset
+tidy_db = tidy_db.stack()
+# Take indices into proper columns
+tidy_db = tidy_db.reset_index()
+# Rename column names
+tidy_db = tidy_db.rename(
+    columns={"level_1": "Attribute", 0: "Values"}
+)
+# Check out result
+tidy_db.head()
+```
+
+```{python}
+# Setup the facets
+facets = sns.FacetGrid(
+    data=tidy_db,
+    col="Attribute",
+    hue="ward5",
+    sharey=False,
+    sharex=False,
+    aspect=2,
+    col_wrap=3,
+)
+# Build the plot as a `sns.kdeplot`
+facets.map(sns.kdeplot, "Values", shade=True).add_legend()
+```
+
+comparação dos 2 resultados  
+```{python}
+gdf1106["ward5"] = model.labels_
+# Set up figure and ax
+f, axs = plt.subplots(1, 2, figsize=(12, 6))
+
+### K-Means ###
+ax = axs[0]
+# Plot unique values choropleth including
+# a legend and with no boundary lines
+gdf1106.plot(
+    column="ward5",
+    categorical=True,
+    cmap="Set3",
+    legend=True,
+    linewidth=0,
+    ax=ax,
+    legend_kwds={'loc': 'upper left'}
+)
+# Remove axis
+ax.set_axis_off()
+# Add title
+ax.set_title("K-Means solution ($k=5$)")
+
+### AHC ###
+ax = axs[1]
+# Plot unique values choropleth including
+# a legend and with no boundary lines
+gdf1106.plot(
+    column="k5cls",
+    categorical=True,
+    cmap="Set3",
+    legend=True,
+    linewidth=0,
+    ax=ax,
+    legend_kwds={'loc': 'upper left'}
+)
+# Remove axis
+ax.set_axis_off()
+# Add title
+ax.set_title("AHC solution ($k=5$)")
+
+# Display the map
+plt.show()
+```
+
+
+### Regionalization
+
+Criar novos Cluster
+
++ Incluir matriz de vizinhança
++ connectivity = w.sparse
+
+```{python}
+# Set the seed for reproducibility
+np.random.seed(123456)
+# Specify cluster model with spatial constraint
+model = AgglomerativeClustering(
+    linkage="ward", connectivity=w.sparse, n_clusters=5
+)
+# Fit algorithm to the data
+model.fit(db_scaled)
+```
+
+visualizar resultados
+
+```{python}
+
+gdf1106["ward5wq"] = model.labels_
+# Set up figure and ax
+f, ax = plt.subplots(1, figsize=(9, 9))
+# Plot unique values choropleth including a legend and with no boundary lines
+gdf1106.plot(
+    column="ward5wq",
+    categorical=True,
+    legend=True,
+    linewidth=0,
+    ax=ax,
+    legend_kwds={'loc': 'upper left'}
+)
+# Remove axis
+ax.set_axis_off()
+# Display the map
+plt.show()
+
+# Guardar o mapa:
+f.savefig(r"data\geo\mapa_clusters1.png")
+```
+
+Repetir o processo com outra matriz de vizinhança
+
+```{python}
+# Generate W from the GeoDataFrame
+w = weights.distance.KNN.from_dataframe(gdf1106, k=8)
+# Metodo Alternativo:
+#w = weights.Queen.from_dataframe(gdf1106, use_index=True)
+```
+
+### Outros metodos
+
+Medida *compactness*
+
+```{python}
+#| eval: false
+results = []
+for cluster_type in ("k5cls", "ward5", "ward5wq", "ward5wknn"):
+    # compute the region polygons using a dissolve
+    regions = db[[cluster_type, "geometry"]].dissolve(by=cluster_type)
+    # compute the actual isoperimetric quotient for these regions
+    ipqs = (
+        regions.area * 4 * numpy.pi / (regions.boundary.length ** 2)
+    )
+    # cast to a dataframe
+    result = ipqs.to_frame(cluster_type)
+    results.append(result)
+# stack the series together along columns
+pandas.concat(results, axis=1)
+```
+
+
+```{python}
+import numpy
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+
+# gdf1106['IND65'] = gdf1106.N_INDIVIDUOS_65_OU_MAIS/gdf1106.N_INDIVIDUOS
+gdf1106['compact'] = gdf1106.geometry.area * 4  * numpy.pi / (gdf1106.geometry.boundary.length ** 2)
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 3}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf1106.plot(column='compact', 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=9, 
+                      cmap='PuBu', 
+                      legend=True,
+                      edgecolor = 'None', # sem outline
+                      legend_kwds  = lgnd_kwds)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Compactness')
+plt.show()
+```
+
+```{python}
+print(gdf1106.head())
+```
+
+Kriging com o *package* `pykrige`
+
+```{python}
+import numpy as np
+from pykrige.ok import OrdinaryKriging
+import pykrige.kriging_tools as kt
+import matplotlib.pyplot as plt  
+
+# Sample data points
+data = np.array(
+    [
+        [0.3, 1.2, 0.5],
+        [1.1, 3.2, 0.4],
+        [1.8, 0.8, 0.6],
+        [2.8, 2.6, 0.7],
+        [3.2, 0.3, 0.8],
+    ]
+)  # [x, y, z]
+
+# Define the grid to interpolate onto
+gridx = np.arange(0.0, 4.1, 0.1)
+gridy = np.arange(0.0, 4.1, 0.1)
+
+# Create an Ordinary Kriging object
+OK = OrdinaryKriging(
+    data[:, 0],  # X coordinates
+    data[:, 1],  # Y coordinates
+    data[:, 2],  # Z values
+    variogram_model="spherical",  # Variogram model (can also use "linear" gaussian" or "spherical")
+    verbose=False,
+    enable_plotting=True,  # Enable plotting of the variogram (optional)
+)
+
+# Execute Ordinary Kriging on the defined grid
+# `z` contains the interpolated values
+# `ss` contains the standard deviation at each grid point
+z, ss = OK.execute("grid", gridx, gridy)
+
+# Writes the kriged grid to an ASCII grid file and plot it.
+kt.write_asc_grid(gridx, gridy, z, filename="data\geo\output.asc")
+plt.imshow(z)
+plt.show()
+
+```
+
+![](images\geo_predict.png)
+
+### Exercício
+
+adaptar o código anterior para outro municipio
+
+
+preparação dos dados
+
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Caminho para o arquivo GeoPackage municipio Valongo
+gpk = r'data\geo\BGRI2021_1315.gpkg'
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdf1315 = gpd.read_file(gpk)
+
+# Simplificar a geografia para uma precisão de 5 metros
+gdf1315['geometry'] = gdf1315['geometry'].simplify(tolerance=5)
+
+# # Visualizar o GeoDataFrame
+# gdf1315.plot(column = 'DTMNFR21',
+#               legend = False)
+              
+# Nomes Atributos
+gdf1315.info()
+
+```
+
+```{python}
+# Incluir os nomes das variáveis que devem ser utilizados para criar os agrupamentos (clusters)
+cluster_variables = [
+    gdf1315.columns[24],  # 
+    gdf1315.columns[25],  # 
+    gdf1315.columns[26],  # 
+    gdf1315.columns[27],  # 
+    gdf1315.columns[28],
+    gdf1315.columns[38],
+    gdf1315.columns[39],
+    gdf1315.columns[40]
+]
+```
+
+
+```{python}
+# Tratamento NaN
+# Contar o número total de NaNs no DataFrame
+total_nans = gdf1315.isna().sum().sum()
+print('Número total de registros com NaN:', total_nans)
+
+# Contar o número de NaNs em cada coluna
+nans_por_coluna = gdf1315.isna().sum()
+print('Número de registros com NaN por coluna:\n', nans_por_coluna)
+
+# Preencher com valor 0
+gdf1315 = gdf1315.fillna(0)
+```
+
+
+```{python}
+# Mostrar como mapas temáticos os valores dos atributos escolhidos  
+
+f, axs = plt.subplots(nrows=3, ncols=3, figsize=(12, 12))
+# Make the axes accessible with single indexing
+axs = axs.flatten()
+# Start a loop over all the variables of interest
+for i, col in enumerate(cluster_variables):
+    # select the axis where the map will go
+    ax = axs[i]
+    # Plot the map
+    gdf1315.plot(
+        column=col,
+        ax=ax,
+        scheme="Quantiles",
+        linewidth=0,
+        cmap="RdPu",
+    )
+    # Remove axis clutter
+    ax.set_axis_off()
+    # Set the axis title to the name of variable being plotted
+    ax.set_title(col)
+# Display the figure
+plt.show()
+```
+
+
+Calcular Moran I para todas as variáveis
+
+```{python}
+# Generate W from the GeoDataFrame
+# w = weights.distance.KNN.from_dataframe(gdf1315, k=8)
+# Metodo Alternativo:
+w = weights.Queen.from_dataframe(gdf1315, use_index=True)
+```
+
+```{python}
+# Set seed for reproducibility
+np.random.seed(123456)
+# Calculate Moran's I for each variable
+mi_results = [
+    Moran(gdf1315[variable], w) for variable in cluster_variables
+    ]
+# Structure results as a list of tuples
+mi_results = [
+    (variable, res.I, res.p_sim)
+    for variable, res in zip(cluster_variables, mi_results)
+]
+# Display on table
+table = pd.DataFrame(
+    mi_results, columns=["Variable", "Moran's I", "P-value"]
+).set_index("Variable")
+table
+```
+
+```{python}
+# Utilizar kdeplot dá um aviso
+import warnings
+
+# Nao mostrar aviso FutereWarning (não aconselhável)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Mostrar kdeplot para cada variável
+# _: Convenção Python que mostra que o resultado não está a ser utilizado
+
+sns.pairplot(
+    gdf1315[cluster_variables], kind="reg", diag_kind="kde"
+)
+```
+
+```{python}
+# The distance between observations in terms of these variates can be computed easily using
+from sklearn import metrics
+metrics.pairwise_distances(
+    gdf1315[[cluster_variables[0], cluster_variables[5]]].head()
+).round(4)
+
+```
+
+```{python}
+from sklearn.preprocessing import robust_scale
+# And create the db_scaled object which contains only the variables we are interested in, scaled:
+db_scaled = robust_scale(gdf1315[cluster_variables])
+print(type(db_scaled))
+```
+
+
+
+```{python}
+import numpy
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+
+# gdf1106['IND65'] = gdf1106.N_INDIVIDUOS_65_OU_MAIS/gdf1106.N_INDIVIDUOS
+gdf1315['compact'] = gdf1315.geometry.area * 4  * numpy.pi / (gdf1315.geometry.boundary.length ** 2)
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 3}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf1315.plot(column='compact', 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=9, 
+                      cmap='PuBu', 
+                      legend=True,
+                      edgecolor = 'None', # sem outline
+                      legend_kwds  = lgnd_kwds)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Compactness')
+plt.show()
+```
+
+```{python}
+print(gdf1315.head())
+```
+
+Kriging com o *package* `pykrige`
+
+```{python}
+import numpy as np
+from pykrige.ok import OrdinaryKriging
+import pykrige.kriging_tools as kt
+import matplotlib.pyplot as plt  
+
+# Sample data points
+data = np.array(
+    [
+        [0.3, 1.2, 0.5],
+        [1.1, 3.2, 0.4],
+        [1.8, 0.8, 0.6],
+        [2.8, 2.6, 0.7],
+        [3.2, 0.3, 0.8],
+    ]
+)  # [x, y, z]
+
+# Define the grid to interpolate onto
+gridx = np.arange(0.0, 4.1, 0.1)
+gridy = np.arange(0.0, 4.1, 0.1)
+
+# Create an Ordinary Kriging object
+OK = OrdinaryKriging(
+    data[:, 0],  # X coordinates
+    data[:, 1],  # Y coordinates
+    data[:, 2],  # Z values
+    variogram_model="spherical",  # Variogram model (can also use "linear" gaussian" or "spherical")
+    verbose=False,
+    enable_plotting=True,  # Enable plotting of the variogram (optional)
+)
+
+# Execute Ordinary Kriging on the defined grid
+# `z` contains the interpolated values
+# `ss` contains the standard deviation at each grid point
+z, ss = OK.execute("grid", gridx, gridy)
+
+# Writes the kriged grid to an ASCII grid file and plot it.
+kt.write_asc_grid(gridx, gridy, z, filename="data\geo\output.asc")
+plt.imshow(z)
+plt.show()
+
+```
+
+## JSON / API INE
+
+### JavaScript Object Notation
+
++ formato de dados leve e eficiente
++ dados estruturados
++ amplamente utilizado
+
+útil para:
+
++ recolha de dados
++ preparação de dados
++ análise de dados
++ visualização de dados
+
+JSON _vs_ XML
+
+![](images\json_xml.png)
+
+Um objecto JSON é um conjunto de pares de chave e valor encerrados por chaves.
+
+_packages_ python para ler JSON: `json`, `pandas`, `requests`, `jsonpath-ng`, `jsonschema` 
+
+```{python}
+# Ler JSON de um Dicionario
+import pprint # para visualizar de forma mais amigavel os dados
+import json
+
+# Criar um Dictionary (exemplo dados municipios)
+municipios = {
+    "Almada": {
+        "populacao": 177400        
+    },
+    "Cascais": {
+        "populacao": 214124        
+    },
+    "Seixal": {
+        "populacao": 160000
+    },
+    "Entroncamento": {
+        "populacao": 20141
+    },
+    "Cadaval": {
+        "populacao": 13372
+    },
+    "Sintra": {
+        "populacao": 385606
+    }
+}
+
+print(type(municipios))
+
+# Converter o Dictionary para uma string JSON
+mn_json = json.dumps(municipios)
+print(type(mn_json))
+
+# Fazer Load do JSON
+data_json = json.loads(mn_json)
+print(type(data_json))
+
+# Mostrar População Cascais
+print ("População Cascais:",data_json["Cascais"]["populacao"])
+
+# Imprimir o Type do Object Devolvido
+print('Tipo Objecto:', type(data_json))
+
+# Imprimir o objecto com PrettyPrinter
+pp = pprint.PrettyPrinter(indent=2)
+
+# Imprimir o dicionário
+pp.pprint(data_json)
+```
+
+```{python}
+# Criar JSOn a partir de uma Listagem:
+# import json
+# import pprint
+
+# Exemplo cidades de Portugal
+cidades = ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Funchal", "Coimbra", "Almada", "Setúbal", "Agualva-Cacém"]
+
+# Converter a lista para uma string JSON
+cidades_json = json.dumps(cidades)
+print('Tipo Objecto após json.dumps:', type(cidades_json))
+
+# Converter a string JSON de volta para uma lista
+data_json = json.loads(cidades_json)
+
+
+# Imprimir o Type do Object Devolvido
+print('Tipo Objecto após json.loads:', type(data_json))
+
+# Imprimir os dados carregados
+# Criar um objeto PrettyPrinter
+pp = pprint.PrettyPrinter(indent=4)
+
+# Imprimir o dicionário
+pp.pprint(data_json)
+
+```
+
+ler dados de um ficheiro
+
+```{python}
+# exemplo de um ficheiro com os municipios de Madrid
+import json
+import pandas as pd
+# Ler Dados de um Ficheiro no computador (Municipios de Provincia de Madrid)
+jsonfile = r"data\geo\municipio_comunidad_madrid.json"
+
+# Abrir Ficheiro e fazer Load
+with open(jsonfile, 'r') as f:
+    json_data = json.load(f)
+
+print(type(json_data))
+    
+# Verificar Tipo de Dados Devolvido e mostrar informação
+if isinstance(json_data, list):
+    print("JSON object is a list.")
+    if json_obj:
+        print("Numero Registos:", len(json_data))
+        print("Registo Exemplo:", json_data[0])
+elif isinstance(json_data, dict):
+    print("JSON object is a dictionary.")
+    print("Keys do Object:", list(json_data.keys()))
+else:
+    print("Unknown JSON object type.")
+
+novoelem = json_data["data"]  
+print (type(novoelem))
+
+df = pd.DataFrame(novoelem)
+print(df.info())
+
+```
+
+ler dados de um URL
+
+```{python}
+import json
+import requests
+
+proxies = {
+  'http': 'http://proxy.ine.pt:8080',
+  'https': 'http://proxy.ine.pt:8080',
+}
+
+
+url = "https://datos.comunidad.madrid/catalogo/dataset/032474a0-bf11-4465-bb92-392052962866/resource/301aed82-339b-4005-ab20-06db41ee7017/download/municipio_comunidad_madrid.json"
+
+# Make an HTTP GET request to fetch the JSON data from the URL
+# 
+response = requests.get(url)#, proxies=proxies)
+
+# Verificar Resposta
+# Respostas Possiveis
+if response.status_code == 200:
+    #Obter JSON response
+    json_data = response.json()
+else:
+    print("Failed to fetch data. Status code:", response.status_code)
+    exit()
+
+
+# Verificar Tipo de Dados Devolvido e mostrar informação
+if isinstance(json_data, list):
+    print("JSON object is a list.")
+    if json_data:
+        print("Numero Registos:", len(json_data))
+        print("Registo Exemplo:", json_data[0])
+elif isinstance(json_data, dict):
+    print("JSON object is a dictionary.")
+    print("Keys do Object:", list(json_data.keys()))
+else:
+    print("Unknown JSON object type.")
+```
+
+### converter para pandas DataFrame
+
+ler dados de uma listagem normal  
+```{python}
+  import pandas as pd
+# Ler Informacao JSOn Municipios:
+df_mn = pd.read_json(r'data\geo\municipios.json')
+
+print(df_mn.info())
+print('Primeiro Municipio',df_mn['municipio'][0])
+```
+
+nested data  
+```{python}
+import pandas as pd
+# Ler Informacao JSOn Municipios:
+df_frmn = pd.read_json(r"data\geo\municipiosfreguesias.json")
+print(df_frmn.info())
+print('Primeiro Municipio',df_frmn['municipio'][0])
+
+# Ver o tipo do atributo freguesias - Series
+print(type(df_frmn['freguesias']))
+
+# Selecionar o primeiro municipio
+df_frmn = df_frmn.loc[df_frmn['municipio'] == 'Almada']
+
+# Mostrar os valores das freguesias
+print(df_frmn['freguesias'])
+
+```
+
+utilizar `json_normalize()`  
+```{python}
+# Utilizar a funcao json_normalize para criar um DF apenas das freguesias
+
+# Load the JSON file
+with open(r"data\geo\municipiosfreguesias.json", "r", encoding="utf-8") as f:
+    municipalities = json.load(f)
+
+# Convert the JSON into a DataFrame
+df = pd.json_normalize(municipalities, record_path=['freguesias'])
+
+# Print the DataFrame
+print(df)
+print(df.info())
+```
+
+
+criar dataframe utilizando um loop  
+```{python}
+# Alternativa para criar Informação das Freguesias
+# Ler os dados
+with open(r"data\geo\municipiosfreguesias.json", "r", encoding="utf-8") as f:
+    municipalities = json.load(f)
+    
+# Criar Lista das linhas do INPUT
+rows = []
+
+# Percorrer os municipios
+for municipality in municipalities:
+    # Iterate over the freguesias
+    for freguesia in municipality['freguesias']:
+        # Criar novo registo
+        row = {
+            'municipio': municipality['municipio'],
+            'freguesia': freguesia['nome'],
+            'populacao': freguesia['populacao']
+        }
+
+        # Adicionar Registo a Lista
+        rows.append(row)
+
+# Criar DataFame
+df = pd.DataFrame(rows)
+
+# Print the DataFrame
+print(df)
+```
+
+### Exercício
+
+**A partir do objecto pt_info**
+
+1. Converter o dicionário para uma string JSON  
+2. Converter a string JSON de volta para um dicionário
+3. Obter o tipo do objecto devolvido
+4. Imprimir as chaves
+5. Converter para DataFrame
+6. Fazer algumas pesquisas
+
+    - População de Vila Nova de Gaia
+    - Area de Portugal
+    
+```{python}
+# Dictionary com informcao Portugal:
+# Também é Nested
+pt_info = {
+  "country": "Portugal",
+  "capital": "Lisbon",
+  "population": 10347892,
+  "area": 92212,
+  "language": "Portuguese",
+  "currency": "Euro",
+  "cities": [
+    {
+      "name": "Lisbon",
+      "population": 504762,
+      "region": "Lisboa"
+    },
+    {
+      "name": "Porto",
+      "population": 219419,
+      "region": "Norte"
+    },
+    {
+      "name": "Vila Nova de Gaia",
+      "population": 301877,
+      "region": "Norte"
+    },
+    {
+      "name": "Matosinhos",
+      "population": 174339,
+      "region": "Norte"
+    },
+    {
+      "name": "Almada",
+      "population": 174033,
+      "region": "Lisboa"
+    }
+  ]
+}
+
+print(type(pt_info))
+```
+
+```{python}
+# Converter o Dictionary para uma string JSON
+mn_json = json.dumps(pt_info)
+print(type(mn_json))
+
+# Fazer Load do JSON
+data_json = json.loads(mn_json)
+print(type(data_json))
+
+# Imprimir o Type do Object Devolvido
+print('Tipo Objecto:', type(data_json))
+
+# Imprimir o objecto com PrettyPrinter
+pp = pprint.PrettyPrinter(indent=2)
+
+# Imprimir o dicionário
+pp.pprint(data_json)
+
+# Obter o Nome da primeira cidade 
+print(data_json['cities'][0]['name'])
+
+# população do Porto
+print('População do Porto: ',data_json['cities']['name' == 'Porto']['population'])
+
+# 4. Imprimir as chaves 
+# Verificar Tipo de Dados Devolvido e mostrar informação
+if isinstance(data_json, list):
+    print("JSON object is a list.")
+    if json_obj:
+        print("Numero Registos:", len(data_json))
+        print("Registo Exemplo:", data_json[0])
+elif isinstance(data_json, dict):
+    print("JSON object is a dictionary.")
+    print("Keys do Object:", list(data_json.keys()))
+else:
+    print("Unknown JSON object type.")
+
+# 5. Converter para DataFrame
+df = pd.json_normalize(data_json, record_path=['cities'])
+print(df)
+
+
+# 6. Fazer algumas pesquisas
+#  - População de Vila Nova de Gaia
+#  - Area de Portugal
+populacao_vila_nova_de_gaia = df[df['name'] == 'Vila Nova de Gaia']['population'].values[0]
+print("População de Vila Nova de Gaia:", populacao_vila_nova_de_gaia)
+
+area_portugal = data_json['area']
+print("Área de Portugal:", area_portugal)
+
+```
+
+## JSON INE
+
+```{python}
+import requests
+import os
+# Ler Dados Inicial para JSON
+# Indicador 0008074: Taxa de criminalida, último ano, todos os níveis geográficos, indicador 
+# Categorias no SMI do Dim3: http://smi-i.ine.pt/Versao/Detalhes/902 
+proxies = {
+  'http': 'http://proxy.ine.pt:8080',
+  'https': 'http://proxy.ine.pt:8080',
+}
+
+# os.environ['http_proxy'] = 'http://proxy.ine.pt:8080'
+# os.environ['https_proxy'] = 'http://proxy.ine.pt:8080'
+
+# Dim1=T: Dados de todos os anos
+url = "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0008074&Dim1=T&Dim3=3&lang=PT"
+print(url)
+# Make an HTTP GET request to fetch the JSON data from the URL
+response = requests.get(url)#, proxies=proxies)
+
+# Verificar Resposta
+# Respostas Possiveis
+if response.status_code == 200:
+    #Obter JSON response
+    json_data = response.json()
+else:
+    print("Failed to fetch data. Status code:", response.status_code)
+    exit()
+
+
+# Verificar Tipo de Dados Devolvido e mostrar informação
+if isinstance(json_data, list):
+    print("JSON object is a list.")
+    if json_data:
+        print("Numero Registos:", len(json_data))
+        #print("Registo Exemplo:", json_data[0])
+        print("Tipo 1º elementos:", type(json_data[0]))
+elif isinstance(json_data, dict):
+    print("JSON object is a dictionary.")
+    print("Keys do Object:", list(json_data.keys()))
+else:
+    print("Unknown JSON object type.")
+
+    
+# Obter tipo de keys no dictionary
+print("Keys existentes:", list(json_data[0].keys()))
+
+# Key com os dados
+```
+
+analisar o objecto JSON devolvido  
+```{python}
+# Para poder Importar será necessário de fazer uma análise do Objeto Devolvido
+
+# Obter Keys no Dados
+# Existe um Key para Cada Ano
+print("Keys existentes nos Dados:", list(json_data[0]['Dados'].keys()) )
+
+# Ver Tipo de conteudo 2022:
+print("Tipo Objecto:", type(json_data[0]['Dados']['2022']) )
+
+# Tipo é Listagem de Dictionary's
+# Ver conteudo e informação 1º elemento
+print("Tipo primeiro elemento:", type(json_data[0]['Dados']['2022'][0]), 'Numero Elementos:', len(json_data[0]['Dados']['2022']) )
+# Atributos de cada dictionary
+print("Keys existentes no Ano:", list(json_data[0]['Dados']['2022'][0].keys()) )
+```
+mostrar ano  
+```{python}
+# Fazer um Loop por todos os anos
+for ky in list(json_data[0]['Dados'].keys()):
+    print(ky)
+```
+
+criar dataframe dos dados   
+```{python}
+import geopandas as gpd
+
+dadosmn = r"data\geo\GPK_CAOP_MN.gpkg"
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdfmn = gpd.read_file(dadosmn, encoding='utf-8')
+print(gdfmn.info())
+print(gdfmn.head())
+```
+
+
+```{python}
+import pandas as pd
+# Os dados para importar dzem respeito a uma listagem de dictionary's. 
+
+# Os dados podem ser importados a partir destas listagem com função pd.DataFrame()
+# Para assegurar o tipo de dados deveria ser especificado o tipo de atributos das colunas 
+columns = ["geocod", "geodsg", "dim_3", "dim_3_t", "valor"]
+data_types = {"geocod": str, "geodsg": str, "dim_3": str, "dim_3_t": str, "valor": float}
+
+# Convert the list of dictionaries to a Pandas DataFrame
+df_ine = pd.DataFrame(json_data[0]['Dados']['2022'], columns=columns).astype(data_types)
+
+# Mostrar o Resultado:
+print(df_ine.info())
+print(df_ine.head(8))
+print('Numero registos:',len(df_ine))
+
+# Novo Cell - filter NUTS3 (length geocod == 3):
+# Alternativa - seria criar uma listagem unica a 34]
+df_nuts3 = df_ine[df_ine['geocod'].str.len() == 3]
+print(df_nuts3.info())
+
+#df_nuts3['codmn'] = df_nuts3['geocod'].str[-4:]
+# df_nuts3['geocod'].str[-4:]
+#print(df_nuts3.head(10))
+
+# df_mn = df_ine[df_ine['geocod'].str.len() == 7]
+# print(df_mn.info())
+# df_mn['codmn'] = df_mn['geocod'].str[-4:]
+# print(df_mn.head(10))
+
+```
+
+visualizar os dados como um mapa  
+```{python}
+# Mostrar valores unicos chave
+import numpy as np
+print(np.sort(df_nuts3.geocod.unique()))
+print(df_nuts3[['geocod','geodsg','valor']])
+
+# Corrigir Valores NaN
+df_nuts3 = df_nuts3.fillna(0)
+```
+
+```{python}
+# Import packages
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+
+# Definir Figura e Axis
+f, ax = plt.subplots(1, figsize=(9, 9))
+
+
+# Ler os dados NUTS3
+gpk = r"data\geo\GPK_NUTS3.gpkg"
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdfnuts3 = gpd.read_file(gpk)
+print(gdfnuts3.info())
+# Selecionar Dados Portugal Continental:
+# Fazer Seleção da NUTS1, Atributo NUTS3
+# Sem seleção a area da visualização é muito grande
+gdf_nuts3_sel = gdfnuts3[gdfnuts3['NUTS3'].str.startswith('1')]
+
+print(gdf_nuts3_sel.info())
+
+# Fazer Merge dos dados
+# Fazer o Join, especificar: DF
+gdf_nuts3_2 = gdf_nuts3_sel.merge(df_nuts3, left_on='NUTS3', right_on='geocod', how='left')
+
+# Definir Legenda 
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 2}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf_nuts3_2.plot(column=gdf_nuts3_2.valor, 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=7, 
+                      cmap='YlGn', 
+                      legend=True,
+                      edgecolor = 'dimgray',
+                      legend_kwds  = lgnd_kwds,
+                      ax=ax)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title(json_data[0]['IndicadorDsg']) # usar a designação do indicador no titulo do mapa
+plt.show()
+```
+
+```{python}
+gdfnuts3.info()
+print(gdf_nuts3_sel.NUTS3.unique())
+print(df_nuts3.geocod.unique())
+# Valores unicos NUTS3 
+```
+
+### Exercício
+
+**Observações:**
+- Faz a Adaptação do código seguinte para importar outro indicador ao nível de municipio ou NUTS3
+- Ler Dados Indicador XXXX de um ano a escolha
+    - Ver pagina SMI Indicadores: https://smi.ine.pt/Indicador?clear=True
+    - Testar url antes de incluir no script
+- Importar para Pandas Dataframe as áreas NUTS3
+- Criar mapa dos resultados
+
+**Informação URL**
+- varcd: código de difusão
+- Dim1 (periódo de referência): 
+    - Ano (de acordo com portal, por exemplo S7A2016<)
+    - Sem valores, devolvido dados último ano
+    - T: Dados de todos os anos
+- Dim2:
+    - Sem dados: retornados dados todas as geografias
+    - Geografias separados por vírgula
+- Dim3=T: Informação disponível no SMI
+
+```{python}
+import requests
+import os
+import pandas as pd
+
+# Ler Dados Inicial para JSON
+# Indicador 0008074: Taxa de criminalida, último ano, todos os níveis geográficos, indicador 
+# Categorias no SMI do Dim3: http://smi-i.ine.pt/Versao/Detalhes/902 
+proxies = {
+  'http': 'http://proxy.ine.pt:8080',
+  'https': 'http://proxy.ine.pt:8080',
+}
+
+# os.environ['http_proxy'] = 'http://proxy.ine.pt:8080'
+# os.environ['https_proxy'] = 'http://proxy.ine.pt:8080'
+
+# Dim1: Ultimo ano, Dim2: Todas as geografias 
+url = r'https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0008265&lang=PT'
+
+# Make an HTTP GET request to fetch the JSON data from the URL
+response = requests.get(url)#, proxies=proxies)
+
+# Verificar Resposta
+# Respostas Possiveis
+if response.status_code == 200:
+    #Obter JSON response
+    json_data = response.json()
+else:
+    print("Failed to fetch data. Status code:", response.status_code)
+    exit()
+
+print (type(json_data))
+
+
+# Verificar Tipo de Dados Devolvido e mostrar informação
+if isinstance(json_data, list):
+    print("JSON object is a list.")
+    if json_data:
+        print("Numero Registos:", len(json_data))
+        #print("Registo Exemplo:", json_data[0])
+        print("Tipo 1º elementos:", type(json_data[0]))
+elif isinstance(json_data, dict):
+    print("JSON object is a dictionary.")
+    print("Keys do Object:", list(json_data.keys()))
+else:
+    print("Unknown JSON object type.")
+
+    
+# Obter tipo de keys no dictionary
+print("Keys existentes:", list(json_data[0].keys()))
+```
+
+```{python}
+# Fazer um Loop por todos os anos
+for ky in list(json_data[0]['Dados'].keys()):
+    print(ky)
+```
+
+```{python}
+# Obter Keys no Dados
+# Existe um Key para Cada Ano
+# Resultado json_data
+print("Keys existentes nos Dados:", list(json_data[0]['Dados'].keys()) )
+
+# Ver Tipo de conteudo 2022:
+print("Tipo Objecto:", type(json_data[0]['Dados']['2022']) )
+
+# Tipo é Listagem de Dictionary's
+# Ver conteudo e informação 1º elemento
+print("Tipo primeiro elemento:", type(json_data[0]['Dados']['2022'][0]), 'Numero Elementos:', len(json_data[0]['Dados']['2022']) )
+# Atributos de cada dictionary
+# json_data[0] = Conteudo de resposta
+# json_data[0]['Dados'] = Vamos buscar os proprios dados
+# Obter os dados do ano 2022 - deste conteudo podmeos criar DataFrame: json_data[0]['Dados']['2022']
+print("Keys existentes no Ano:", list(json_data[0]['Dados']['2022'][0].keys()) )
+```
+
+```{python}
+# criar Dataframe:
+# Para assegurar o tipo de dados deveria ser especificado o tipo de atributos das colunas 
+columns = ["geocod", "geodsg", "valor"]
+data_types = {"geocod": str, "geodsg": str, "valor": float}
+
+# Convert the list of dictionaries to a Pandas DataFrame
+df_ine = pd.DataFrame(json_data[0]['Dados']['2022'], columns=columns).astype(data_types)
+print (df_ine.head())
+```
+
+```{python}
+# Mostrar os dados ao nivel de NUTS3:
+# Filtragem no DF - Seleção Length 7
+df_nuts3 = df_ine[df_ine['geocod'].str.len() == 7].copy()
+df_nuts3['codmn'] = df_nuts3['geocod'].str[-4:]
+print(df_nuts3.head())
+```
+
+```{python}
+# ImportR gEOPackage
+# Import packages
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+ 
+# Ler os dados CAOP
+gpk = r"data\geo\GPK_CAOP_MN.gpkg"
+
+# Ler os dados do GeoPackage para um GeoDataFrame
+gdfnuts3 = gpd.read_file(gpk)
+print(gdfnuts3.head())
+```
+
+```{python}
+# Merge dos Dados:
+gdf_nuts3_2 = gdfnuts3.merge(df_nuts3, left_on='DTMN', right_on='codmn', how='left')
+print(gdf_nuts3_2.head())
+```
+
+```{python}
+# Definir Figura e Axis
+f, ax = plt.subplots(1, figsize=(9, 9))
+
+# Mostrar Dados 
+# Definir Legenda 
+
+lgnd_kwds = {'loc': 'upper left', 
+             'bbox_to_anchor': (1, 1.03), 
+             'ncol': 2}
+
+# Generate the choropleth and store the axis
+# natural_breaks
+ax = gdf_nuts3_2.plot(column=gdf_nuts3_2.valor, 
+                      scheme='quantiles', # natural_breaks, quantiles, equal_interval 
+                      k=7, 
+                      cmap='YlGn', 
+                      legend=True,
+                      edgecolor = 'dimgray',
+                      legend_kwds  = lgnd_kwds,
+                      ax=ax)
+ 
+# Remover frames, ticks e tick labels do axis
+ax.set_axis_off()
+
+plt.title('Taxa bruta de mortalidade (‰) por Local de residência (NUTS - 2013)')
+plt.show()
+```
+
+
+## Geocoding
+
+API com serviços REST  
+![](images\apis.png)
+
+**API Keys google e BING** *(vão ser eliminadas após a formação)*
+
+- GeoCode Key BING: At0TxnfnmV0hqD99JAtRPIZfPfQarPox_JCIPgRERq-cY99c1HLvqryhnkMLwIK0
+- GeoCode Key Google: AIzaSyC-tGOoI4QrYNS3AgRuzOOMb_51Gd0RTic
+
+```{python}
+#| eval: false
+# definir as variaveis proxy
+
+import os
+os.environ['http_proxy'] = 'http://proxy.ine.pt:8080'
+os.environ['https_proxy'] = 'http://proxy.ine.pt:8080'
+```
+
+obter longitude e latitudede uma morada com o Google Maps API     
+```{python}
+# Incluir Controlo de Resposta - Invalido API Key
+
+import requests
+import random, time
+import pprint
+
+proxies = {
+  'http': 'http://proxy.ine.pt:8080',
+  'https': 'http://proxy.ine.pt:8080',
+}
+
+
+API_KEY = "AIzaSyC-tGOoI4QrYNS3AgRuzOOMb_51Gd0RTic"
+
+def geocode_address(address):
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + API_KEY
+    print(url)
+    response = requests.get(url)#, proxies=proxies)
+    # Mostrar Resposta JSON (para fim demonstrativos)
+    print(response)
+    # Atenção - ao utilizar chave errado - Response é differente     
+    if response.status_code == 200:
+        data = response.json()
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(data)
+        latitude = data["results"][0]["geometry"]["location"]["lat"]
+        longitude = data["results"][0]["geometry"]["location"]["lng"]
+        return latitude, longitude
+    else:
+        return None
+
+latitude, longitude = geocode_address("Rua João Morais Barbosa 12, Lisboa")
+print(latitude, longitude) 
+
+# Para Assegurar de não ultrapassar o limite de 2 pedidos por segundo seria necessário acresentar codigo deste tipo:
+time.sleep(random.uniform(0, 3)+0.1)
+```
+
+### Geopandas
+
+```{python}
+import geopandas as gpd
+```
+
+geocode de uma morada  
+```{python}
+# GeoReference Morada simples:
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+import geopandas as gpd
+import pandas as pd
+import folium
+# import os
+# os.environ['http_proxy'] = 'http://proxy.ine.pt:8080'
+# os.environ['https_proxy'] = 'http://proxy.ine.pt:8080'
+
+
+# Chamar Função GeoCode
+# Rua  Prof Luciano Mota vieira 42, Ponta Delgada
+res_geo = gpd.tools.geocode("Rua Prof Luciano Mota vieira 42, Ponta Delgada",
+                            provider = "nominatim", 
+                            user_agent="Intro Geocode")
+
+print(res_geo)
+
+# # Atenção esta linha dá um erro caso não foi obtido nenhum resultado
+# # Sera necessário fazer a validação de existencia de Geometria (utiliza Shapely)
+# if (not res_geo['geometry'][0].is_empty):
+#     print ('Visualizar')
+#     res_geo.explore(marker_type = 'marker',edgecolor = 'black')
+# else:
+#     print('Nao foi obtido nenhum resultado')
+# 
+# print(len(res_geo))
+# res_geo.explore(marker_type = 'marker',edgecolor = 'black')
+
+```
+
+geocode de um ficheiro com moradas  
+```{python}
+# GeoReference Morada simples:
+import geopandas as gpd
+import pandas as pd
+import os
+from shapely.geometry import Point
+
+# os.environ['http_proxy'] = 'http://proxy.ine.pt:8080'
+# os.environ['https_proxy'] = 'http://proxy.ine.pt:8080'
+
+# Ler Ficheiros ocm Moradas
+inputfile = r"data\geo\Ensino_Nao_Superior_Amadora.xlsx"
+pd_escolas = pd.read_excel(inputfile)
+
+# Criar nova coluna morada
+pd_escolas['morada2'] = pd_escolas['MORADA'].astype(str) + ' ' + pd_escolas['CTT_COD'].astype(str) + ' ' + pd_escolas['CTT_AUX'].astype(str) + ' ' + pd_escolas['LOCALIDADE'].astype(str)
+
+
+# Fazer Seleção de apenas alguns registos:
+pd_escolas = pd_escolas.head(10)
+
+# Chamar Função GeoCode
+try:
+    res_geo = gpd.tools.geocode(pd_escolas.morada2)
+except Exception as e:
+    print(f"Aconteceu um erro a utilizar o geocode() de geopandas: {e}")    
+    
+    
+#print(res_geo.info())
+#print(pd_escolas.head())
+
+print (f"Nº de Registos do ficheiro: {len(pd_escolas)}")
+```
+
+selecionar os registos com geometria  
+```{python}
+from shapely.geometry import Point
+import geopandas as gpd
+
+# Mostrar Resultado:
+# Selecionar Pontos com Geometria:
+# Crie uma máscara booleana para identificar geometrias válidas (resultado Pandas Series)
+# ~: Siginifca not (será seleccionado o inverso) - 
+mask_valid_geometry = ~res_geo['geometry'].apply(lambda x: x.is_empty)
+
+# Selecione os registros com geometria válida
+res_geo_valid = res_geo[mask_valid_geometry]
+
+
+print (f"Nº de Registos do ficheiro: {len(pd_escolas)}","\n",
+      f"Nº de Registos resultado: {len(res_geo_valid)}")
+
+
+# Mostrar a geografia obtida
+res_geo_valid.explore(marker_type = 'marker',edgecolor = 'black')
+```
+
+
+### Geopy
+
+geocode com nomination  
+```{python}
+from geopy.geocoders import Nominatim
+
+# Morada para geocode
+address = "Rua do comercio 42, vilar formoso"
+
+# Inicialização do geocodificador com o serviço Nominatim
+geolocator = Nominatim(user_agent="my_geocoder")
+
+# Geocode da morada
+# Opções para mostrar: addressdetails =True, limit = 4, extratags  = Tru
+# 
+location = geolocator.geocode(address)
+print(location)
+
+# Verificando o tipo de resultado JSON retornado
+if location:
+    print(f"Latitude: {location.latitude}, Longitude: {location.longitude}")
+    print(f"Tipo de objeto JSON retornado: {type(location.raw)}")
+    print("Exemplo de parte do JSON retornado:")
+    print(location.raw)
+else:
+    print("Morada não encontrada ou geocodificação não foi possível.")
+    
+```
+
+geocode com google  
+```{python}
+from geopy.geocoders import GoogleV3
+
+# Sua chave de API do Google Maps
+api_key = 'AIzaSyC-tGOoI4QrYNS3AgRuzOOMb_51Gd0RTic'
+
+# Endereço para geocode
+address = "Av Antonio José Almeida, Lisboa"
+
+# Inicialização do geocodificador com o serviço Google Maps usando a chave de API
+geolocator = GoogleV3(api_key=api_key)
+
+
+# Geocode da morada
+location = geolocator.geocode(address)
+print (location)
+
+# Verificando os resultados
+if location:
+    print(f"Latitude: {location.latitude}, Longitude: {location.longitude}")
+    print(location.raw)
+else:
+    print("Morada não encontrada ou geocodificação não foi possível.")
+```
+
+geocode com bing  
+```{python}
+from geopy.geocoders import Bing
+
+# Sua chave de API do Bing Maps
+bing_api_key = 'At0TxnfnmV0hqD99JAtRPIZfPfQarPox_JCIPgRERq-cY99c1HLvqryhnkMLwIK0'
+
+# Endereço para geocode
+address = "Rua da urbanização do tanque 8, Funchal"
+
+# Inicialização do geocodificador com o serviço Bing Maps usando a chave de API
+geolocator = Bing(api_key=bing_api_key)
+
+# Geocode da morada
+location = geolocator.geocode(address)
+
+print(location.raw,'\n')
+
+# Verificando os resultados
+if location:
+    print(f"Latitude: {location.latitude}, Longitude: {location.longitude}")
+else:
+    print("Morada não encontrada ou geocodificação não foi possível.")
+
+```
+
+importar um ficheiro inteiro (com bing)  
+```{python}
+import pandas as pd
+from geopy.geocoders import Bing
+import geopandas as gpd
+from shapely.geometry import Point
+
+# Seus dados
+inputfile = r"data\geo\Ensino_Nao_Superior_Amadora.xlsx"
+bing_api_key = 'At0TxnfnmV0hqD99JAtRPIZfPfQarPox_JCIPgRERq-cY99c1HLvqryhnkMLwIK0'
+
+# Colunas CTT_COD e CTT_AUX são importados como numero
+columns_para_string = ['CTT_COD', 'CTT_AUX']
+
+# Leitura do arquivo Excel especificando os tipos de dados das colunas
+df = pd.read_excel(inputfile, dtype={col: str for col in columns_para_string})
+
+# Concatenando os atributos desejados para formar o endereço
+df['endereco'] = df['MORADA'] + ', ' + df['CTT_COD'] + ' ' + df['CTT_AUX'] + ', ' + df['LOCALIDADE']
+
+# Importar apenas alguns registos
+df = df.head(20)
+
+# Inicializando o geocodificador com o serviço Bing
+geolocator = Bing(api_key=bing_api_key)
+
+# Função para obter a localização e a qualidade da resposta
+def get_location_info(address):
+    try:
+        location = geolocator.geocode(address)
+        return location, location.raw['confidence']
+    except:
+        return None, None
+
+# Aplicando a função para obter a localização e a qualidade da resposta
+df['location_info'] = df['endereco'].apply(get_location_info)
+
+
+# Extraindo as coordenadas e a qualidade da resposta para colunas separadas
+# Atenção a ordem longitude (x) e latitude (y)!
+df['coordinates'] = df['location_info'].apply(lambda loc: (loc[0].longitude, loc[0].latitude) if loc[0] else None)
+df['quality'] = df['location_info'].apply(lambda loc: loc[1] if loc[1] else None)
+
+# Criando o GeoDataFrame com base nas coordenadas obtidas
+geometry = [Point(xy) if xy else None for xy in df['coordinates']]
+# Criar gdf de resultado - com indicação do CRS
+gdfBing = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+
+
+# Corrigir para registos onde não existe GeoMetry
+# Neste caso a coluna geometry is Null
+mask_valid_geometry = gdfBing['geometry'].notnull()
+
+# Selecione os registros com geometria válida
+gdfBing = gdfBing[mask_valid_geometry]
+
+print (f"Nº de Registos do ficheiro: {len(df)}","\n",
+      f"Nº de Registos resultado: {len(gdfBing)}")
+
+
+# Mostrar GeoDataFrame resultante
+print(gdfBing.head())
+
+print()
+gdfBing.info()
+```
+
+```{python}
+# Exportar o resultado obtido (coluna location_info):
+df['location_info'].to_csv(r'data\geo\outdfbing.txt', sep='\t')
+```
+
+visualizar com `explore`  
+```{python}
+gdfBing = gdfBing.drop(columns=['location_info'])
+gdfBing.explore(marker_type = 'marker',edgecolor = 'black')
+```
+
+### Dados OSMX com OSMnx
+
+OpenStreetMap (OSM)
+
+pesquisa de dados por lugar  
+```{python}
+import osmnx as ox
+import geopandas as gpd
+#import matplotlib.pyplot as plt
+
+# Definir o lugar para qual queremos dados
+place = "Porto, PT"
+
+# Verificar Existencia Place
+try:
+    result = ox.geocoder.geocode(place)
+    print(f"The geocoded result for {place} is: {result}")
+except Exception as e:
+    print(f"O place não existe: {place}")
+    
+tags = {"highway": "bus_stop"}
+
+try:
+    gdf_bus = ox.features_from_place(place, tags)
+except Exception as e:
+    print(f"Não existem elementos para este tag: {tags}")    
+
+    
+print(gdf_bus[["bench",'name','network','operator','route_ref','departures_board', 'brand' ]].head(8))
+
+gdf_bus.explore(#column = 'cuisine',
+              legend = True,
+            marker_type = 'marker',
+                  edgecolor = 'black')
+```
+
+
+Pesquisa de dados por extensão de uma GDF  
+
+este exemplo faz a importação dos restaurantes existentes no OSM  
+```{python}
+import osmnx as ox
+import geopandas as gpd
+#import matplotlib.pyplot as plt
+from shapely.geometry import box
+
+# Por exemplo Obter Dados o Extento do GPK que utilizamos os notebooks
+# Processo importar 
+gpk = r'data\geo\BGRI2021_1106.gpkg'
+gdf1106 = gpd.read_file(gpk,encoding='utf-8')
+
+# Obter a extensão do GeoDataFrame
+xmin, ymin, xmax, ymax = gdf1106.total_bounds
+
+# Criar um poligono que representa a extensão
+extent_polygon = box(xmin, ymin, xmax, ymax)
+
+# Atenção O CRS dos dados do OSM é EPSG 4326 - Necesistamos de transformar o poligono para 4326
+
+# Isto pode ser efetuado em GeoPandas (alternativa package pyproj)
+# Necessário de definir o CRS par apoder fazer a projeção dos dados
+extent_gdf = gpd.GeoDataFrame(geometry=[extent_polygon], crs = gdf1106.crs) 
+
+# Mudar a projeção para CRS dos dados OSM - 4326:
+extent_gdf2 = extent_gdf.to_crs('EPSG:4326')
+
+# Esta GDF consiste de 1 registo com o poligono
+
+# Definir Tags   
+tags = {"amenity": "restaurant"}
+
+# Necessário try e except para validar o input 
+try:
+    gdf_restaurants = ox.features_from_polygon(extent_gdf2['geometry'][0], tags)
+except Exception as e:
+    print(f"Não existem elementos para este tag: {tags}")
+    
+
+# Vai dar erro se houver problema com tags ou dados existentes    
+gdf_restaurants.explore(column = 'cuisine',
+        legend = True,
+        marker_type = 'marker',
+        edgecolor = 'black')
+```
+
+### Exportar dados
+
+```{python}
+#| eval: false
+gdf_restaurants.to_file(r'data\geo\osm_restaurants1106.gpkg', layer='RESTAURANTS1106', driver="GPKG")
+```
+
+### Exercício
+- Tentar importar mais moradas e melhorar a qualidade do endereço de input
+- Importar o Ficheiro "Ensino_Nao_Superior_Amadora.xlsx" utilizando Google ou Nomantim:
+    - Ver o codigo de importar utilizando Bing, com a seguinte diferença
+    ~~~Python
+    # Inicializar o o geocodificador com o serviço Google
+    geolocator = GoogleV3(api_key=google_api_key)
+
+    # Funcao get_location_info para geocodificar endereco
+    def get_location_info(address):
+        try:
+            location = geolocator.geocode(address)
+            return location, location.raw['types']
+        except:
+            return None, None
+    ~~~
+    - Ver o codigo de importar utilizando Bing, com a seguinte diferença
+    ~~~Python
+    # Inicializar o o geocodificador com o serviço Nominatim
+    geolocator = Nominatim(user_agent="my_geocoder")
+
+    # Funcao get_location_info para geocodificar endereco
+    def get_location_info(address):
+        try:
+            location = geolocator.geocode(address)
+            return location, location.raw['osm_type']  # Adjust according to the response structure
+        except:
+            return None, None
+
+    ~~~
+    - Ajuda Geocoders GeoPY: https://geopy.readthedocs.io/en/latest/#geocoders
+- Importar as escolas de Amadora utilizando o OSMnx (tag amenity e school)
+    - Ver o exemplo neste notebook
+- Visualizar os diferentes Resultados obtidos:
+    - É possivel de utilizar o MatplotLib para visualizar, codigo exemplo (será necessário adicionar as outras gdf
+    ~~~Python
+    import contextily as ctx
+    from shapely.geometry import Point
+
+    # Criar variáveis para a figura
+    f, ax = plt.subplots(1, figsize=(9, 9))
+
+    # Visualizar a GDF
+    gdfBing.plot(legend = False,
+                   ax = ax,
+                  color= 'green' )
+
+    # Add basemap do contextily
+    ctx.add_basemap(
+        ax,
+        crs=gdfGoogle.crs,
+        source=ctx.providers.CartoDB.VoyagerNoLabels,
+    )
+    ~~~
+
+
+**Atenção:** Cuidado com a quantidade de endereços a georrefenciar
+
+
+#### Georeferenciar dados com Google
+
+```{python}
+import pandas as pd
+from geopy.geocoders import GoogleV3
+import geopandas as gpd
+from shapely.geometry import Point
+
+# Importar os Dados
+inputfile = r"data\geo\Ensino_Nao_Superior_Amadora.xlsx"
+google_api_key = 'AIzaSyC-tGOoI4QrYNS3AgRuzOOMb_51Gd0RTic'
+
+# Colunas CTT_COD e CTT_AUX são importados como números
+columns_para_string = ['CTT_COD', 'CTT_AUX']
+
+# Ler EXCEl e indicar que colunas CTT_COD e CTT_AUX são texto
+df = pd.read_excel(inputfile, dtype={col: str for col in columns_para_string})
+
+# Criar nova coluna com endereco
+df['endereco'] = df['MORADA'] + ', ' + df['CTT_COD'] + ' ' + df['CTT_AUX'] + ', ' + df['LOCALIDADE']
+
+# Importar apenas alguns registos
+df = df.head(20)
+
+# Inicializar o o geocodificador com o serviço Google
+geolocator = GoogleV3(api_key=google_api_key)
+
+# Funcao get_location_info para geocodificar endereco
+def get_location_info(address):
+    try:
+        location = geolocator.geocode(address)
+        return location, location.raw['types']
+    except:
+        return None, None
+
+# Aplicando a função para obter a localização e a qualidade da resposta
+df['location_info'] = df['endereco'].apply(get_location_info)
+
+# Extraindo as coordenadas e a qualidade da resposta para colunas separadas
+# Atenção a ordem longitude (x) e latitude (y)!
+df['coordinates'] = df['location_info'].apply(lambda loc: (loc[0].longitude, loc[0].latitude) if loc[0] else None)
+df['quality'] = df['location_info'].apply(lambda loc: loc[1] if loc[1] else None)
+
+# Criar o GeoDataFrame com base nas coordenadas obtidas
+geometry = [Point(xy) if xy else None for xy in df['coordinates']]
+# Criar gdf de resultado - com indicação do CRS
+gdfGoogle = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+# Corrigir para registos onde não existe GeoMetry
+# Neste caso a coluna geometry is Null
+mask_valid_geometry = gdfGoogle['geometry'].notnull()
+
+# Selecione os registros com geometria válida
+gdfGoogle = gdfGoogle[mask_valid_geometry]
+
+print (f"Nº de Registos do ficheiro: {len(df)}","\n",
+      f"Nº de Registos resultado: {len(gdfGoogle)}")
+
+# Mostrar parte do Resultado
+print(gdfGoogle.head())
+```
+
+
+```{python}
+# Apagar atributo location_info 
+gdfGoogle = gdfGoogle.drop(columns=['location_info'])
+gdfGoogle.explore(marker_type = 'marker',edgecolor = 'black')
+```
+
+#### Importar dados Nominatim
+
+```{python}
+import pandas as pd
+from geopy.geocoders import Nominatim
+import geopandas as gpd
+from shapely.geometry import Point
+
+# Importar os Dados
+inputfile = r"data\geo\Ensino_Nao_Superior_Amadora.xlsx"
+
+# Colunas CTT_COD e CTT_AUX são importados como números
+columns_para_string = ['CTT_COD', 'CTT_AUX']
+
+# Ler EXCEl e indicar que colunas CTT_COD e CTT_AUX são texto
+df = pd.read_excel(inputfile, dtype={col: str for col in columns_para_string})
+
+# Criar nova coluna com endereco
+df['endereco'] = df['MORADA'] + ', ' + df['CTT_COD'] + ' ' + df['CTT_AUX'] + ', ' + df['LOCALIDADE']
+
+# Importar apenas alguns registos
+df = df.head(20)
+
+# Inicializar o o geocodificador com o serviço Nominatim
+geolocator = Nominatim(user_agent="my_geocoder")
+
+# Funcao get_location_info para geocodificar endereco
+def get_location_info(address):
+    try:
+        location = geolocator.geocode(address)
+        return location, location.raw['osm_type']  # Adjust according to the response structure
+    except:
+        return None, None
+
+# Aplicando a função para obter a localização e a qualidade da resposta
+df['location_info'] = df['endereco'].apply(get_location_info)
+
+# Extraindo as coordenadas e a qualidade da resposta para colunas separadas
+# Atenção a ordem longitude (x) e latitude (y)!
+df['coordinates'] = df['location_info'].apply(lambda loc: (loc[0].longitude, loc[0].latitude) if loc[0] else None)
+df['quality'] = df['location_info'].apply(lambda loc: loc[1] if loc[1] else None)
+
+# Criar o GeoDataFrame com base nas coordenadas obtidas
+geometry = [Point(xy) if xy else None for xy in df['coordinates']]
+# Criar gdf de resultado - com indicação do CRS
+gdfNominatim = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+
+# Corrigir para registos onde não existe GeoMetry
+# Neste caso a coluna geometry is Null
+mask_valid_geometry = gdfNominatim['geometry'].notnull()
+
+# Selecione os registros com geometria válida
+gdfNominatim = gdfNominatim[mask_valid_geometry]
+
+print (f"Nº de Registos do ficheiro: {len(df)}","\n",
+      f"Nº de Registos resultado: {len(gdfNominatim)}")
+
+
+# Mostrar GDf Resultado
+print(gdfNominatim.head())
+```
+
+
+```{python}
+# Google não tem problema com o atributo location_info
+gdfNominatim = gdfNominatim.drop(columns=['location_info'])
+gdfNominatim.explore(marker_type = 'marker',edgecolor = 'black')
+```
+
+#### Importar dados OSM
+
+```{python}
+import osmnx as ox
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Definir o lugar para qual queremos dados
+place = "Amadora, PT"
+
+# Verificar Existencia Place
+try:
+    result = ox.geocoder.geocode(place)
+    print(f"The geocoded result for {place} is: {result}")
+except Exception as e:
+    print(f"O place não existe: {place}")
+    
+tags = {"amenity": "school"}
+
+try:
+    gdf_school = ox.features_from_place(place, tags)
+except Exception as e:
+    print(f"Não existem elementos para este tag: {tags}")    
+
+    
+gdf_school.explore(marker_type = 'marker',
+                  edgecolor = 'black')
+```
+
+mostrar todos os resultados  
+```{python}
+import contextily as ctx
+from shapely.geometry import Point
+
+# Criar variáveis para a figura
+f, ax = plt.subplots(1, figsize=(9, 9))
+
+
+# Visualizar a GDF
+gdfBing.plot(legend = False,
+               ax = ax,
+              color= 'green' )
+
+# Add basemap do contextily
+ctx.add_basemap(
+    ax,
+    crs=gdfGoogle.crs,
+    source=ctx.providers.CartoDB.VoyagerNoLabels,
+)
+
+
+
+# Visualizar a GDF
+gdfNominatim.plot(legend = False,
+               ax = ax,
+              color= 'purple' )
+
+# Visualizar a GDF
+gdfGoogle.plot(legend = False,
+               ax = ax,
+              color= 'red' )
+
+
+# Visualizar a GDF
+gdf_school.plot(legend = False,
+               ax = ax,
+              color= 'blue' )
+
+# Add basemap do contextily
+ctx.add_basemap(
+    ax,
+    crs=gdfGoogle.crs,
+    source=ctx.providers.CartoDB.VoyagerNoLabels,
+)
+
+
+ax.set_axis_off()
+```
 
 
 <br>

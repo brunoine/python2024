@@ -1,4 +1,4 @@
-# Módulo 8
+# Data Science (Advanced)
 
 ::: {.callout-tip}
 ## Conteúdos
@@ -7,6 +7,2697 @@ Aprendizagem supervisionada utilizando o `scikit`.
 
 :::
 
+## KNN
+
+![](images\knn.png)
+
+K-nearest neighbors (KNN) depende do número de vizinhos (k) e da medida de distância:
+
++ *euclidean*
++ *manhattan*
++ *chebyshev*
++ *minkowski*
++ *seuclidean*
++ *mahalanobis*
+
+é também comum parametrizar *weights* (*uniform* ou *distance*)
+
+`sklearn.neighbors.KNeighborsClassifier`
+
+O algoritno pode ser:
++ `ball_tree`
++ `kd_tree`
++ `brute`
++ `auto`
+
+Exemplo
+
+gerar dados de exemplo:  
+```{python}
+from sklearn.datasets import make_blobs
+import numpy as np
+
+centers = [[2, 3], [5, 5], [1, 8]]
+n_classes = len(centers)
+data, labels = make_blobs(n_samples=150, 
+                          centers=np.array(centers),
+                          random_state=1)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+# define cores                          
+colours = ('green', 'red', 'blue')
+
+fig, ax = plt.subplots()
+for n_class in range(0, n_classes):
+    ax.scatter(data[labels==n_class, 0], data[labels==n_class, 1], 
+               c=colours[n_class], s=10, label=str(n_class))
+
+ax.legend(loc='upper right')
+
+plt.show()
+```
+
+dividir os dados em teste e treino  
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(data, labels,
+                                                    train_size=0.8, test_size=0.2, random_state=1)
+```
+
+
+```{python}
+y_train
+```
+
+```{python}
+# Create and fit a nearest-neighbor classifier
+from sklearn.neighbors import KNeighborsClassifier
+
+# a instância do KNN está a ser criada sem parâmetros
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train) 
+
+y_pred = knn.predict(X_test)
+print("Previsões do classificador:")
+print(y_pred)
+print("Target:")
+print(y_test)
+```
+
+```{python}
+from sklearn.metrics import accuracy_score
+
+print(accuracy_score(y_pred, y_test))
+```
+exemplo *ad hoc* para calcular *accuracy*
+```{python}
+from sklearn.metrics import accuracy_score
+
+example_predictions = [0, 2, 1, 3, 2, 0, 1]
+example_labels      = [0, 1, 2, 3, 2, 1, 1]
+print(accuracy_score(example_predictions, example_labels))
+```
+
+### KNN com Dataset Iris
+
+```{python}
+from sklearn import datasets
+#from sklearn.model_selection import train_test_split
+
+iris = datasets.load_iris()
+data, labels = iris.data, iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(data, labels, train_size=0.7, test_size=0.3, random_state=1)
+```
+
+
+```{python}
+#import matplotlib.pyplot as plt
+
+colours = ('purple', 'red', 'blue')
+n_classes = 3
+
+fig, ax = plt.subplots()
+for n_class in range(0, n_classes):
+    ax.scatter(data[labels==n_class, 0], data[labels==n_class, 1], 
+               c=colours[n_class], s=10, label=str(n_class))
+
+ax.legend(loc='upper right')
+
+plt.show()
+```
+
+```{python}
+# Create and fit a nearest-neighbor classifier
+# sklearn.neighbors import KNeighborsClassifier
+
+# instanciação com parâmetros
+knn2 = KNeighborsClassifier(algorithm='auto', 
+                           leaf_size=30, 
+                           metric='minkowski',
+                           p=2,
+                           metric_params=None, 
+                           n_jobs=1, 
+                           n_neighbors=3, 
+                           weights='uniform')
+                           
+knn2.fit(X_train, y_train) 
+
+y_pred = knn2.predict(X_test)
+print("Previsões do classificador:")
+print(y_pred)
+print("Target:")
+print(y_test)                           
+```
+
+```{python}
+#from sklearn.metrics import accuracy_score
+
+print(accuracy_score(y_pred, y_test))
+```
+
+```{python}
+y_test_proba = knn2.predict_proba(X_test)
+y_test_proba[:10]
+```
+
+
+```{python}
+from sklearn.metrics import confusion_matrix
+import pandas as pd
+
+cm_thr50 = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm_thr50,columns = ['pred: 0','pred: 1','pred: 2'],
+                   index = ['real: 0','real: 1','real: 2']))
+```
+
+```{python}
+from sklearn.metrics import precision_score, recall_score, accuracy_score
+
+# por omissão average='binary' mas pode também ser None 'micro', 'macro' e 'weighted'
+print('Precision: %.3f' % precision_score(y_test, y_pred, average='micro'))
+print('Recall: %.3f' % recall_score(y_test, y_pred, average='micro'))
+print('Accuracy: %.3f' % accuracy_score(y_test, y_pred))
+```
+
+```{python}
+from sklearn.metrics import classification_report
+
+print(
+    f"Classification report for classifier {knn2}:\n"
+    f"{classification_report(y_test, y_pred)}\n"
+)
+```
+
+### Avaliação do modelo
+
+![](images\complexity.png)
+
+:::: {.columns}
+
+::: {.column}
+![](images\bias.png)
+:::
+
+::: {.column}
+![](images\variance.png)
+
+:::
+:::: 
+
+Bias / Variance trade-off
+
+$Total Error = Bias^2 + Variance + Irreductible Error$
+
+![](images\balance.png)
+Exemplo
+
+Criar dois grupos e prever o grupo a que pertence cada observação de acordo com os seus vizinhos:  
+```{python}
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+import numpy as np
+
+centers = [[2, 3], [5, 5]]
+n_classes = len(centers)
+data, labels = make_blobs(n_samples=200, 
+                          centers=np.array(centers),
+                          random_state=1)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+colours = ('orange', 'blue')
+# n_classes = 2
+
+fig, ax = plt.subplots()
+for n_class in range(0, n_classes):
+    ax.scatter(data[labels==n_class, 0], data[labels==n_class, 1], 
+               c=colours[n_class], s=10, label=str(n_class))
+
+ax.legend(loc='upper right')
+
+plt.show()
+```
+
+dividir os dados  em treino e teste:  
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(data, labels, train_size=0.8, test_size=0.2, random_state=1)
+```
+
+
+modelar para diferentes K:  
+```{python}
+# Create and fit a nearest-neighbor classifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+# vamos aumentar a complexidade aumentando o nº de vizinhos
+k_range = range(1,20)
+scores = {}
+scores_list = []
+
+for k in k_range:
+    knn = KNeighborsClassifier(n_neighbors = k)
+    knn.fit(X_train, y_train)
+    y_pred = knn.predict(X_test)
+    scores[k] = metrics.accuracy_score(y_test, y_pred)
+    scores_list.append(metrics.accuracy_score(y_test, y_pred))
+    
+print(*scores_list, sep = ", ")
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+# vamos fazer o plot da relação entre o aumento do nº de vizinhos k
+# e o valor da accuracy medido nos dados de Teste
+plt.plot(k_range, scores_list)
+plt.xlabel("Valor de k no KNN")
+plt.ylabel("Testing Accuracy")
+plt.show()
+```
+
+```{python}
+# parece não haver ganhos a partir dos 8 vizinhos
+knn = KNeighborsClassifier(n_neighbors = 8)
+knn.fit(X_train, y_train) 
+
+classes = {0: 'doces', 1: 'salgados'}
+
+x_new = [[5.88213357, 3.75041164], [1.6546771, 3.6924546 ]]
+y_predict = knn.predict(x_new)
+y_predict_prob = knn.predict_proba(x_new)
+
+print('O elemento {0} gosta mais de {1}'.format(x_new[0],classes[y_predict[0]]))
+print('O elemento {0} gosta mais de {1}'.format(x_new[1],classes[y_predict[1]]))
+```
+
+### Matriz de confusão
+
+modelo KNN com K = 6  
+```{python}
+# Create and fit a nearest-neighbor classifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+knn = KNeighborsClassifier(n_neighbors = 6)
+    
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_test)
+
+score = metrics.accuracy_score(y_test, y_pred)
+score
+```
+
+probabilidades previstas para os positivos (2ª coluna)  
+```{python}
+knn.predict_proba(X_test)[:, 1]
+```
+
+```{python}
+from sklearn.metrics import confusion_matrix
+
+confusion_matrix(y_test, y_pred)
+```
+
+com *labels*  
+```{python}
+cm = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+from sklearn.metrics import precision_score, recall_score, accuracy_score
+
+print('Precision: %.3f' % precision_score(y_test, y_pred))
+print('Recall: %.3f' % recall_score(y_test, y_pred))
+print('Accuracy: %.3f' % accuracy_score(y_test, y_pred))
+```
+
+cálculo "manual":  
+```{python}
+# Accuracy = TP + TN / P + N
+f_acc = (23 + 14)/ (( 2 + 23) + (14 + 1))
+f_acc
+
+# Recall ou sensitivity ou TPR - linha yes da matriz
+# Dos que são positivos quantos previu?
+# TPR = TP / P
+f_recall = 23 / 25
+f_recall
+```
+
+
+```{python}
+# Precision - coluna yes da matriz
+# Dos que previu como positivos quantos eram realmente positivos? 
+# Precision = TP / TP + FP
+f_precision = 23 / (23 + 1)
+f_precision
+
+# Specificity ou Selectivity ou TNR - Linha no da matriz
+# TNR = TN / N 
+f_specificity = 14 / (14 + 1)
+f_specificity
+```
+
+### ROC e AUC
+
+Receiver Operating Characteristics (ROC) e Area Under the Curve (AUC)
+
+```{python}
+model = knn.fit(X_train, y_train)
+
+from sklearn.metrics import roc_curve, RocCurveDisplay
+
+fpr, tpr, thresholds = roc_curve(y_test,model.predict_proba(X_test)[:,1], # 
+                                 drop_intermediate=False)
+
+knn_disp = RocCurveDisplay.from_estimator(model, X_train, y_train)
+roc_disp = RocCurveDisplay.from_estimator(model, X_test, y_test, ax=knn_disp.ax_) # o ax diz que este novo objecto fica no objecto anterior
+
+plt.show()
+```
+
+```{python}
+thresholds
+```
+
+```{python}
+cm = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+# FPR = FP / N
+FPR_50 = 1 / 15
+FPR_50
+```
+
+```{python}
+# TPR = TP / P
+TPR_50 = 23 / 25
+TPR_50
+```
+
+```{python}
+threshold = 0.33
+y_pred = (model.predict_proba(X_test)[:, 1] > threshold)
+
+cm_thr33 = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm_thr33,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+# FPR = FP / N
+FPR_33 = 2 / 15
+# TPR = TP / P
+TPR_33 = 24 / 25
+print('O FPR é {0} quando o TPR é {1}' . format(FPR_33,TPR_33))
+```
+
+```{python}
+threshold = 0.83
+y_pred = (model.predict_proba(X_test)[:, 1] > threshold)
+
+cm_thr83 = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm_thr83,columns = ['pred: No','pred: Yes'],
+                   index = ['real: No','real: Yes']))
+```
+
+```{python}
+# FPR = FP / N
+FPR_83 = 1 / 15
+# TPR = TP / P
+TPR_83 = 21 / 25
+print('O FPR é {0} quando o TPR é {1}' . format(FPR_83,TPR_83))
+```
+
+```{python}
+knn_disp = RocCurveDisplay.from_estimator(model, X_test, y_test)
+
+plt.show()
+```
+
+## Regressão Linear
+
+Problemas mais comuns:
+
++ relação não linear entre a resposta e predictor
++ correlação dos termos de erro
++ variância não constante dos erros
++ outliers
++ pontos com *high-leverage*
++ colinearidade
+
+```{python}
+import numpy as np
+import pandas as pd
+
+datadir ="data\\"
+filename = "df_prep.csv"
+
+df_hosp = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')
+df_hosp.head()
+```
+```{python}
+df_hosp.describe()
+```
+
+```{python}
+# passa indices para coluna
+df_hosp = df_hosp.reset_index()
+
+# deixar cair a coluna 't_cirurgia'
+df_hosp = df_hosp.drop(columns=['t_cirurgia']) 
+```
+
+```{python}
+# criação de matriz de correlação e selecão do triângulo superior
+cor_matrix = df_hosp.corr().abs()
+upper_tri = cor_matrix.where(np.triu(np.ones(cor_matrix.shape),k=1).astype(bool))
+
+# seleciona as colunas a remover por serem colunas altamente correlacionadas
+to_drop = [column for column in upper_tri.columns if any(upper_tri[column] > 0.9)]
+print(to_drop)
+
+df_hosp = df_hosp.drop(columns=to_drop, axis=1)
+
+```
+
+
+```{python}
+# seleciona para remover as colunas ano e ordem
+# que não trazem informação e queremos evitar que ruído seja aprendido
+to_drop = ['ANO','NORDEM']
+df = df_hosp.drop(columns=to_drop, axis=1)
+
+# excluimos os registos com valores vazios
+df1 = df.dropna()
+
+# define a variável target e as features
+X = df1.drop(columns=['C31011']) 
+y = df1['C31011'].values # array com os valores
+
+## Typecast da coluna para categórica em pandas
+X['NUTS2'] = pd.Categorical(X.NUTS2)
+
+X.shape
+
+# cria variáveis dummy e faz drop da baseline
+X = pd.get_dummies(X, drop_first = True)
+
+# O nº de colunas aumentou por causa das dummy variables
+X.shape
+```
+
+divide os dados em treino e teste  
+```{python}
+from sklearn.model_selection import train_test_split 
+
+#Split data for machine learning
+X_train, X_test, y_train, y_test = train_test_split(X,  y, test_size = 0.2 ,random_state = 2002)
+print(X_train.shape)
+print(X_test.shape)
+```
+
+faz o modelo  
+```{python}
+from sklearn.linear_model import LinearRegression 
+
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+```
+
+calcula o R^2  
+```{python}
+y_pred = lr.predict(X_test)
+
+from sklearn.metrics import r2_score
+
+r2_score(y_test, y_pred)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred)
+plt.xlim(0, 10)
+plt.ylim(0, 10)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+## Regressão logística
+
+para prever um valor contínuo  
+```{python}
+#| warning: false
+from sklearn.linear_model import LogisticRegression
+
+# sem qualquer parâmetro
+logisticRegr = LogisticRegression()
+
+logisticRegr.fit(X_train, y_train)
+```
+
+```{python}
+y_pred = logisticRegr.predict(X_test)
+
+from sklearn.metrics import r2_score
+
+r2_score(y_test, y_pred)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred)
+plt.xlim(0, 8)
+plt.ylim(0, 8)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+para classificar  
+```{python}
+from sklearn.datasets import load_digits
+
+digits = load_digits()
+
+# Vamos ver que há 1797 images (imagens 8 por 8 com uma dimensionalidade de 64)
+print('Image Data Shape' , digits.data.shape)
+# Print to show there are 1797 labels (integers from 0–9)
+print("Label Data Shape", digits.target.shape)
+```
+
+visualizar algumas imagens  
+```{python}
+import numpy as np 
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(20,4))
+for index, (image, label) in enumerate(zip(digits.data[0:5], digits.target[0:5])):
+ plt.subplot(1, 5, index + 1)
+ # imshow() função dó módulo pyplot module do matplotlib para mostrar dados como imagem; i.e. num raster 2D.
+ plt.imshow(np.reshape(image, (8,8)), cmap=plt.cm.gray)
+ plt.title('Training: %i\n' % label, fontsize = 20)
+ 
+plt.show()
+
+```
+
+```{python}
+#| warning: false
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.25, random_state=2023)
+
+from sklearn.linear_model import LogisticRegression
+
+# sem qualquer parâmetro
+logisticRegr = LogisticRegression()
+
+logisticRegr.fit(X_train, y_train)
+```
+previsão da categoria/classe  
+```{python}
+# Retorna um Array NumPy 
+# Prevê para um único caso (imagem)
+prv1 = logisticRegr.predict(X_test[0].reshape(1,-1))
+prv1
+```
+visualizar a imagem que foi prevista  
+```{python}
+# vamos ver a imagem
+plt.figure(figsize=(20,4))
+plt.imshow(np.reshape(X_test[0], (8,8)), cmap=plt.cm.gray)
+
+plt.show()
+```
+
+```{python}
+# probabilidade de que seja um 5 é de 9.93529410e-01
+prob1 = logisticRegr.predict_proba(X_test[0].reshape(1,-1))
+prob1
+```
+
+```{python}
+#| eval: false
+logisticRegr.coef_
+```
+
+array com as previões  
+```{python}
+#| eval: false
+y_pred = logisticRegr.predict(X_test)
+y_pred
+```
+
+confusion matrix 9x9  
+```{python}
+#| eval: false
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import metrics
+
+#cm = metrics.confusion_matrix(y_test, y_pred)
+
+plt.figure(figsize=(9,9))
+sns.heatmap(cm, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r')
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+all_sample_title = 'Accuracy Score: {0}'.format(metrics.accuracy_score(y_pred, y_test))
+plt.title(all_sample_title, size = 15)
+
+plt.show()
+```
+
+## Regularização
+
+regularizações que penalizam os coeficientes grandes
+
+### Ridge Regression 
+
+$Função Perda = OLS + \lambda \times slope^2$
+
+A recta da ridge regressioné menos inclinada dos que a recta da regressão linear, ou seja, as previsões são menos sensíveis ao predictor (processo de dessensitização dos predictores) 
+
+```{python}
+#Importa desta feita os datasets
+from sklearn import datasets
+
+#Load dataset de diabetes
+diabetes_X,diabetes_y = datasets.load_diabetes(return_X_y = True , as_frame = True)
+
+# Colunas que temos nos dados
+diabetes_X.keys
+```
+
+```{python}
+diabetes_y
+```
+
+
+```{python}
+# print data(feature)shape
+diabetes_X.shape
+```
+dividir os dados  
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(diabetes_X, diabetes_y, test_size=0.3,random_state=2510) 
+
+X_test
+```
+
+Na função de perda $\alpha$ é o parâmetro que precisamos selecionar. Um valor $\alpha$ baixo pode levar a um ajuste excessivo, enquanto um valor $\alpha$ alto pode levar a um ajuste insuficiente.
+
+```{python}
+from sklearn.linear_model import Ridge
+
+# instancia o modelo de regressão Ridge
+# com um valor alfa 
+model_ridge = Ridge(alpha=0.01)
+
+model_ridge.fit(X_train, y_train) 
+
+y_pred_ridgetrain= model_ridge.predict(X_train)
+
+y_pred_ridgetest = model_ridge.predict(X_test)
+
+y_pred_ridgetest[0:3]
+```
+
+```{python}
+y_test[0:3]
+```
+
+```{python}
+from sklearn.metrics import mean_squared_error, r2_score
+
+print('RMSE nos dados de Treino: {}' .format(np.sqrt(mean_squared_error(y_train,y_pred_ridgetrain))))
+print('R2 nos dados de Treino: {}' .format(r2_score(y_train, y_pred_ridgetrain)))
+
+print('RMSE nos dados de Teste: {}' .format(np.sqrt(mean_squared_error(y_test,y_pred_ridgetest)))) 
+print('R2 nos dados de Teste: {}' .format(r2_score(y_test, y_pred_ridgetest)))
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred_ridgetest)
+plt.xlim(0, 400)
+plt.ylim(0, 400)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+Exemplo com ficheiro `Hitters`  
+
+```{python}
+datadir ="data\\"
+filename = "Hitters.csv"
+
+df = pd.read_csv(f"{datadir}{filename}", index_col=0, verbose = False, encoding='latin-1')
+df.head()
+
+```
+
+```{python}
+df.reset_index()
+```
+
+```{python}
+# Vamos descobrir em que colunas há valores em falta
+[col for col in df.columns if df[col].isnull().sum()>0]
+
+# só a coluna salary tem valores em falta
+df.dropna(inplace = True)
+```
+
+```{python}
+# vamos ver que colunas são do tipo Object
+qual_vars = [col for col in df.columns if df[col].dtype == 'object']
+print(qual_vars)
+
+# e criar variáveis dummy para as nossas variáveis categóricas
+df = pd.get_dummies(df,columns= qual_vars,drop_first=True)
+df.head()
+```
+
+```{python}
+# Separamos a coluna target das outras
+X = df.drop('Salary',axis = 1)
+y = df['Salary']
+
+from sklearn.preprocessing import StandardScaler
+
+# Como vemos nas colunas grandes diferenças de escala vamos standardizar
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=2510) 
+print(X_train.shape)
+print(y_test.shape)
+```
+
+```{python}
+from sklearn.linear_model import Ridge
+
+# instanciar o modelo de regressão Ridge
+# com um valor alfa 
+model_ridge = Ridge(alpha=0.01)
+
+model_ridge.fit(X_train, y_train) 
+```
+
+ver os primeiros resultados
+```{python}
+y_pred_ridgetrain= model_ridge.predict(X_train)
+
+y_pred_ridgetest= model_ridge.predict(X_test)
+
+y_pred_ridgetest[0:3]
+
+y_test[0:3]
+```
+
+avaliar o modelo  
+```{python}
+from sklearn.metrics import mean_squared_error, r2_score
+
+print('MSE nos dados de Treino: {}' .format(np.sqrt(mean_squared_error(y_train,y_pred_ridgetrain))))
+print('R2 nos dados de Treino: {}' .format(r2_score(y_train, y_pred_ridgetrain)))
+
+print('MSE nos dados de Teste: {}' .format(np.sqrt(mean_squared_error(y_test,y_pred_ridgetest)))) 
+print('R2 nos dados de Teste: {}' .format(r2_score(y_test, y_pred_ridgetest)))
+```
+
+visualizar a comparação do previsto com o real  
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred_ridgetest)
+plt.xlim(0, 1000)
+plt.ylim(0, 1000)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+#### explorar o alpha
+
+```{python}
+#| echo: false
+list_alpha = 10**np.linspace(-2,10,100)
+list_alpha
+```
+vizualizar o valor dos coeficientes para cada alpha. Quanto maior é o alpha menor é o valor dos coeficientes  
+```{python}
+#| echo: false  
+coeff_matrix = {}
+
+for alpha in list_alpha:
+    model = Ridge(alpha=alpha)
+    model.fit(X,y)
+    coeff_matrix[alpha] = list(model.coef_)
+    
+tmp = pd.DataFrame(coeff_matrix).T
+tmp.index = list_alpha
+
+tmp.head()
+tmp.tail()
+```
+
+```{python}
+#| warning: false
+
+import warnings
+warnings.filterwarnings("ignore", "is_categorical_dtype")
+warnings.filterwarnings("ignore", "use_inf_as_na")
+
+plt.figure(figsize = (16,8))
+sns.lineplot(data = tmp, dashes=False)
+plt.axhline(y = 0,linestyle = 'dashed',lw = 0.1,color = 'black')
+plt.xscale('log')
+plt.xticks(list_alpha)
+plt.ylabel('Coeffients',fontsize = 14)
+plt.xlabel('Alpha')
+plt.legend(loc='right')
+
+plt.show()
+```
+alguns alphas  
+```{python}
+print(list_alpha[0])
+print(list_alpha[3])
+print(list_alpha[97])
+print(list_alpha[99])
+```
+
+```{python}
+# para um valor baixo de alpha os coeficientes são elevados
+print(coeff_matrix[list_alpha[8]])
+
+# para um valor elevado de alpha os coeficientes são próximos de zero
+# mas não realmente zero
+print(coeff_matrix[list_alpha[90]])
+```
+
+```{python}
+# linalg.norm(x, ord=None, axis=None, keepdims=False)
+# Calcula a norma matricial ou vetorial, dependendo do ord, 8 normas diferentes
+# Quando ord é None para um vector x retorna a 2-norm
+
+list_l2_norm = []
+
+for alpha in list_alpha:
+    list_l2_norm.append(np.linalg.norm(coeff_matrix[alpha]))
+
+print(list_l2_norm[0])
+print(list_l2_norm[-1])
+```
+
+```{python}
+plt.figure(figsize = (14,6))
+plt.plot(list_alpha,list_l2_norm)
+plt.xlabel('Alpha')
+plt.ylabel('L2 Norm')
+plt.xlim(0,100)
+```
+
+#### seleccionar o melhor $\alpha$
+
+```{python}
+#| echo: false
+# Usando o método de validação
+X_train,X_test,y_train,y_test = train_test_split(df.drop('Salary',axis = 1),df['Salary'],test_size = 0.3,random_state = 2023)
+
+# score de validação MSE para cada alpha
+validation_score = []
+for alpha in list_alpha:
+    model = Ridge(alpha=alpha)
+    model.fit(X_train,y_train)
+    validation_score.append(mean_squared_error(model.predict(X_test),y_test)*len(y_test))
+
+validation_score[:5]
+```
+
+```{python}
+# visualização dos scores
+sns.lineplot(x=list_alpha,y=validation_score)
+plt.xscale('log')
+
+plt.show()
+```
+ver valores por posição
+```{python}
+np.argmin(validation_score)
+
+validation_score[69]
+```
+escolhido o score aplicamos o respectivo alpha  
+```{python}
+model_ridge = Ridge(alpha=validation_score[69])
+model_ridge.fit(X_train, y_train) 
+y_pred_ridgetrain= model_ridge.predict(X_train)
+y_pred_ridgetest= model_ridge.predict(X_test)
+y_pred_ridgetest[0:3]
+```
+
+```{python}
+# reparem que como estamos a partir/split com seed diferente 
+# temos diferentes elementos no conjunto de teste
+y_test[0:3]
+```
+
+### Lasso Regression
+
+$Função Perda = OLS + \alpha \times \sum|\beta|)$
+
+Exemplo com dataset do Scikit
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(diabetes_X, diabetes_y, test_size=0.3,random_state=2510) 
+
+from sklearn.linear_model import Lasso
+
+# instancia o modelo de regressão Lasso
+# com um valor alfa 
+model_lasso = Lasso(alpha=0.01)
+
+model_lasso.fit(X_train, y_train) 
+```
+
+```{python}
+y_pred_lassotrain = model_lasso.predict(X_train)
+
+y_pred_lassotest = model_lasso.predict(X_test)
+
+y_pred_lassotest[:5]
+
+y_test[:5]
+```
+
+```{python}
+from sklearn.metrics import mean_squared_error, r2_score
+
+print('MSE nos dados de Treino: {}' .format(np.sqrt(mean_squared_error(y_train,y_pred_lassotrain))))
+print('R2 nos dados de Treino: {}' .format(r2_score(y_train, y_pred_lassotrain)))
+
+print('MSE nos dados de Teste: {}' .format(np.sqrt(mean_squared_error(y_test,y_pred_lassotest)))) 
+print('R2 nos dados de Teste: {}' .format(r2_score(y_test, y_pred_lassotest)))
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred_lassotest)
+plt.xlim(0, 400)
+plt.ylim(0, 400)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+#### explorar o $\alpha$
+
+```{python}
+df.head()
+```
+
+```{python}
+# Separamos a coluna target das outras
+X = df.drop('Salary',axis = 1)
+y = df['Salary']
+```
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+
+# Como vemos nas colunas grandes diferenças de escala vamos standardizar
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=2510) 
+print(X_train.shape)
+print(y_test.shape)
+```
+
+```{python}
+#| echo: false
+coeff_matrix_lasso = {}
+
+for alpha in list_alpha:
+    model = Lasso(alpha=alpha)
+    model.fit(X,y)
+    coeff_matrix_lasso[alpha] = list(model.coef_)
+```
+
+```{python}
+tmp = pd.DataFrame(coeff_matrix_lasso).T
+tmp.index = list_alpha
+tmp.head()
+```
+
+```{python}
+#| echo: false
+# Visualização dos Coeficientes usando Lasso
+plt.figure(figsize = (16,8))
+sns.lineplot(data = tmp, dashes=False)
+plt.axhline(y = 0,linestyle = 'dashed',lw = 0.1,color = 'black')
+plt.xscale('log')
+plt.xticks(list_alpha)
+plt.ylabel('Coeffients',fontsize = 14)
+plt.xlabel('Alpha')
+plt.legend(loc='right')
+```
+
+```{python}
+# para valores pequenos de alpha os coeficientes são grandes
+print(coeff_matrix_lasso[list_alpha[8]])
+
+# para valores maiores de alpha alguns coeficientes são zero
+print(coeff_matrix_lasso[list_alpha[30]])
+```
+
+```{python}
+# para valores suficientemente grandes de alpha
+# são todos encolhidos até ao zero 
+# ao contrário do que sucedia com o Ridge em que se
+# aproximavam mas nunca eram mesmo zero
+print(coeff_matrix_lasso[list_alpha[90]])
+```
+
+### Elastic Net Regression
+
+$Função Perda = OLS + \alpha_1 \times \sum\beta^2 + \alpha_2 \times \sum|\beta|)$
+
+*ElasticNet* combina as propriedades da regressão *Ridge* e *Lasso.* Funciona penalizando o modelo usando a norma l2 e a norma l1.
+
+No *scikit-learn*, um modelo de regressão *ElasticNet* é construído usando a classe `ElasticNet`.
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(diabetes_X, diabetes_y, test_size=0.3,random_state=2510) 
+
+from sklearn.linear_model import ElasticNet
+
+# instancia o modelo de regressão ElasticNet
+# com um valor alfa 
+model_elnet = ElasticNet(alpha = 0.01)
+
+model_elnet.fit(X_train, y_train) 
+```
+
+```{python}
+y_pred_elnettrain= model_elnet.predict(X_train)
+
+y_pred_elnettest= model_elnet.predict(X_test)
+y_pred_elnettest[:5]
+
+print()
+y_test[:5]
+```
+
+```{python}
+from sklearn.metrics import mean_squared_error, r2_score
+
+print('MSE nos dados de Treino: {}' .format(np.sqrt(mean_squared_error(y_train,y_pred_elnettrain))))
+print('R2 nos dados de Treino: {}' .format(r2_score(y_train, y_pred_elnettrain)))
+
+print('MSE nos dados de Teste: {}' .format(np.sqrt(mean_squared_error(y_test,y_pred_elnettest)))) 
+print('R2 nos dados de Teste: {}' .format(r2_score(y_test, y_pred_elnettest)))
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+plt.figure(figsize = (12,6))
+sns.scatterplot(x= y_test, y= y_pred_elnettest)
+plt.xlim(0, 400)
+plt.ylim(0, 400)
+plt.title("Predictions")
+plt.xlabel("y_test")
+plt.ylabel("y_pred")
+plt.show()
+```
+
+
+## Cross Validation
+
+![](images\crossval.png)
+
+### hold-out
+
+```{python}
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.35,random_state=2023)
+X_train.shape
+```
+
+```{python}
+#| eval: true
+model=DecisionTreeClassifier()
+model.fit(X_train,y_train)
+mod_score = model.score( X_test, y_test) # devolve a accuracy
+mod_score
+```
+
+### Leave-one-out CV
+
+![](images\loocv.png)
+
+verifica as partições  
+```{python}
+import numpy as np
+from sklearn.model_selection import LeaveOneOut
+
+# criar dados de exemplo
+X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
+y = np.array([1, 2, 3, 4])
+
+# iniciar o metodo de CV
+loo = LeaveOneOut()
+# métodos que dá o número de splits para cross validadtion
+loo.get_n_splits(X)
+
+print(loo)
+
+# a função split faz os splits
+for i, (train_index, test_index) in enumerate(loo.split(X)):
+    print(f"Fold {i}:")
+    print(f"  Train: index={train_index}")
+    print(f"  Test:  index={test_index}")
+```
+
+exemplo para calcular Score com dados do Iris  
+```{python}
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import LeaveOneOut
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+```{python}
+model = DecisionTreeClassifier()
+
+leave_val = LeaveOneOut()
+leave_val
+
+mod_score = cross_val_score( model, X, y, cv = leave_val) # acertos
+mod_score
+```
+
+```{python}
+print(np.mean(mod_score)) # accuracy
+```
+
+### Leave-P-out
+
+verificar as partições  
+```{python}
+import numpy as np
+from sklearn.model_selection import LeavePOut
+
+X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
+y = np.array([1, 2, 3, 4])
+
+lpo = LeavePOut(2)
+# métodos que dá o número de splits para cross validadtion
+lpo.get_n_splits(X)
+
+print(lpo)
+
+# a função split faz os splits
+for i, (train_index, test_index) in enumerate(lpo.split(X)):
+    print(f"Fold {i}:")
+    print(f"  Train: index={train_index}")
+    print(f"  Test:  index={test_index}")
+```
+
+exemplo com os dados do Iris  
+```{python}
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import LeavePOut
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+listar os acertos
+```{python}
+model = DecisionTreeClassifier()
+
+leave_val = LeavePOut(2)
+leave_val
+
+mod_score = cross_val_score( model, X, y, cv = leave_val)
+mod_score
+```
+
+calcular a *accuracy* que é a média dos acertos  
+```{python}
+print(np.mean(mod_score))
+```
+
+### K-fold
+
+![](images\kfold.png)
+
+verifica partições  
+```{python}
+import numpy as np
+from sklearn.model_selection import KFold
+
+X = np.array([[1, 2], [3, 4], [1, 2], [3, 4]])
+y = np.array([1, 2, 3, 4])
+
+kf = KFold(n_splits=2)
+kf.get_n_splits(X)
+```
+
+```{python}
+print(kf)
+
+KFold(n_splits=2, random_state=None, shuffle=False)
+for i, (train_index, test_index) in enumerate(kf.split(X)):
+    print(f"Fold {i}:")
+    print(f"  Train: index={train_index}")
+    print(f"  Test:  index={test_index}")
+```
+
+exemplo com treino do modelo para os Iris  
+```{python}
+from sklearn.model_selection import KFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import datasets
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+```{python}
+# K-fold split
+k_folds = 5
+kf = KFold(n_splits=k_folds, shuffle=True, random_state=1972) # faz o sufle dos dados antes de criar os folds
+
+kf
+```
+
+accuracy  
+```{python}
+# se quisessemos só calcular o score
+model=DecisionTreeClassifier()
+
+mod_score =  cross_val_score( model, X, y, cv = kf) # accuracy de cada fold
+
+print(np.mean(mod_score))
+```
+podemos também calcular 'manualmente' a *accuracy* de cada *fold*  
+```{python}
+from sklearn.tree import DecisionTreeClassifier
+
+scores = []
+# Aqui só estamos a obter os indices de split
+# por isso servem tanto para X como para y
+for train_idx, test_idx in kf.split(X):
+    X_train, X_test = X[train_idx], X[test_idx]
+    y_train, y_test = y[train_idx], y[test_idx]
+    #... treina o modelo, etc
+    model=DecisionTreeClassifier()
+    model.fit(X_train, y_train)
+    mod_score = model.score(X_test, y_test)
+    scores.append(mod_score)
+    
+    
+print(X_train.shape)
+print(scores)
+print(np.mean(scores))
+```
+
+### Repeated K-fold
+
+repete o k-fold mas com folds diferentes  
+```{python}
+import numpy as np
+from sklearn.model_selection import RepeatedKFold
+
+X = np.array([[1, 2], [3, 4], [1, 2], [3, 4], [1, 1], [2, 2]])
+y = np.array([0, 0, 1, 1, 0, 1])
+
+
+rkf = RepeatedKFold(n_splits=2, n_repeats=5, random_state=2652124)
+rkf.get_n_splits(X, y)
+```
+
+```{python}
+#| echo: fenced
+RepeatedKFold(n_repeats=2, n_splits=2, random_state=2652124)
+for i, (train_index, test_index) in enumerate(rkf.split(X)):
+    print(f"Fold {i}:")
+    print(f"  Train: index={train_index}")
+    print(f"  Test:  index={test_index}")
+```
+
+calcular o score *accuracy* para Iris   
+```{python}
+import numpy as np
+from sklearn.model_selection import RepeatedKFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn import datasets
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+```{python}
+model = DecisionTreeClassifier()
+
+rkf = RepeatedKFold(n_splits=10, n_repeats=2, random_state=2020)
+rkf
+
+mod_score = cross_val_score( model, X, y, cv = rkf)
+print(mod_score)
+```
+
+### Stratifies K-fold
+
+a importância de instanciar  
+```{python}
+import pandas as pd
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split, StratifiedKFold, StratifiedShuffleSplit, KFold
+
+# criar dados sinteticos para classificação
+make_class = make_classification(n_samples=500,n_features=3,
+                                 n_redundant=0,n_informative=2,
+                                 n_classes=3,n_clusters_per_class=1,
+                                 random_state=11)
+
+data = pd.DataFrame(make_class[0],columns=range(make_class[0].shape[1]))
+data['target'] = make_class[1]
+data.head()
+```
+ver como se distribuiram os dados entre treino e teste  
+```{python}
+train_df,test_df = train_test_split(data,test_size=0.2,random_state=11)
+print(f'PROPORTION OF TARGET IN THE ORIGINAL DATA\n{data["target"].value_counts() / len(data)}\n\n'+
+      f'PROPORTION OF TARGET IN THE TRAINING SET\n{train_df["target"].value_counts() / len(train_df)}\n\n'+
+      f'PROPORTION OF TARGET IN THE TEST SET\n{test_df["target"].value_counts() / len(test_df)}')
+```
+
+```{python}
+# na divisão dos dados em treino e test podemos estartificar pelo 'target'
+train_df,test_df = train_test_split(data,test_size=0.2,stratify=data['target'],random_state=11)
+print(f'PROPORTION OF TARGET IN THE ORIGINAL DATA\n{data["target"].value_counts() / len(data)}\n\n'+
+      f'PROPORTION OF TARGET IN THE TRAINING SET\n{train_df["target"].value_counts() / len(train_df)}\n\n'+
+      f'PROPORTION OF TARGET IN THE TEST SET\n{test_df["target"].value_counts() / len(test_df)}')
+```
+
+exemplo para Iris  
+```{python}
+import numpy as np
+from sklearn.model_selection import StratifiedKFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn import datasets
+
+# Load the X and y data from the iris dataset
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+
+```{python}
+k = 5 # numero de blocos
+skf = StratifiedKFold(n_splits=k, shuffle=True)
+skf
+```
+
+```{python}
+model = DecisionTreeClassifier()
+mod_score = cross_val_score(model, X, y,cv=skf)
+mod_score
+
+print(np.mean(mod_score))
+```
+
+'manualmente'  
+```{python}
+scores = []
+
+# o split do stratified recebe 2 argumentos
+for train_idx, test_idx in skf.split(X, y):
+    X_train, X_test = X[train_idx], X[test_idx]
+    y_train, y_test = y[train_idx], y[test_idx]
+    #... treina o modelo, etc
+    model=DecisionTreeClassifier()
+    model.fit(X_train, y_train)
+    mod_score = model.score(X_test, y_test)
+    scores.append(mod_score)
+    
+    
+print(X_train.shape)
+print(scores)
+print(np.mean(scores))
+```
+
+## Random Forest
+
+![](images\randomforest.png)
+
+
+construir uma Random Forest
+
+```{python}
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
+
+X, y = make_classification(n_samples=1000, n_features=4,
+                            n_informative=2, n_redundant=0,
+                            random_state=2023, shuffle=False)
+# print(X)
+# print(y)
+```
+
+```{python}
+clf = RandomForestClassifier(max_depth=2, oob_score=True,random_state=2023)
+clf.fit(X, y)
+
+clf.score(X, y)
+
+clf.oob_score_
+```
+
+previsoes  
+```{python}
+print(clf.predict([[0.8, 1.43, 0.65, 2.1]]))
+
+print(clf.predict_proba([[0.8, 1.43, 0.65, 2.1]]))
+
+print(clf.predict([[0.5, -0.3, -0.25, 0.1]]))
+```
+
+### Out-of-bag error
+
+![](images\oob_error.png)
+
+os registos que não foram usados pelo bootsrap podem ser usados para avaliar a árvore criada  
+```{python}
+from collections import OrderedDict
+
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import make_classification
+from sklearn.ensemble import RandomForestClassifier
+
+RANDOM_STATE = 2023
+
+# Fazer a classificação com 500 datapoints (dados sinteticos)
+X, y = make_classification(
+    n_samples=500,
+    n_features=25,
+    n_clusters_per_class=1,
+    n_informative=15,
+    random_state=RANDOM_STATE,
+)
+
+# X tem 25 features/colunas
+X
+```
+
+Parâmetros impotantes
+
+- `n_estimators` será o número de árvores a crescer na floresta, por omissão 100
+- `max_depth` será o máximo para cada árvore, se vazio continua a crescer a árvore até atingir folhas puras ou até que todas as folhas tenham menos que min_samples_split exemplos nas folhas
+- `min_samples_split` será o minimo de exemplo num nó para fazer um split e continuar a crescer a árvore
+- `max_features` será o número de features/colunas a considerar quando procuramos o melhor split para cada crescimento da árvore
+- `oob_score` se quisermos ter o erro out-of-bag tem de estar a True, por omissão está a false e usa o `accuracy_score`
+
+*ensemble* de varias *random forest* mudando o `max_feat`  
+```{python}
+#| echo: false
+# warm_start a True impede a paralelização mas é necessário 
+# para registar o OOB error durante o treino
+ensemble_clfs = [
+    (
+        "RandomForestClassifier, max_features='sqrt'",
+        RandomForestClassifier(
+            warm_start=True, #
+            oob_score=True,
+            max_features="sqrt",
+            random_state=RANDOM_STATE,
+        ),
+    ),
+    (
+        "RandomForestClassifier, max_features='log2'",
+        RandomForestClassifier(
+            warm_start=True,
+            max_features="log2",
+            oob_score=True,
+            random_state=RANDOM_STATE,
+        ),
+    ),
+    (
+        "RandomForestClassifier, max_features=None",
+        RandomForestClassifier(
+            warm_start=True,
+            max_features=None,
+            oob_score=True,
+            random_state=RANDOM_STATE,
+        ),
+    ),
+]
+
+# Mapear o nome do classificador para uma lista de pares (<n_estimators>, <error rate>) 
+error_rate = OrderedDict((label, []) for label, _ in ensemble_clfs)
+
+# Range dos valores de `n_estimators` a explorar (numero de árvores para cada random forest)
+min_estimators = 15
+max_estimators = 150
+
+for label, clf in ensemble_clfs:
+    for i in range(min_estimators, max_estimators + 1, 5):
+        clf.set_params(n_estimators=i)
+        clf.fit(X, y)
+
+        # Regista o erro OOB para cada setting `n_estimators=i` 
+        oob_error = 1 - clf.oob_score_
+        error_rate[label].append((i, oob_error))
+
+
+error_rate
+```
+
+visualização do OOB error de acordo com o número de arvores usadas e para os três `max_features`    
+```{python}
+# Prepara o gráfico "OOB error rate" vs. "n_estimators" 
+for label, clf_err in error_rate.items():
+    xs, ys = zip(*clf_err)
+    plt.plot(xs, ys, label=label)
+
+plt.xlim(min_estimators, max_estimators)
+plt.xlabel("n_estimators")
+plt.ylabel("OOB error rate")
+plt.legend(loc="upper right")
+plt.show()
+```
+
+## Tuning dos hiperparametros
+
+*Grid Search* e *Randomized Search* são as duas técnicas mais amplamente utilizadas no ajuste de hiperparâmetros.
+
+### *GridSearchCV*
+
+pesquisa exaustiva para cada combinação de hiperparametros especificados  
+
+exemplo com dados Breast_Cancer  
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn import datasets
+
+# Load  X e y data a partir do dataset
+cancer = datasets.load_breast_cancer()
+
+cancer.keys()
+
+print()
+cancer['feature_names']
+print()
+cancer['target_names']
+```
+
+```{python}
+X = cancer.data
+y = cancer.target
+
+X.shape
+```
+
+definir o algoritmo a usar e os respectivosparametros a testar   
+```{python}
+logModel = LogisticRegression()
+
+# Contruimos a grid de parâmetros
+param_grid = [    
+    {'penalty' : ['l1', 'l2', 'elasticnet', 'none'],
+    'C' : np.logspace(-4, 4, 20),
+    'solver' : ['lbfgs','newton-cg','liblinear','sag','saga'],
+    'max_iter' : [100, 1000,2500, 5000]
+    }
+]
+
+param_grid
+```
+
+
+a função `GridSearchCV` tem o parametro `refit` por defeito TRUE o que significa quje o treino é feito com os melhores parametros encontrados apos CV.
+
+```{python}
+# por omissão refit = True
+clf = GridSearchCV(logModel, param_grid = param_grid, cv = 3, verbose=True, n_jobs=-1)
+clf
+```
+
+Vamos fazer o fit para 3 Folds de:
+- 20 valores possíveis de C
+- 4 possíveis penalty
+- 5 possíveis solvers
+- 4 máximos para iterações <br>
+
+Portanto no total vamos fazer 20x4x5x4 = 1600 candidatos x número de folds (3)
+
+Ou seja, 4800 fits
+
+```{python}
+#| eval: false
+best_clf = clf.fit(X,y)
+
+best_clf.best_estimator_
+
+print (f'Accuracy : {best_clf.score(X,y):.3f}')
+```
+
+vamos fazer a previsão para para o primeiro array de X  
+```{python}
+#| eval: false
+X[0]
+
+print()
+pred = clf.predict(X[0].reshape(1, -1))
+pred[0]
+
+print()
+pred_prob = clf.predict_proba(X[0].reshape(1, -1))
+pred_prob
+```
+
+### *RandomizedSerachCV*
+
+```{python}
+from scipy.stats import randint as sp_randint
+
+exemplo = sp_randint(1, 11)
+exemplo
+```
+
+```{python}
+# sp_randint pode ser usado nos parâmetros 
+# exemplo é um objecto da rv_class
+# o método rvs vai gerar random variate sample
+# random_state pode ser usado
+exemplo.rvs(20)
+```
+
+pode ser usado qualquer `rvs`  
+```{python}
+import scipy
+
+a = scipy.stats.expon(scale=.1)
+a.rvs(10)
+```
+
+```{python}
+# distribuição normal com mean .25 stddev 0.1, entre 0 e 1
+b = scipy.stats.truncnorm(a=0, b=1, loc=0.25, scale=0.1)
+b.rvs(10)
+
+# distribuição uniforme entre .01 e .2
+c = scipy.stats.uniform(0.01, 0.199)
+c.rvs(10)
+```
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+from sklearn import datasets
+
+# Load the X and y data from the dataset
+cancer = datasets.load_breast_cancer()
+```
+
+```{python}
+X = cancer.data
+y = cancer.target
+
+X.shape
+```
+
+```{python}
+param_dist = {"max_depth": [3, 5], 
+    "max_features": sp_randint(1, 11), 
+    "min_samples_split": sp_randint(2, 11), 
+    "bootstrap": [True, False], 
+    "criterion": ["gini", "entropy"]} 
+
+param_dist
+```
+
+```{python}
+# construir o classificador indicando o nº 
+# de árvores a crescer na floresta
+clf = RandomForestClassifier(n_estimators=50) # 50 árvores
+clf
+```
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.15,random_state=2023)
+X_train.shape
+```
+
+```{python}
+random_search = RandomizedSearchCV(clf, 
+                                   param_distributions=param_dist, 
+                                   n_iter=20, 
+                                   cv=5) 
+
+random_search.fit(X_train, y_train)
+print(random_search.best_params_)
+```
+
+```{python}
+X_test[12]
+
+print()
+y_test[12]
+```
+
+```{python}
+random_search.predict(X_test[12].reshape(1, -1))[0]
+
+print()
+cm = confusion_matrix(y_test, random_search.predict(X_test))
+print(pd.DataFrame(cm,columns = ['pred: 0','pred: 1'],
+                   index = ['real: 0','real: 1']))
+```
+
+### *NestedCV*
+
+
+começamos por gerar dados sintéticos  
+```{python}
+import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# cria o dataset
+X, y = make_classification(n_samples=1000, n_features=20, random_state=1, n_informative=10, n_redundant=10)
+
+X
+```
+são feitos dois loops  
+```{python}
+# configura o loop exterior
+cv_outer = KFold(n_splits=10, shuffle=True, random_state=1999)
+
+# prepara a lista para o loop exterior
+outer_results = list()
+
+# configura o loop CV interior
+cv_inner = KFold(n_splits=3, shuffle=True, random_state=1999)
+
+# o loop interior serve para escolher os parametros
+# define o espaço de procura
+param_grid = {'n_estimators':  [10, 100, 500],
+              'max_features': [2, 4, 6] }
+```
+
+```{python}
+# define o modelo
+model = RandomForestClassifier(random_state=1999)
+```
+
+```{python}
+# para o loop exterior em que vamos ter KFold (10 blocos)
+for train_idx, test_idx in cv_outer.split(X):
+    
+    # split dos dados com os indexes dados pelo split
+    X_train, X_test = X[train_idx, :], X[test_idx, :]
+    y_train, y_test = y[train_idx], y[test_idx]
+    
+    # define a procura dos hyperparâmetros
+    search = GridSearchCV(model, param_grid, 
+                          scoring='accuracy',
+                          cv=cv_inner,
+                          refit=True)
+    # executa a procura fazendo o fit
+    result = search.fit(X_train, y_train)
+    
+    # regista o melhor fit
+    best_model = result.best_estimator_
+    # prevê com o modelo usando o hold-out dataset
+    y_pred = best_model.predict(X_test)
+    # avalia o modelo
+    acc = accuracy_score(y_test, y_pred)
+    
+    # regista os resultados do outer CV na lista
+    outer_results.append(acc)
+    # reporta o progresso
+    print('>acc=%.3f, est=%.3f, cfg=%s' % (acc, result.best_score_, result.best_params_))
+    
+# sumariza a performance estimada do modelo
+print('Accuracy: %.3f (%.3f)' % (np.mean(outer_results), np.std(outer_results)))
+```
+
+de forma mais condensada  
+```{python}
+import numpy as np
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn import datasets
+
+# Carrega os Dados
+cancer = datasets.load_breast_cancer()
+
+X = cancer.data
+y = cancer.target
+
+# escolhe o modelo
+rf = RandomForestClassifier()
+
+# define a grid
+param_grid = {'n_estimators': [50, 100, 200],
+              'max_depth': [None, 5, 10],
+              'min_samples_split': [2, 5, 10]}
+
+# define os loops de CV
+outer_cv = KFold(n_splits=3, shuffle=True, random_state=2023)
+inner_cv = KFold(n_splits=5, shuffle=True, random_state=2023)
+
+# Define a procura de hyperparâmetros do loop interior de CV 
+model = GridSearchCV(
+    estimator=rf, param_grid=param_grid, cv=inner_cv, n_jobs=-1
+)
+
+# Define a seleção e avaliação de modelo no loop exterior de CV 
+scores = cross_val_score(model, X, y,
+                        scoring='accuracy',
+                        cv=outer_cv, n_jobs=-1)
+
+print('Accuracy: %.3f (%.3f)' % (np.mean(scores), np.std(scores)))
+```
+
+## Suport Vector Machines (SVM)
+
+![](images\svm.png)
+
+```{python}
+# importar os datasets
+from sklearn import datasets
+
+# load do dataset
+cancer = datasets.load_breast_cancer()
+
+# ver os dois primeiros registos
+print(cancer.data[0:2])
+```
+dividir em treino/test  
+```{python}
+# importar a função train_test_split 
+from sklearn.model_selection import train_test_split
+
+# Split do dataset
+X_train, X_test, y_train, y_test = train_test_split(cancer.data, 
+                                                    cancer.target, 
+                                                    test_size=0.3,
+                                                    random_state=1980) 
+```
+
+aplicar o SVM  
+```{python}
+# importar o modelo svm
+from sklearn import svm
+
+# criar o classificador svm 
+# com um kernel linear
+# para fazer classificação SVC
+# para regressão seria SVR
+clf = svm.SVC(kernel='linear')
+
+# treinar o modelo (fazer o fit)
+clf.fit(X_train, y_train)
+
+# prever com o dataset de teste
+y_pred = clf.predict(X_test)
+```
+ver resultados  
+```{python}
+# importar as métricas para avaliar o modelo
+from sklearn import metrics
+
+# Model Accuracy: Quantas vezes acerta o classificador
+# Diagonal
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+# Model Precision: Dos que previu como positivos quantos eram realmente positivos
+# Coluna direita
+print("Precision:",metrics.precision_score(y_test, y_pred))
+# Model Recall: Dos que são positivos quantos previu
+# Linha inferior
+print("Recall:",metrics.recall_score(y_test, y_pred))
+```
+
+```{python}
+from sklearn.metrics import confusion_matrix
+import pandas as pd
+
+cm = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm,columns = ['pred: 0','pred: 1'],
+                   index = ['real: 0','real: 1']))
+```
+
+```{python}
+import numpy as np
+from sklearn.model_selection import LearningCurveDisplay
+from sklearn.model_selection import cross_validate, ShuffleSplit
+
+cv = ShuffleSplit(random_state=0)
+
+train_sizes = np.linspace(0.1, 1, num=10)
+disp = LearningCurveDisplay.from_estimator(
+    clf,
+    cancer.data, 
+    cancer.target,
+    train_sizes=train_sizes,
+    cv=cv,
+    score_type="both",
+    scoring="accuracy",  
+    score_name="Accuracy",
+    std_display_style="errorbar",
+    errorbar_kw={"alpha": 0.7},  
+    n_jobs=2,
+)
+
+_ = disp.ax_.set(title="Learning curve for support vector machine")
+```
+
+### SVM kernels
+
+```{python}
+import pandas as pd  
+import numpy as np  
+from sklearn import datasets
+from sklearn.svm import SVC  
+from sklearn.metrics import classification_report, confusion_matrix  
+import matplotlib.pyplot as plt
+
+# Load  X e y data a partir do dataset
+iris = datasets.load_iris()
+
+_, ax = plt.subplots()
+scatter = ax.scatter(iris.data[:, 0], iris.data[:, 1], c=iris.target)
+ax.set(xlabel=iris.feature_names[0], ylabel=iris.feature_names[1])
+_ = ax.legend(
+    scatter.legend_elements()[0], iris.target_names, loc="lower right", title="Classes"
+)
+
+plt.show()
+```
+
+```{python}
+X = iris.data
+y = iris.target
+
+X.shape
+```
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
+
+kernels = ['Polynomial', 'RBF', 'Sigmoid','Linear']
+
+# função para instanciar classificador ed acordo com o tipo escolhido (ktype)
+def getClassifier(ktype):
+    if ktype == 0:
+        # Polynomial kernal
+        return SVC(kernel='poly', degree=8, gamma="auto")
+    elif ktype == 1:
+        # Radial Basis Function kernal
+        return SVC(kernel='rbf', gamma="auto")
+    elif ktype == 2:
+        # Sigmoid kernal
+        return SVC(kernel='sigmoid', gamma="auto")
+    elif ktype == 3:
+        # Linear kernal
+        return SVC(kernel='linear', gamma="auto")
+```
+
+```{python}
+#| warning: false
+for i in range(4):
+    # Separate data into test and training sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)# Train a SVC model using different kernels
+    svclassifier = getClassifier(i) 
+    svclassifier.fit(X_train, y_train)# Make prediction
+    y_pred = svclassifier.predict(X_test)# Evaluate our model
+    print("Evaluation:", kernels[i], "kernel")
+    print(classification_report(y_test,y_pred))
+```
+Cross validation para *tunning* de parametros
+
+```{python}
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {'C': [0.1,1, 10, 100], 'gamma': [1,0.1,0.01,0.001],'kernel': ['rbf', 'poly', 'sigmoid']}
+```
+
+```{python}
+#| eval: true
+#| echo: false
+
+grid = GridSearchCV(SVC(), param_grid, refit=True, verbose=2)
+grid.fit(X_train,y_train)
+```
+
+```{python}
+print(grid.best_estimator_)
+```
+
+```{python}
+y_pred = grid.predict(X_test)
+
+cm = confusion_matrix(y_test, y_pred)
+print(pd.DataFrame(cm,columns = ['pred: 0','pred: 1','pred: 2'],
+                   index = ['real: 0','real: 1','real: 2']))
+
+print(classification_report(y_test,y_pred))
+```
+
+
+### Decision Boundary
+
+```{python}
+# Como vamos mostrar em 2D só podemos ver 2 caracteristicas de cada vez
+X_01 = iris.data[:, :2]
+clf = svm.SVC(C=0.1, gamma=0.1, kernel='poly')
+
+clf.fit(X_01, y)
+```
+
+```{python}
+from sklearn.inspection import DecisionBoundaryDisplay
+
+disp = DecisionBoundaryDisplay.from_estimator(clf, X_01, response_method="predict",
+                                              xlabel=iris.feature_names[0], ylabel=iris.feature_names[1],
+                                              alpha=0.5)
+
+disp.ax_.scatter(X[:, 0], X[:, 1], c=iris.target, edgecolor="k")
+plt.show()
+```
+
+### Boosting - XGBoost
+
+![](images\boosting.png)
+
+```{python}
+import seaborn as sns
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import warnings
+
+warnings.filterwarnings("ignore")
+
+diamonds = sns.load_dataset("diamonds")
+diamonds.head()
+```
+dataset Diamonds  
+```{python}
+#| warning: false
+diamonds.shape
+
+print()
+diamonds.describe(exclude = np) # sem exclusão de variáveis
+```
+
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X, y = diamonds.drop('price', axis=1), diamonds[['price']]
+
+# Extrair features de texto/categoricas
+cats = X.select_dtypes(exclude=np.number).columns.tolist() # lista com as colunas que não são numericas
+
+# Converter para categorias Pandas
+for col in cats:
+    X[col] = X[col].astype('category')
+    
+X.dtypes
+```
+
+```{python}
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1923)
+
+import xgboost as xgb
+
+# Cria matrizes de regressão
+dtrain_reg = xgb.DMatrix(X_train, y_train, enable_categorical=True)
+dtest_reg = xgb.DMatrix(X_test, y_test, enable_categorical=True)
+
+# Define hyperparametros
+params = {"objective": "reg:squarederror", "tree_method": "exact"}
+
+n = 100 # numero de vezes que faz o re-train 
+model = xgb.train(
+   params=params,
+   dtrain=dtrain_reg,
+   num_boost_round=n,
+)
+```
+
+
+```{python}
+from sklearn.metrics import mean_squared_error
+
+preds = model.predict(dtest_reg)
+
+rmse = mean_squared_error(y_test, preds, squared=False)
+
+print(f"RMSE of the base model: {rmse:.3f}")
+```
+com validation sets
+
+```{python}
+#| echo: false
+evals = [(dtrain_reg, "train"), (dtest_reg, "validation")]
+
+model = xgb.train(
+   params=params,
+   dtrain=dtrain_reg,
+   num_boost_round=n, # 100
+   evals=evals,
+)
+```
+
+```{python}
+# com early stop
+n = 10000
+
+model = xgb.train(
+   params=params,
+   dtrain=dtrain_reg,
+   num_boost_round=n,
+   evals=evals,
+   verbose_eval=50,
+   # Activate early stopping
+   early_stopping_rounds=50 
+)
+```
+
+com Cross-Validation
+
+```{python}
+params = {"objective": "reg:squarederror", "tree_method": "exact"}
+n = 1000
+
+results = xgb.cv(
+   params, dtrain_reg,
+   num_boost_round=n,
+   nfold=5, # adicionado o nº de folds
+   early_stopping_rounds=20
+)
+
+results.tail()
+```
+
+### Stacking
+
+![](images\stacking.png)
+
+avaliar e comparar modelos incluindo stacking  
+```{python}
+# importar a função para fazer um dataset
+from sklearn.datasets import make_classification
+
+# definir o dataset com dados sinteticos
+X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, n_redundant=5, random_state=1973)
+
+# caracteristicas do dataset
+print(X.shape, y.shape)
+```
+
+```{python}
+# todos os imports
+from numpy import mean
+from numpy import std
+from sklearn.datasets import make_classification
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import StackingClassifier
+from matplotlib import pyplot
+
+# função para dar o dataset
+# tal como exemplificado em cima
+def get_dataset():
+    X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, n_redundant=5, random_state=1)
+    return X, y
+
+# função para definir modelos  
+def get_models():
+    models = dict()
+    models['lr'] = LogisticRegression()
+    models['knn'] = KNeighborsClassifier()
+    models['cart'] = DecisionTreeClassifier()
+    models['svm'] = SVC()
+    models['bayes'] = GaussianNB()
+    return models
+  
+# avaliar um modelo usando cross-validation
+def evaluate_model(model, X, y):
+    cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+    # estamos a usar a accuracy para o scoring
+    scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1, error_score='raise')
+    return scores
+
+# e agora podemos aplicar as funções definidas 
+X, y = get_dataset()
+models = get_models()
+
+# avalia os modelos e regista os resultados
+results, names = list(), list()
+for name, model in models.items():
+    scores = evaluate_model(model, X, y)
+    results.append(scores)
+    names.append(name)
+    print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+```
+
+
+```{python}
+# faz boxplot do desempenho dos modelos para comparação
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
+```
+
+```{python}
+# define o stacking ensemble dos modelos
+def get_stacking():
+    # define os modelos de base
+    level0 = list()
+    level0.append(('lr', LogisticRegression()))
+    level0.append(('knn', KNeighborsClassifier()))
+    level0.append(('cart', DecisionTreeClassifier()))
+    level0.append(('svm', SVC()))
+    level0.append(('bayes', GaussianNB()))
+    # define o modelo meta learner
+    level1 = LogisticRegression()
+    # define o stacking ensemble usando o Stacking Classifier e cross-validation
+    model = StackingClassifier(estimators=level0, final_estimator=level1, cv=5)
+    return model
+  
+# redefinimos a lista de modelos a avaliar acrescentando o stacking
+def get_models():
+    models = dict()
+    models['lr'] = LogisticRegression()
+    models['knn'] = KNeighborsClassifier()
+    models['cart'] = DecisionTreeClassifier()
+    models['svm'] = SVC()
+    models['bayes'] = GaussianNB()
+    models['stacking'] = get_stacking()
+    return models
+  
+X, y = get_dataset()
+models = get_models()
+
+# avalia os modelos e regista os resultados
+results, names = list(), list()
+for name, model in models.items():
+    scores = evaluate_model(model, X, y)
+    results.append(scores)
+    names.append(name)
+    print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+
+
+```
+
+```{python}
+# faz boxplot do desempenho dos modelos para comparação
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
+```
+
+
+prever usando o sctaking de modelos  
+```{python}
+# imports
+from sklearn.datasets import make_classification
+from sklearn.ensemble import StackingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+
+# definir o dataset
+X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, n_redundant=5, random_state=1)
+
+```
+
+
+```{python}
+# definir os modelos de base
+level0 = list()
+level0.append(('lr', LogisticRegression()))
+level0.append(('knn', KNeighborsClassifier()))
+level0.append(('cart', DecisionTreeClassifier()))
+level0.append(('svm', SVC()))
+level0.append(('bayes', GaussianNB()))
+
+# definir o modelo meta learner
+level1 = LogisticRegression()
+
+# definir o stacking ensemble
+model = StackingClassifier(estimators=level0, final_estimator=level1, cv=5)
+```
+
+```{python}
+# treinar o modelo com todos os dados (fazer o fit)
+model.fit(X, y)
+```
+
+```{python}
+# data é um novo dado
+data = [[2.47475454,0.40165523,1.68081787,2.88940715,0.91704519,-3.07950644,4.39961206,0.72464273,-4.86563631,-6.06338084,-1.22209949,-0.4699618,1.01222748,-0.6899355,-0.53000581,6.86966784,-3.27211075,-6.59044146,-2.21290585,-3.139579]]
+
+# prever para esse novo dado
+ynew = model.predict(data)
+print('Predicted Class: %d' % (ynew))
+```
+
+stacking para regressão  
+```{python}
+# importar
+from numpy import mean
+from numpy import std
+from sklearn.datasets import make_regression
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedKFold
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.svm import SVR
+from sklearn.ensemble import StackingRegressor
+from matplotlib import pyplot
+
+# definir o dataset
+# repare que estamos a usar a função make_regression e não a make_classification que usámos antes
+def get_dataset():
+    X, y = make_regression(n_samples=1000, n_features=20, n_informative=15, noise=0.1, random_state=1985)
+    return X, y
+
+# definir o stacking
+def get_stacking():
+    # definir os modelos base
+    level0 = list()
+    level0.append(('knn', KNeighborsRegressor()))    # em vez de KNeighborsClassifier
+    level0.append(('cart', DecisionTreeRegressor())) # em vez de DecisionTreeClassifier
+    level0.append(('svm', SVR()))                    # em vez de SVC
+    # definir o modelo meta learner
+    level1 = LinearRegression()
+    # definir o stacking ensemble
+    # usando o StackingRegressor em vez do StackingClassifier
+    model = StackingRegressor(estimators=level0, final_estimator=level1, cv=5)
+    return model
+  
+# definir a lista dos modelos a avaliar
+def get_models():
+    models = dict()
+    models['knn'] = KNeighborsRegressor()    # em vez de KNeighborsClassifier
+    models['cart'] = DecisionTreeRegressor() # em vez de DecisionTreeClassifier
+    models['svm'] = SVR()                    # em vez de SVC
+    models['stacking'] = get_stacking()
+    return models
+  
+# definir avaliação de um modelo usando cross-validation
+def evaluate_model(model, X, y):
+    cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+    # estamos a usar neg_mean_absolute_error em vez da accuracy para o scoring
+    scores = cross_val_score(model, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1, error_score='raise')
+    return scores
+  
+X, y = get_dataset()
+models = get_models()
+
+# avalia os modelos e regista os resultados
+results, names = list(), list()
+for name, model in models.items():
+    scores = evaluate_model(model, X, y)
+    results.append(scores)
+    names.append(name)
+    print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+
+# boxplot do desempenho dos modelos para comparação
+pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.show()
+
+```
+
+## Bonus
+
+### Comparar os modelos com Decision Boundaries 
+
+```{python}
+# Code source: Gaël Varoquaux
+#              Andreas Müller
+# Modified for documentation by Jaques Grobler
+# License: BSD 3 clause
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.colors import ListedColormap
+
+from sklearn.datasets import make_circles, make_classification, make_moons
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.inspection import DecisionBoundaryDisplay
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+
+names = [
+    "Nearest Neighbors",
+    "Linear SVM",
+    "RBF SVM",
+    "Decision Tree",
+    "Random Forest",
+    "Neural Net",
+    "AdaBoost",
+    
+]
+
+# instanciação dos métodos a usar, já com parametros
+classifiers = [
+    KNeighborsClassifier(3),
+    SVC(kernel="linear", C=0.025, random_state=42),
+    SVC(gamma=2, C=1, random_state=42),
+    DecisionTreeClassifier(max_depth=5, random_state=42),
+    RandomForestClassifier(
+        max_depth=5, n_estimators=10, max_features=1, random_state=42
+    ),
+    MLPClassifier(alpha=1, max_iter=1000, random_state=42),
+    AdaBoostClassifier(random_state=42),
+]
+
+# cria os dados sinteticos
+X, y = make_classification(
+    n_features=2, n_redundant=0, n_informative=2, random_state=1, n_clusters_per_class=1
+)
+rng = np.random.RandomState(2000)
+X += 2 * rng.uniform(size=X.shape)
+linearly_separable = (X, y)
+
+datasets = [
+    make_moons(noise=0.3, random_state=0),
+    make_circles(noise=0.2, factor=0.5, random_state=1),
+    linearly_separable,
+]
+
+figure = plt.figure(figsize=(27, 9))
+i = 1
+# iterate over datasets
+for ds_cnt, ds in enumerate(datasets):
+    # preprocess dataset, split into training and test part
+    X, y = ds
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.4, random_state=42
+    )
+
+    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
+    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
+
+    # just plot the dataset first
+    cm = plt.cm.RdBu
+    cm_bright = ListedColormap(["#FF0000", "#0000FF"])
+    ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
+    if ds_cnt == 0:
+        ax.set_title("Input data")
+    # Plot the training points
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright, edgecolors="k")
+    # Plot the testing points
+    ax.scatter(
+        X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright, alpha=0.6, edgecolors="k"
+    )
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+    ax.set_xticks(())
+    ax.set_yticks(())
+    i += 1
+
+    # iterate over classifiers
+    for name, clf in zip(names, classifiers): # a função zip cia o par num tuplo
+        ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
+
+        clf = make_pipeline(StandardScaler(), clf)
+        clf.fit(X_train, y_train)
+        score = clf.score(X_test, y_test)
+        DecisionBoundaryDisplay.from_estimator(
+            clf, X, cmap=cm, alpha=0.8, ax=ax, eps=0.5
+        )
+
+        # Plot the training points
+        ax.scatter(
+            X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright, edgecolors="k"
+        )
+        # Plot the testing points
+        ax.scatter(
+            X_test[:, 0],
+            X_test[:, 1],
+            c=y_test,
+            cmap=cm_bright,
+            edgecolors="k",
+            alpha=0.6,
+        )
+
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(y_min, y_max)
+        ax.set_xticks(())
+        ax.set_yticks(())
+        if ds_cnt == 0:
+            ax.set_title(name)
+        ax.text(
+            x_max - 0.3,
+            y_min + 0.3,
+            ("%.2f" % score).lstrip("0"),
+            size=15,
+            horizontalalignment="right",
+        )
+        i += 1
+
+plt.tight_layout()
+plt.show()
+```
+
+
+## Comparação dos Modelos Complexos
+
+![](images\modelos_complexos.png)
 
 
 <br>

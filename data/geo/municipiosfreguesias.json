@@ -1,0 +1,53 @@
+[
+    {
+        "municipio": "Almada",
+        "populacao": 177400,
+        "freguesias": [
+            {"nome": "Almada", "populacao": 53194},
+            {"nome": "Cacilhas", "populacao": 20540},
+            {"nome": "Caparica", "populacao": 29222},
+            {"nome": "Costa da Caparica", "populacao": 33477},
+            {"nome": "Laranjeiro e Feijó", "populacao": 19910},
+            {"nome": "Marinha da Caparica", "populacao": 10090},
+            {"nome": "Pichela", "populacao": 10012},
+            {"nome": "Sobreda", "populacao": 10084}
+        ]
+    },
+    {
+        "municipio": "Cascais",
+        "populacao": 214124,
+        "freguesias": [
+            {"nome": "Alcabideche", "populacao": 26613},
+            {"nome": "Carcavelos e Parede", "populacao": 74302},
+            {"nome": "Cascais", "populacao": 36744},
+            {"nome": "Estoril", "populacao": 40926},
+            {"nome": "Guincho", "populacao": 24759}
+        ]
+    },
+    {
+        "municipio": "Seixal",
+        "populacao": 160000,
+        "freguesias": [
+            {"nome": "Amora", "populacao": 41588},
+            {"nome": "Gandra e Samouco", "populacao": 13069},
+            {"nome": "Palmela", "populacao": 23698},
+            {"nome": "Seixal", "populacao": 120464}
+        ]
+    },
+    {
+        "municipio": "Entroncamento",
+        "populacao": 39343,
+        "freguesias": [
+            {"nome": "Entroncamento", "populacao": 39343}
+        ]
+    },
+    {
+        "municipio": "Cadaval",
+        "populacao": 35508,
+        "freguesias": [
+            {"nome": "Cadaval", "populacao": 12889},
+            {"nome": "Ferreira do Zêzere", "populacao": 10890},
+            {"nome": "Lourinhã", "populacao": 11729}
+        ]
+    }
+]

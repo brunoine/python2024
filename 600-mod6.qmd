@@ -618,11 +618,10 @@ importa dados de Censos2021 por NUTS3 e Municipio
 ```{python}
 #| eval: false
 
-
 # Obter Password e Utilizador para Ligacao SQL
 #from getpass import getpass # para ler a password sem a mostrar
 my_user = '"BRUNO.LIMA"'  
-my_password = 'Pa$$w0rd5' # getpass("Password: ")
+my_password = getpass("Password: ")
 
 # Ler Dados da BD
 # criar conexão
@@ -664,10 +663,9 @@ conn.close()
 
 ```
 
-
 fazer JOIN dos dados GDF com as NUTS3  
 ```{python}
-#| eval: false
+#| eval: false 
 # Juntar Dados NUTS3 do C2021 a GDF com as areas NUTS3
 
 # gdf_nuts3 obtido de Shapefile NUTS3: NUTS3_2015_PT.shp (dados estão em WebMercator)
@@ -686,6 +684,7 @@ print(gdf_nuts3_2.info())
 Visualizar a classificação da relação entre 2 variáveis por NUTS3  
 ```{python}
 #| eval: false
+
 # Import packages
 # import matplotlib.pyplot as plt
 # import pandas as pd
@@ -795,7 +794,6 @@ gdf_cidades_m.explore()
 ### Folium
 
 ```{python}
-#| eval: false
 import folium
 
 # Mostrar Zona do INE 
@@ -811,7 +809,7 @@ ine
 Importar Dataset com NUTS3  
 ```{python}
 # Importar GeoPandas
-#import geopandas as gpd
+import geopandas as gpd
 
 # Carregar Dados com read_file (Shapefile preferivel, GeoJSON -  Mais Lento)
 # Mudar Caminho para onde estão os dados - atenção de ter os ficheiros .shp\.shx\.dbf\.prj
